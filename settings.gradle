@@ -1,0 +1,8 @@
+rootProject.name = 'KHelpApi'
+include ':Utilities'
+include ':Thread'
+include ':Security'
+include ':IO'
+include ':Database'
+
+

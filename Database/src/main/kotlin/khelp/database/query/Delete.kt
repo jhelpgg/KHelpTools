@@ -2,16 +2,19 @@ package khelp.database.query
 
 import khelp.database.DeleteSL
 import khelp.database.Table
+import khelp.database.WhereDSL
 import khelp.database.condition.Condition
 
 class Delete(val table: Table)
 {
     private var condition: Condition? = null
 
-    @DeleteSL
-    fun where(condition: Condition)
+    @WhereDSL
+    fun where(whereCreator:Where.()->Unit)
     {
-        condition.checkAllColumns(this.table)
+        val where = Where(this.table)
+        whereCreator(where)
+        val condition = where.condition ?: throw IllegalStateException("Choose a condition with 'condition ='")
         this.condition = condition
     }
 

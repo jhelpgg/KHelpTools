@@ -8,6 +8,7 @@ import khelp.database.query.Insert
 import khelp.database.query.InsertList
 import khelp.database.query.Select
 import khelp.database.query.Update
+import khelp.database.query.Where
 import khelp.database.type.DataType
 import khelp.utilities.extensions.transform
 
@@ -116,11 +117,12 @@ class Table internal constructor(val name: String, val readOnly: Boolean, privat
      *
      * @return Row ID **OR** [ROW_NOT_EXISTS] **OR** [ROW_NOT_UNIQUE]
      */
-    fun rowID(where: Condition): Int
+    @WhereDSL
+    fun rowID(whereCreator: Where.()->Unit): Int
     {
         val result = this.select {
             +COLUMN_ID
-            where(where)
+            where(whereCreator)
         }
 
         if (!result.hasNext)

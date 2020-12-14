@@ -6,6 +6,7 @@ import khelp.database.COLUMN_ID
 import khelp.database.Column
 import khelp.database.InsertDSL
 import khelp.database.Table
+import khelp.database.WhereDSL
 import khelp.database.condition.Condition
 import khelp.database.condition.EQUALS_ID
 import khelp.database.exception.NoValueDefinedAndNoDefaultValue
@@ -30,6 +31,12 @@ class Insert internal constructor(val table: Table)
     }
 
     @InsertDSL
+    infix fun String.IS(value: String)
+    {
+        this@Insert.table.getColumn(this) IS value
+    }
+
+    @InsertDSL
     infix fun Column.IS(value: Boolean)
     {
         this@Insert.table.checkColumn(this)
@@ -46,11 +53,23 @@ class Insert internal constructor(val table: Table)
     }
 
     @InsertDSL
+    infix fun String.IS(value: Boolean)
+    {
+        this@Insert.table.getColumn(this) IS value
+    }
+
+    @InsertDSL
     infix fun Column.IS(value: Byte)
     {
         this@Insert.table.checkColumn(this)
         this.checkType(DataType.BYTE)
         this@Insert.columnValues[this] = value.toString()
+    }
+
+    @InsertDSL
+    infix fun String.IS(value: Byte)
+    {
+        this@Insert.table.getColumn(this) IS value
     }
 
     @InsertDSL
@@ -62,11 +81,23 @@ class Insert internal constructor(val table: Table)
     }
 
     @InsertDSL
+    infix fun String.IS(value: Short)
+    {
+        this@Insert.table.getColumn(this) IS value
+    }
+
+    @InsertDSL
     infix fun Column.IS(value: Int)
     {
         this@Insert.table.checkColumn(this)
         this.checkType(DataType.INTEGER)
         this@Insert.columnValues[this] = value.toString()
+    }
+
+    @InsertDSL
+    infix fun String.IS(value: Int)
+    {
+        this@Insert.table.getColumn(this) IS value
     }
 
     @InsertDSL
@@ -78,11 +109,23 @@ class Insert internal constructor(val table: Table)
     }
 
     @InsertDSL
+    infix fun String.IS(value: Long)
+    {
+        this@Insert.table.getColumn(this) IS value
+    }
+
+    @InsertDSL
     infix fun Column.IS(value: Float)
     {
         this@Insert.table.checkColumn(this)
         this.checkType(DataType.FLOAT)
         this@Insert.columnValues[this] = value.toString()
+    }
+
+    @InsertDSL
+    infix fun String.IS(value: Float)
+    {
+        this@Insert.table.getColumn(this) IS value
     }
 
     @InsertDSL
@@ -94,11 +137,23 @@ class Insert internal constructor(val table: Table)
     }
 
     @InsertDSL
+    infix fun String.IS(value: Double)
+    {
+        this@Insert.table.getColumn(this) IS value
+    }
+
+    @InsertDSL
     infix fun Column.IS(value: ByteArray)
     {
         this@Insert.table.checkColumn(this)
         this.checkType(DataType.BYTE_ARRAY)
         this@Insert.columnValues[this] = "'${value.base64}'"
+    }
+
+    @InsertDSL
+    infix fun String.IS(value: ByteArray)
+    {
+        this@Insert.table.getColumn(this) IS value
     }
 
     @InsertDSL
@@ -110,11 +165,23 @@ class Insert internal constructor(val table: Table)
     }
 
     @InsertDSL
+    infix fun String.IS(value: Calendar)
+    {
+        this@Insert.table.getColumn(this) IS value
+    }
+
+    @InsertDSL
     infix fun Column.IS(value: DataDate)
     {
         this@Insert.table.checkColumn(this)
         this.checkType(DataType.DATE)
         this@Insert.columnValues[this] = value.serialized.toString()
+    }
+
+    @InsertDSL
+    infix fun String.IS(value: DataDate)
+    {
+        this@Insert.table.getColumn(this) IS value
     }
 
     @InsertDSL
@@ -126,6 +193,12 @@ class Insert internal constructor(val table: Table)
     }
 
     @InsertDSL
+    infix fun String.IS(value: DataTime)
+    {
+        this@Insert.table.getColumn(this) IS value
+    }
+
+    @InsertDSL
     infix fun <E : Enum<E>> Column.IS(value: E)
     {
         this@Insert.table.checkColumn(this)
@@ -134,8 +207,17 @@ class Insert internal constructor(val table: Table)
     }
 
     @InsertDSL
-    fun updateIfExactlyOneRowMatch(condition: Condition)
+    infix fun <E : Enum<E>> String.IS(value: E)
     {
+        this@Insert.table.getColumn(this) IS value
+    }
+
+    @WhereDSL
+    fun updateIfExactlyOneRowMatch(whereCreator: Where.() -> Unit)
+    {
+        val where = Where(this.table)
+        whereCreator(where)
+        val condition = where.condition ?: throw IllegalStateException("Choose a condition with 'condition ='")
         condition.checkAllColumns(this.table)
         this.conditionUpdateOneMatch = condition
     }
@@ -205,7 +287,7 @@ class Insert internal constructor(val table: Table)
     {
         val update = Update(this.table)
         update.transfer(this.columnValues)
-        update.where(COLUMN_ID EQUALS_ID id)
+        update.where { condition = COLUMN_ID EQUALS_ID id }
         return update.updateSQL()
     }
 }

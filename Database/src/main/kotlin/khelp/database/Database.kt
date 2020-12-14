@@ -5,7 +5,7 @@ import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.IOException
 import java.sql.Connection
-import khelp.database.condition.EQUALS
+import khelp.database.extensions.checkReadOnly
 import khelp.database.extensions.validName
 import khelp.database.query.Delete
 import khelp.database.query.Insert
@@ -147,6 +147,38 @@ class Database private constructor(login: String, password: String, path: String
         return this.table(name, false, creator)
     }
 
+    fun dropTable(tableName: String) =
+        this.obtainTable(tableName)
+            ?.let { table -> this.dropTable(table) } ?: false
+
+    fun dropTable(table: Table): Boolean
+    {
+        table.checkReadOnly()
+
+        if (table !in this.tables)
+        {
+            return false
+        }
+
+        this.tables.remove(table)
+        val tableName = table.name
+        this.updateQuery("DROP TABLE $tableName")
+
+        this.delete(this.metaColumnTable) {
+            where {
+                condition = METADATA_COLUMN_COLUMN_TABLE_ID IN {
+                    select(metaDataTable) {
+                        +COLUMN_ID
+                        where { condition = METADATA_TABLE_COLUMN_TABLE EQUALS tableName }
+                    }
+                }
+            }
+        }
+
+        this.delete(this.metaDataTable) { where { condition = METADATA_TABLE_COLUMN_TABLE EQUALS tableName } }
+        return true
+    }
+
     override fun iterator(): Iterator<Table>
     {
         this.checkClose()
@@ -166,8 +198,8 @@ class Database private constructor(login: String, password: String, path: String
         this.checkClose()
         var rowID = ROW_NOT_EXISTS
 
-        insert.conditionUpdateOneMatch?.let { condition ->
-            rowID = insert.table.rowID(condition)
+        insert.conditionUpdateOneMatch?.let { conditionUpdate ->
+            rowID = insert.table.rowID { condition = conditionUpdate }
         }
 
         if (rowID >= 0)
@@ -231,15 +263,14 @@ class Database private constructor(login: String, password: String, path: String
     {
         if (!table.readOnly)
         {
-            val id = this.metaDataTable.rowID(this.metaDataTable.getColumn(METADATA_TABLE_COLUMN_TABLE) EQUALS table.name)
+            val id = this.metaDataTable.rowID { condition = METADATA_TABLE_COLUMN_TABLE EQUALS table.name }
 
             if (id != ROW_NOT_EXISTS)
             {
                 val result = this.metaColumnTable.select {
                     +METADATA_COLUMN_COLUMN_NAME
                     +METADATA_COLUMN_COLUMN_TYPE
-                    where(this.table.getColumn(METADATA_COLUMN_COLUMN_TABLE_ID) EQUALS id)
-
+                    where { condition = METADATA_COLUMN_COLUMN_TABLE_ID EQUALS id }
                 }
 
                 return this.createTable(table.name) {

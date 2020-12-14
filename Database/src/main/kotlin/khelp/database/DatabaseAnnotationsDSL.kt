@@ -21,3 +21,7 @@ annotation class RowResultDSL()
 @DslMarker
 annotation class MatchDSL
 
+@DslMarker
+annotation class WhereDSL
+
+

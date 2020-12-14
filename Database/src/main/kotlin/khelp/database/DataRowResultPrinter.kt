@@ -39,7 +39,7 @@ fun printDataRowResult(dataRowResult: DataRowResult, printStream: PrintStream)
     {
         dataRowResult.next {
             data += Array<String>(numberColumn) { index ->
-                val value = toString(index+1)
+                val value = toString(index + 1)
                 maxWidths[index] = max(maxWidths[index], value.length)
                 value
             }
@@ -49,7 +49,7 @@ fun printDataRowResult(dataRowResult: DataRowResult, printStream: PrintStream)
     dataRowResult.close()
 
     // Print result
-    val separatorCharacters = CharArray(2 + maxWidths.sum() + 2 * numberColumn + 2)
+    val separatorCharacters = CharArray(2 + maxWidths.sum() + 3 * (numberColumn - 1) + 2)
     separatorCharacters[0] = '+'
     var index = 1
     maxWidths.forEach { width ->
@@ -60,8 +60,8 @@ fun printDataRowResult(dataRowResult: DataRowResult, printStream: PrintStream)
     }
     val separator = String(separatorCharacters, 0, index)
     val table = dataRowResult.table.name
-    val space = (separator.length - table.length) / 2 - 1
-    val left = separator.length - table.length - space - 2
+    val space = max(0, (separator.length - table.length) / 2 - 1)
+    val left = max(0, separator.length - table.length - space - 2)
 
     printStream.print('+')
     printStream.print(String(CharArray(separator.length - 2) { '-' }))

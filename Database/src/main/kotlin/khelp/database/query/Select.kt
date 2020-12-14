@@ -3,6 +3,7 @@ package khelp.database.query
 import khelp.database.Column
 import khelp.database.SelectDSL
 import khelp.database.Table
+import khelp.database.WhereDSL
 import khelp.database.condition.Condition
 import khelp.database.extensions.checkColumn
 
@@ -88,9 +89,12 @@ class Select internal constructor(val table: Table) : Iterable<Column>
         }
     }
 
-    @SelectDSL
-    fun where(condition: Condition)
+    @WhereDSL
+    fun where(whereCreator: Where.() -> Unit)
     {
+        val where = Where(this.table)
+        whereCreator(where)
+        val condition = where.condition ?: throw IllegalStateException("Choose a condition with 'condition ='")
         condition.checkAllColumns(this.table)
         this.condition = condition
     }

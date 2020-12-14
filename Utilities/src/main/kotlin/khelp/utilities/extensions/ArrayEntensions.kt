@@ -2,16 +2,16 @@ package khelp.utilities.extensions
 
 import java.util.TreeSet
 
-inline fun <reified T> Array<T>.merge(array:Array<T>) : Array<T>
+inline fun <reified T> Array<T>.merge(array: Array<T>): Array<T>
 {
     val treeSet = TreeSet<T>()
 
-    for(element in this)
+    for (element in this)
     {
         treeSet.add(element)
     }
 
-    for(element in array)
+    for (element in array)
     {
         treeSet.add(element)
     }
@@ -58,3 +58,12 @@ fun <T> Array<T>.same(other: Array<T>): Boolean
 
     return true
 }
+
+inline fun <S, reified D> Array<S>.transformArray(transformation: (S) -> D) =
+    Array<D>(this.size) { index -> transformation(this[index]) }
+
+fun <T> Array<T>.transformInt(transformation: (T) -> Int) =
+    IntArray(this.size) { index -> transformation(this[index]) }
+
+fun <T> Array<T>.transformLong(transformation: (T) -> Long) =
+    LongArray(this.size) { index -> transformation(this[index]) }
