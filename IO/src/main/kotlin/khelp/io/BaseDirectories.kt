@@ -18,6 +18,10 @@ const val PATH_SEPARATOR = '/'
  * Path the represents the parent directory
  */
 const val PREVIOUS_DIRECTORY = ".."
+
+/**
+ * Current directory path
+ */
 const val CURRENT_DIRECTORY = "."
 
 /**

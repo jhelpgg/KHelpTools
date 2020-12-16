@@ -1,10 +1,22 @@
 package khelp.database
 
 import java.util.Objects
+import khelp.database.exception.InvalidDataTypeException
 import khelp.database.type.DataType
 
+/**
+ * Represents a table's column
+ */
 data class Column internal constructor(val name: String, val type: DataType) : Comparable<Column>
 {
+    fun checkType(expectedType: DataType)
+    {
+        if (this.type != expectedType)
+        {
+            throw InvalidDataTypeException(this.type, expectedType)
+        }
+    }
+
     override fun equals(other: Any?): Boolean
     {
         if (this === other)
@@ -27,5 +39,6 @@ data class Column internal constructor(val name: String, val type: DataType) : C
         this.name.compareTo(other.name, true)
 }
 
+/**The common column table*/
 val COLUMN_ID = Column("ID", DataType.ID)
 

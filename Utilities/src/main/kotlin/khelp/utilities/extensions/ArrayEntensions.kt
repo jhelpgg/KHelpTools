@@ -2,6 +2,9 @@ package khelp.utilities.extensions
 
 import java.util.TreeSet
 
+/**
+ * Merge two array in one contains the union of the both without duplicates
+ */
 inline fun <reified T> Array<T>.merge(array: Array<T>): Array<T>
 {
     val treeSet = TreeSet<T>()
@@ -19,6 +22,9 @@ inline fun <reified T> Array<T>.merge(array: Array<T>): Array<T>
     return treeSet.toTypedArray()
 }
 
+/**
+ * String representation with customizable header, separator and footer
+ */
 fun <T> Array<T>.string(header: String = "[", separator: String = ", ", footer: String = "]"): String
 {
     val stringBuilder = StringBuilder()

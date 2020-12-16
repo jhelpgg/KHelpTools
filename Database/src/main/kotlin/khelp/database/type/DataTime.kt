@@ -14,6 +14,9 @@ private const val HOURS_SHIFT = MINUTES_SHIFT + 6
 private const val DAYS_SHIFT = HOURS_SHIFT + 5
 private const val MAX_DAYS = 0b1_1111
 
+/**
+ * A time duration in hour, minute. seconds and milliseconds
+ */
 class DataTime() : Comparable<DataTime>
 {
     var days = 0

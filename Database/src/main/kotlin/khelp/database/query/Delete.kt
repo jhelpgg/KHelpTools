@@ -1,16 +1,23 @@
 package khelp.database.query
 
-import khelp.database.DeleteSL
 import khelp.database.Table
 import khelp.database.WhereDSL
 import khelp.database.condition.Condition
 
-class Delete(val table: Table)
+/**
+ * For delete rows in table
+ *
+ * See documentation for delete DSL syntax
+ */
+class Delete internal constructor(val table: Table)
 {
     private var condition: Condition? = null
 
+    /**
+     * Specify delete condition
+     */
     @WhereDSL
-    fun where(whereCreator:Where.()->Unit)
+    fun where(whereCreator: Where.() -> Unit)
     {
         val where = Where(this.table)
         whereCreator(where)

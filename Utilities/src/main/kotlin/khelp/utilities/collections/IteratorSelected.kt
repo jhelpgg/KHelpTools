@@ -2,6 +2,9 @@ package khelp.utilities.collections
 
 import java.util.concurrent.atomic.AtomicBoolean
 
+/**
+ * [Iterator] that filter elements of given [Iterator] via the [criteria]
+ */
 class IteratorSelected<T : Any>(internal val criteria: (T) -> Boolean, internal val iterator: Iterator<T>) : Iterator<T>
 {
     private val hasNext = AtomicBoolean(false)

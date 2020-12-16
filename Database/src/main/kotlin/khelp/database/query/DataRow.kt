@@ -5,7 +5,6 @@ import java.util.Calendar
 import khelp.database.Column
 import khelp.database.RowResultDSL
 import khelp.database.Table
-import khelp.database.extensions.checkType
 import khelp.database.type.DataDate
 import khelp.database.type.DataTime
 import khelp.database.type.DataType
@@ -13,7 +12,12 @@ import khelp.utilities.extensions.base64
 import khelp.utilities.extensions.fullString
 import khelp.utilities.extensions.string
 
-class DataRow(private val resultSet: ResultSet, private val select: Select, val table: Table)
+/**
+ * Presents a row result
+ *
+ * See documentation for row result DSL syntax
+ */
+class DataRow internal constructor(private val resultSet: ResultSet, private val select: Select, val table: Table)
 {
 
     /**Number of columns in the answer*/
@@ -53,6 +57,9 @@ class DataRow(private val resultSet: ResultSet, private val select: Select, val 
     /**Column at index in the answer*/
     fun column(columnRange: Int) = this.select[columnRange - 1]
 
+    /**
+     * Read table row ID from specified column
+     */
     @RowResultDSL
     fun getID(column: Column): Int
     {
@@ -67,11 +74,19 @@ class DataRow(private val resultSet: ResultSet, private val select: Select, val 
         return this.resultSet.getInt(index + 1)
     }
 
+    /**
+     * Read table row ID from specified column range
+     *
+     * **Warning** Column range start at **1** not **0**
+     */
     @RowResultDSL
     fun getID(columnRange: Int) =
         this.getID(this.select[columnRange - 1])
 
 
+    /**
+     * Read table row ID from specified column
+     */
     @RowResultDSL
     fun getString(column: Column): String
     {
@@ -86,10 +101,18 @@ class DataRow(private val resultSet: ResultSet, private val select: Select, val 
         return this.resultSet.getString(index + 1)
     }
 
+    /**
+     * Read table row ID from specified column range
+     *
+     * **Warning** Column range start at **1** not **0**
+     */
     @RowResultDSL
     fun getString(columnRange: Int) =
         this.getString(this.select[columnRange - 1])
 
+    /**
+     * Read table row ID from specified column
+     */
     @RowResultDSL
     fun getBoolean(column: Column): Boolean
     {
@@ -104,10 +127,18 @@ class DataRow(private val resultSet: ResultSet, private val select: Select, val 
         return this.resultSet.getBoolean(index + 1)
     }
 
+    /**
+     * Read table row ID from specified column range
+     *
+     * **Warning** Column range start at **1** not **0**
+     */
     @RowResultDSL
     fun getBoolean(columnRange: Int) =
         this.getBoolean(this.select[columnRange - 1])
 
+    /**
+     * Read table row ID from specified column
+     */
     @RowResultDSL
     fun getByte(column: Column): Byte
     {
@@ -122,10 +153,18 @@ class DataRow(private val resultSet: ResultSet, private val select: Select, val 
         return this.resultSet.getByte(index + 1)
     }
 
+    /**
+     * Read table row ID from specified column range
+     *
+     * **Warning** Column range start at **1** not **0**
+     */
     @RowResultDSL
     fun getByte(columnRange: Int) =
         this.getByte(this.select[columnRange - 1])
 
+    /**
+     * Read table row ID from specified column
+     */
     @RowResultDSL
     fun getShort(column: Column): Short
     {
@@ -140,10 +179,18 @@ class DataRow(private val resultSet: ResultSet, private val select: Select, val 
         return this.resultSet.getShort(index + 1)
     }
 
+    /**
+     * Read table row ID from specified column range
+     *
+     * **Warning** Column range start at **1** not **0**
+     */
     @RowResultDSL
     fun getShort(columnRange: Int) =
         this.getShort(this.select[columnRange - 1])
 
+    /**
+     * Read table row ID from specified column
+     */
     @RowResultDSL
     fun getInt(column: Column): Int
     {
@@ -158,10 +205,18 @@ class DataRow(private val resultSet: ResultSet, private val select: Select, val 
         return this.resultSet.getInt(index + 1)
     }
 
+    /**
+     * Read table row ID from specified column range
+     *
+     * **Warning** Column range start at **1** not **0**
+     */
     @RowResultDSL
     fun getInt(columnRange: Int) =
         this.getInt(this.select[columnRange - 1])
 
+    /**
+     * Read table row ID from specified column
+     */
     @RowResultDSL
     fun getLong(column: Column): Long
     {
@@ -176,10 +231,18 @@ class DataRow(private val resultSet: ResultSet, private val select: Select, val 
         return this.resultSet.getLong(index + 1)
     }
 
+    /**
+     * Read table row ID from specified column range
+     *
+     * **Warning** Column range start at **1** not **0**
+     */
     @RowResultDSL
     fun getLong(columnRange: Int) =
         this.getLong(this.select[columnRange - 1])
 
+    /**
+     * Read table row ID from specified column
+     */
     @RowResultDSL
     fun getFloat(column: Column): Float
     {
@@ -195,10 +258,18 @@ class DataRow(private val resultSet: ResultSet, private val select: Select, val 
             .toFloat()
     }
 
+    /**
+     * Read table row ID from specified column range
+     *
+     * **Warning** Column range start at **1** not **0**
+     */
     @RowResultDSL
     fun getFloat(columnRange: Int) =
         this.getFloat(this.select[columnRange - 1])
 
+    /**
+     * Read table row ID from specified column
+     */
     @RowResultDSL
     fun getDouble(column: Column): Double
     {
@@ -213,10 +284,18 @@ class DataRow(private val resultSet: ResultSet, private val select: Select, val 
         return this.resultSet.getDouble(index + 1)
     }
 
+    /**
+     * Read table row ID from specified column range
+     *
+     * **Warning** Column range start at **1** not **0**
+     */
     @RowResultDSL
     fun getDouble(columnRange: Int) =
         this.getDouble(this.select[columnRange - 1])
 
+    /**
+     * Read table row ID from specified column
+     */
     @RowResultDSL
     fun getByteArray(column: Column): ByteArray
     {
@@ -231,10 +310,18 @@ class DataRow(private val resultSet: ResultSet, private val select: Select, val 
         return this.resultSet.getString(index + 1).base64
     }
 
+    /**
+     * Read table row ID from specified column range
+     *
+     * **Warning** Column range start at **1** not **0**
+     */
     @RowResultDSL
     fun getByteArray(columnRange: Int) =
         this.getByteArray(this.select[columnRange - 1])
 
+    /**
+     * Read table row ID from specified column
+     */
     @RowResultDSL
     fun getCalendar(column: Column): Calendar
     {
@@ -251,10 +338,18 @@ class DataRow(private val resultSet: ResultSet, private val select: Select, val 
         return calendar
     }
 
+    /**
+     * Read table row ID from specified column range
+     *
+     * **Warning** Column range start at **1** not **0**
+     */
     @RowResultDSL
     fun getCalendar(columnRange: Int) =
         this.getCalendar(this.select[columnRange - 1])
 
+    /**
+     * Read table row ID from specified column
+     */
     @RowResultDSL
     fun getDate(column: Column): DataDate
     {
@@ -269,10 +364,18 @@ class DataRow(private val resultSet: ResultSet, private val select: Select, val 
         return DataDate(this.resultSet.getInt(index + 1))
     }
 
+    /**
+     * Read table row ID from specified column range
+     *
+     * **Warning** Column range start at **1** not **0**
+     */
     @RowResultDSL
     fun getDate(columnRange: Int) =
         this.getDate(this.select[columnRange - 1])
 
+    /**
+     * Read table row ID from specified column
+     */
     @RowResultDSL
     fun getTime(column: Column): DataTime
     {
@@ -287,10 +390,18 @@ class DataRow(private val resultSet: ResultSet, private val select: Select, val 
         return DataTime(this.resultSet.getInt(index + 1))
     }
 
+    /**
+     * Read table row ID from specified column range
+     *
+     * **Warning** Column range start at **1** not **0**
+     */
     @RowResultDSL
     fun getTime(columnRange: Int) =
         this.getTime(this.select[columnRange - 1])
 
+    /**
+     * Read table row ID from specified column
+     */
     @RowResultDSL
     fun <E : Enum<E>> getEnum(column: Column): E
     {
@@ -312,10 +423,20 @@ class DataRow(private val resultSet: ResultSet, private val select: Select, val 
         return valueOf.invoke(null, enumName) as E
     }
 
+    /**
+     * Read table row ID from specified column range
+     *
+     * **Warning** Column range start at **1** not **0**
+     */
     @RowResultDSL
     fun <E : Enum<E>> getEnum(columnRange: Int) =
         this.getEnum<E>(this.select[columnRange - 1])
 
+    /**
+     * Read table row ID from specified column and returns a string represention of the value
+     *
+     * **Warning** Column range start at **1** not **0**
+     */
     @RowResultDSL
     fun toString(columnRange: Int) =
         when (this.select[columnRange - 1].type)

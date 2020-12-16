@@ -2,9 +2,19 @@ package khelp.utilities.collections
 
 import khelp.utilities.comparators.ComparableNaturalOrderComparator
 
+/**
+ * Create an array of [Comparable] sorted on their "natural order"
+ */
 fun <C : Comparable<C>> sortedArray(unique: Boolean = false) =
     SortedArray<C>(ComparableNaturalOrderComparator(), unique)
 
+/**
+ * Array that sort its elements with given [Comparator]
+ *
+ * If unique option is activated it is not possible to add two elements declared equivalent by the [Comparator]
+ *
+ * * Addition, indexOf, contains and remove are on O(log(N))
+ */
 class SortedArray<T>(private val comparator: Comparator<T>, val unique: Boolean = false) : Collection<T>
 {
     private val list = ArrayList<T>()
@@ -13,9 +23,17 @@ class SortedArray<T>(private val comparator: Comparator<T>, val unique: Boolean 
     val empty get() = this.list.isEmpty()
     val notEmpty get() = this.list.isNotEmpty()
 
+    /**
+     * Iterator in sorted elements order
+     */
     override fun iterator(): Iterator<T> =
         this.list.iterator()
 
+    /**
+     * Add an element in the array.
+     *
+     * If array is on unique mode and the [Comparator] indicates that given element is same than an other one already inside the array, the element is not added
+     */
     operator fun plusAssign(element: T)
     {
         val indexInsert = this.indexFor(true, element)
@@ -30,6 +48,11 @@ class SortedArray<T>(private val comparator: Comparator<T>, val unique: Boolean 
         }
     }
 
+    /**
+     * Index of an element.
+     *
+     * If element is not exists a negative value is returned. Don't assume it is -1
+     */
     fun indexOf(element: T): Int =
         this.indexFor(add = false, element)
 
@@ -42,6 +65,9 @@ class SortedArray<T>(private val comparator: Comparator<T>, val unique: Boolean 
     override fun toString(): String =
         this.list.toString()
 
+    /**
+     * Remove, if exists, an element form the array
+     */
     operator fun minusAssign(element: T)
     {
         val index = this.indexFor(add = false, element)
@@ -52,6 +78,9 @@ class SortedArray<T>(private val comparator: Comparator<T>, val unique: Boolean 
         }
     }
 
+    /**
+     * Add all elements of given [Iterable] in the array
+     */
     operator fun plusAssign(iterable: Iterable<T>)
     {
         for (element in iterable)
@@ -60,6 +89,9 @@ class SortedArray<T>(private val comparator: Comparator<T>, val unique: Boolean 
         }
     }
 
+    /**
+     * Remove all elements of given [Iterable] from the array
+     */
     operator fun minusAssign(iterable: Iterable<T>)
     {
         for (element in iterable)
@@ -68,6 +100,11 @@ class SortedArray<T>(private val comparator: Comparator<T>, val unique: Boolean 
         }
     }
 
+    /**
+     * Keep elements of the list inside the given iterable
+     *
+     * It will left only the intersection
+     */
     operator fun remAssign(iterable: Iterable<T>)
     {
         val contains: (T) -> Boolean =
@@ -94,6 +131,11 @@ class SortedArray<T>(private val comparator: Comparator<T>, val unique: Boolean 
         }
     }
 
+    /**
+     * Remove all elements that match given conditon
+     *
+     * Only case of remove on O(N)
+     */
     fun removeIf(condition: (T) -> Boolean)
     {
         val iterator = this.list.iterator()
@@ -107,11 +149,17 @@ class SortedArray<T>(private val comparator: Comparator<T>, val unique: Boolean 
         }
     }
 
+    /**
+     * Make array empty on removing all
+     */
     fun clear()
     {
         this.list.clear()
     }
 
+    /**
+     * Indicates if all elements of given [Collection] are inside the array
+     */
     override fun containsAll(elements: Collection<T>): Boolean
     {
         for (element in elements)
@@ -128,6 +176,10 @@ class SortedArray<T>(private val comparator: Comparator<T>, val unique: Boolean 
     override fun isEmpty(): Boolean =
         this.list.isEmpty()
 
+    /**
+     * Searech an element index
+     * @param add Indicates we want use this index for insert in array
+     */
     private fun indexFor(add: Boolean, element: T): Int
     {
         if (this.list.isEmpty())

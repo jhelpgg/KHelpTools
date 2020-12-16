@@ -6,18 +6,24 @@ import khelp.database.Table
 import khelp.database.UpdateDSL
 import khelp.database.WhereDSL
 import khelp.database.condition.Condition
-import khelp.database.extensions.checkColumn
-import khelp.database.extensions.checkType
 import khelp.database.type.DataDate
 import khelp.database.type.DataTime
 import khelp.database.type.DataType
 import khelp.utilities.extensions.base64
 
+/**
+ * Update query definition
+ *
+ * See documentation for more information about update DSL syntax
+ */
 class Update internal constructor(val table: Table)
 {
     private val columnValues = HashMap<Column, String>()
     private var condition: Condition? = null
 
+    /**
+     * Defines column new value
+     */
     @UpdateDSL
     infix fun Column.IS(value: String)
     {
@@ -26,12 +32,20 @@ class Update internal constructor(val table: Table)
         this@Update.columnValues[this] = "'$value'"
     }
 
+    /**
+     * Defines column new value
+     *
+     * Specification by column name
+     */
     @UpdateDSL
     infix fun String.IS(value: String)
     {
         this@Update.table.getColumn(this) IS value
     }
 
+    /**
+     * Defines column new value
+     */
     @UpdateDSL
     infix fun Column.IS(value: Boolean)
     {
@@ -48,12 +62,20 @@ class Update internal constructor(val table: Table)
             }
     }
 
+    /**
+     * Defines column new value
+     *
+     * Specification by column name
+     */
     @UpdateDSL
     infix fun String.IS(value: Boolean)
     {
         this@Update.table.getColumn(this) IS value
     }
 
+    /**
+     * Defines column new value
+     */
     @UpdateDSL
     infix fun Column.IS(value: Byte)
     {
@@ -62,12 +84,20 @@ class Update internal constructor(val table: Table)
         this@Update.columnValues[this] = value.toString()
     }
 
+    /**
+     * Defines column new value
+     *
+     * Specification by column name
+     */
     @UpdateDSL
     infix fun String.IS(value: Byte)
     {
         this@Update.table.getColumn(this) IS value
     }
 
+    /**
+     * Defines column new value
+     */
     @UpdateDSL
     infix fun Column.IS(value: Short)
     {
@@ -76,12 +106,20 @@ class Update internal constructor(val table: Table)
         this@Update.columnValues[this] = value.toString()
     }
 
+    /**
+     * Defines column new value
+     *
+     * Specification by column name
+     */
     @UpdateDSL
     infix fun String.IS(value: Short)
     {
         this@Update.table.getColumn(this) IS value
     }
 
+    /**
+     * Defines column new value
+     */
     @UpdateDSL
     infix fun Column.IS(value: Int)
     {
@@ -90,12 +128,20 @@ class Update internal constructor(val table: Table)
         this@Update.columnValues[this] = value.toString()
     }
 
+    /**
+     * Defines column new value
+     *
+     * Specification by column name
+     */
     @UpdateDSL
     infix fun String.IS(value: Int)
     {
         this@Update.table.getColumn(this) IS value
     }
 
+    /**
+     * Defines column new value
+     */
     @UpdateDSL
     infix fun Column.IS(value: Long)
     {
@@ -104,12 +150,20 @@ class Update internal constructor(val table: Table)
         this@Update.columnValues[this] = value.toString()
     }
 
+    /**
+     * Defines column new value
+     *
+     * Specification by column name
+     */
     @UpdateDSL
     infix fun String.IS(value: Long)
     {
         this@Update.table.getColumn(this) IS value
     }
 
+    /**
+     * Defines column new value
+     */
     @UpdateDSL
     infix fun Column.IS(value: Float)
     {
@@ -118,12 +172,20 @@ class Update internal constructor(val table: Table)
         this@Update.columnValues[this] = value.toString()
     }
 
+    /**
+     * Defines column new value
+     *
+     * Specification by column name
+     */
     @UpdateDSL
     infix fun String.IS(value: Float)
     {
         this@Update.table.getColumn(this) IS value
     }
 
+    /**
+     * Defines column new value
+     */
     @UpdateDSL
     infix fun Column.IS(value: Double)
     {
@@ -132,12 +194,20 @@ class Update internal constructor(val table: Table)
         this@Update.columnValues[this] = value.toString()
     }
 
+    /**
+     * Defines column new value
+     *
+     * Specification by column name
+     */
     @UpdateDSL
     infix fun String.IS(value: Double)
     {
         this@Update.table.getColumn(this) IS value
     }
 
+    /**
+     * Defines column new value
+     */
     @UpdateDSL
     infix fun Column.IS(value: ByteArray)
     {
@@ -146,12 +216,20 @@ class Update internal constructor(val table: Table)
         this@Update.columnValues[this] = "'${value.base64}'"
     }
 
+    /**
+     * Defines column new value
+     *
+     * Specification by column name
+     */
     @UpdateDSL
     infix fun String.IS(value: ByteArray)
     {
         this@Update.table.getColumn(this) IS value
     }
 
+    /**
+     * Defines column new value
+     */
     @UpdateDSL
     infix fun Column.IS(value: Calendar)
     {
@@ -160,12 +238,20 @@ class Update internal constructor(val table: Table)
         this@Update.columnValues[this] = value.timeInMillis.toString()
     }
 
+    /**
+     * Defines column new value
+     *
+     * Specification by column name
+     */
     @UpdateDSL
     infix fun String.IS(value: Calendar)
     {
         this@Update.table.getColumn(this) IS value
     }
 
+    /**
+     * Defines column new value
+     */
     @UpdateDSL
     infix fun Column.IS(value: DataDate)
     {
@@ -174,12 +260,20 @@ class Update internal constructor(val table: Table)
         this@Update.columnValues[this] = value.serialized.toString()
     }
 
+    /**
+     * Defines column new value
+     *
+     * Specification by column name
+     */
     @UpdateDSL
     infix fun String.IS(value: DataDate)
     {
         this@Update.table.getColumn(this) IS value
     }
 
+    /**
+     * Defines column new value
+     */
     @UpdateDSL
     infix fun Column.IS(value: DataTime)
     {
@@ -188,12 +282,20 @@ class Update internal constructor(val table: Table)
         this@Update.columnValues[this] = value.serialized.toString()
     }
 
+    /**
+     * Defines column new value
+     *
+     * Specification by column name
+     */
     @UpdateDSL
     infix fun String.IS(value: DataTime)
     {
         this@Update.table.getColumn(this) IS value
     }
 
+    /**
+     * Defines column new value
+     */
     @UpdateDSL
     infix fun <E : Enum<E>> Column.IS(value: E)
     {
@@ -202,12 +304,20 @@ class Update internal constructor(val table: Table)
         this@Update.columnValues[this] = "'${value::class.java.name}:${value.name}'"
     }
 
+    /**
+     * Defines column new value
+     *
+     * Specification by column name
+     */
     @UpdateDSL
     infix fun <E : Enum<E>> String.IS(value: E)
     {
         this@Update.table.getColumn(this) IS value
     }
 
+    /**
+     * Specifies condition for update a column
+     */
     @WhereDSL
     fun where(whereCreator: Where.() -> Unit)
     {

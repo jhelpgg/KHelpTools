@@ -5,6 +5,13 @@ import java.io.InputStream
 import java.math.BigInteger
 import java.util.Objects
 
+/**
+ * Read stream to fill given array with the number of bytes requested.
+ *
+ * The method assure the number of bytes read are the required [length] except if stream have no enough bytes to read. In this case the maximum can be read is read.
+ *
+ * @return Number bytes read. Usually the required [length]. It is lower if no enough bytes left in stream.
+ */
 fun InputStream.readFully(byteArray: ByteArray, offset: Int = 0, length: Int = byteArray.size - offset): Int
 {
     Objects.checkFromIndexSize(offset, byteArray.size, length)
@@ -38,6 +45,10 @@ fun InputStream.readFully(byteArray: ByteArray, offset: Int = 0, length: Int = b
     return totalRead
 }
 
+/**
+ * Read at maximum given number of bytes. The method respect the number required if stream have enough dtata left.
+ * @return Bytes read
+ */
 fun InputStream.readSomeBytes(number: Int): ByteArray
 {
     val array = ByteArray(number)

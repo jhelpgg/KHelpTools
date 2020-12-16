@@ -1,5 +1,8 @@
 package khelp.utilities.extensions
 
+/**
+ * String representation with customizable header, separator and footer
+ */
 fun IntArray.string(header: String = "[", separator: String = ", ", footer: String = "]"): String
 {
     val stringBuilder = StringBuilder()

@@ -1,5 +1,8 @@
 package khelp.utilities.collections.queue
 
+/**
+ * Queue of elements
+ */
 class Queue<T> : Collection<T>
 {
     private var head: QueueElement<T>? = null
@@ -10,6 +13,9 @@ class Queue<T> : Collection<T>
 
     val notEmpty get() = this.head != null
 
+    /**
+     * Add element at the the end of the queue
+     */
     fun inQueue(element: T)
     {
         if (this.head === null)
@@ -25,6 +31,28 @@ class Queue<T> : Collection<T>
         this.tail = this.tail!!.next
     }
 
+    /**
+     * Add element at first element of the queue (It becomes priority)
+     *
+     * Don't abuse call of it, it is for very urgent things, this method break the "queue logic"
+     */
+    fun ahead(element: T)
+    {
+        if (this.head === null)
+        {
+            this.count = 1
+            this.head = QueueElement(element)
+            this.tail = this.head
+            return
+        }
+
+        this.count++
+        this.head = QueueElement(element, this.head)
+    }
+
+    /**
+     * Remove and return the first element of the queue
+     */
     @Throws
     fun outQueue(): T
     {
@@ -45,6 +73,16 @@ class Queue<T> : Collection<T>
         return element
     }
 
+    /**
+     * Look the first element of the queue
+     */
+    @Throws
+    fun peek(): T =
+        this.head?.element ?: throw IllegalStateException("The queue is empty")
+
+    /**
+     * Do action on each queue elements
+     */
     fun forEach(action: (T) -> Unit)
     {
         var queueElement = this.head
@@ -56,6 +94,9 @@ class Queue<T> : Collection<T>
         }
     }
 
+    /**
+     * Remove all elements in queue that match given condition
+     */
     fun removeIf(condition: (T) -> Boolean)
     {
         var parent: QueueElement<T>? = null
@@ -91,6 +132,10 @@ class Queue<T> : Collection<T>
         }
     }
 
+    /**
+     * Remove all queue elements.
+     * Queue becomes empty
+     */
     fun clear()
     {
         this.count = 0

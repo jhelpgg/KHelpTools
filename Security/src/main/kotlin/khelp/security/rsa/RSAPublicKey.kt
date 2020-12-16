@@ -12,7 +12,11 @@ import khelp.io.extensions.readBigInteger
 import khelp.io.extensions.readFully
 import khelp.io.extensions.writeBigInteger
 
-
+/**
+ * RSA public key can be shared to user.
+ *
+ * Used to encrypt data for [RSAKeyPair] owner
+ */
 class RSAPublicKey
 {
     private val publicKey: PublicKey

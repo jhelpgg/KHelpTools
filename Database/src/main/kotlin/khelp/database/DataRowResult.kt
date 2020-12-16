@@ -5,6 +5,9 @@ import java.sql.Statement
 import khelp.database.query.DataRow
 import khelp.database.query.Select
 
+/**
+ * Selected row result from [Table.select]
+ */
 class DataRowResult internal constructor(private val statement: Statement,
                                          private val resultSet: ResultSet,
                                          private val select: Select,
@@ -29,11 +32,18 @@ class DataRowResult internal constructor(private val statement: Statement,
     /**Column index in the answer*/
     fun columnIndex(columnName: String) = this.select.columnIndex(columnName)
 
+    /**Column index in the answer*/
     fun columnIndex(column: Column) = this.select.columnIndex(column)
 
     /**Column name at index in the answer*/
     fun column(index: Int) = this.select[index]
 
+    /**
+     * Read next row from result
+     * See documentation for more explanation about read row result DSL syntax
+     * @throws IllegalStateException if result have no more result
+     */
+    @Throws(IllegalStateException::class)
     @RowResultDSL
     fun next(dataRowReader: DataRow.() -> Unit)
     {
@@ -51,6 +61,9 @@ class DataRowResult internal constructor(private val statement: Statement,
         }
     }
 
+    /**
+     * Close the result properly and free link to database
+     */
     fun close()
     {
         if (!this.closed)

@@ -1,5 +1,8 @@
 package khelp.utilities.extensions
 
+/**
+ * Append a byte on its hexadecimal version
+ */
 fun StringBuilder.appendHexadecimal(byte: Byte)
 {
     val value = byte.toInt() and 0xFF
@@ -7,5 +10,19 @@ fun StringBuilder.appendHexadecimal(byte: Byte)
     this.append(Integer.toHexString(value and 0xF))
 }
 
-fun StringBuilder.appendMinimumSize(minimumSize: Int, value: Int) =
-    this.append(String.format("%0${minimumSize}d", value))
+/**
+ * Append an integer with a given minimum digit.
+ *
+ * If the number of digit of the integer is the given size or more, it print the integer as is.
+ *
+ * But if the number of digit of the integer is less the given number, some 0 are added to fit the size
+ */
+fun StringBuilder.appendMinimumDigit(minimumDigit: Int, value: Int) =
+    if (value < 0)
+    {
+        this.append(String.format("%0${minimumDigit + 1}d", value))
+    }
+    else
+    {
+        this.append(String.format("%0${minimumDigit}d", value))
+    }

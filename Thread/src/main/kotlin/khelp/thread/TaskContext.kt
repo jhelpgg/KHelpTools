@@ -6,10 +6,26 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.SupervisorJob
 
+/**
+ * Task context for launch tasks in parallel
+ */
 enum class TaskContext(internal val scope: CoroutineScope, internal val dispatcher: CoroutineDispatcher)
 {
+    /**
+     * Task will be played in main context. Use it with care for short operations that implies UI operation, like change a color of button, text in label, ....
+     *
+     * Make heavy operation in it will slow down application and make bad user experience.
+     */
     MAIN(MainScope(), Dispatchers.Main),
+
+    /**
+     * Context reserved to IO operations.
+     */
     IO(CoroutineScope(SupervisorJob() + Dispatchers.IO), Dispatchers.IO),
+
+    /**
+     * Context to do task in independent context.
+     */
     INDEPENDENT(CoroutineScope(SupervisorJob() + Dispatchers.Default), Dispatchers.Default);
 
     fun <R : Any> parallel(task: () -> R) =

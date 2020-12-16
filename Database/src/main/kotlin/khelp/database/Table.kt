@@ -1,7 +1,7 @@
 package khelp.database
 
-import khelp.database.condition.Condition
-import khelp.database.extensions.checkReadOnly
+import khelp.database.exception.TableHaveNoSuchColumnException
+import khelp.database.exception.TableReadOnlyException
 import khelp.database.extensions.validName
 import khelp.database.query.Delete
 import khelp.database.query.Insert
@@ -12,6 +12,10 @@ import khelp.database.query.Where
 import khelp.database.type.DataType
 import khelp.utilities.extensions.transform
 
+
+/**
+ * Database table description
+ */
 class Table internal constructor(val name: String, val readOnly: Boolean, private val database: Database) :
     Iterable<Column>
 {
@@ -28,18 +32,60 @@ class Table internal constructor(val name: String, val readOnly: Boolean, privat
         this.columns += COLUMN_ID
     }
 
+    /**
+     * Check if column exists in table.
+     * @throws TableHaveNoSuchColumnException If the column not inside the table
+     */
+    @Throws(TableHaveNoSuchColumnException::class)
+    fun checkColumn(column: Column)
+    {
+        if (column !in this)
+        {
+            throw TableHaveNoSuchColumnException(this, column)
+        }
+    }
+
+    /**
+     * Check if table is read only
+     * @throws TableReadOnlyException If the table is read only
+     */
+    @Throws(TableReadOnlyException::class)
+    fun checkReadOnly()
+    {
+        if (this.readOnly)
+        {
+            throw TableReadOnlyException(this)
+        }
+    }
+
+    /**
+     * Get column by its index
+     */
     operator fun get(index: Int) =
         this.columns[index]
 
+    /**
+     * Get column by name
+     * @throws NoSuchElementException If column not exists
+     */
+    @Throws(NoSuchElementException::class)
     fun getColumn(nameSearched: String) =
         this.columns.first { column -> nameSearched.equals(column.name, true) }
 
+    /**
+     * Get column by name
+     * @return `null` if column not exists
+     */
     fun obtainColumn(nameSearched: String) =
         this.columns.firstOrNull { column -> nameSearched.equals(column.name, true) }
 
     operator fun contains(column: Column) =
         column in this.columns
 
+    /**
+     * Add table column on associate column name and its data type
+     * Used by table creation DSL inside lambda defined by [Database.table]
+     */
     @CreateTableDSL
     infix fun String.AS(dataType: DataType)
     {
@@ -67,6 +113,11 @@ class Table internal constructor(val name: String, val readOnly: Boolean, privat
     fun columnNames() =
         this.columns.transform { column -> column.name }
 
+    /**
+     * Select elements from table.
+     * See documentation for more explanation about select DSL syntax
+     * @return Selection row's result
+     */
     @SelectDSL
     fun select(selectCreator: Select.() -> Unit): DataRowResult
     {
@@ -75,6 +126,11 @@ class Table internal constructor(val name: String, val readOnly: Boolean, privat
         return this.database.select(select)
     }
 
+    /**
+     * Insert element in table
+     * Se documentation for more explanation about insert DSL syntax
+     * @return Row ID where element is insert or updated
+     */
     @InsertDSL
     fun insert(insertCreator: Insert.() -> Unit): Int
     {
@@ -84,12 +140,21 @@ class Table internal constructor(val name: String, val readOnly: Boolean, privat
         return this.database.insert(insert)
     }
 
+    /**
+     * Do a several insertion in same time.
+     * See documentation for more explanation about insert list DSL syntax
+     */
     @InsertDSL
     fun insertList(insertListCreator: InsertList.() -> Unit)
     {
         insertListCreator(InsertList(this))
     }
 
+    /**
+     * Update rows in table
+     * See documentation for more explanation about update DSL syntax
+     * @return Number of updated rows
+     */
     @UpdateDSL
     fun update(updateCreator: Update.() -> Unit): Int
     {
@@ -99,6 +164,11 @@ class Table internal constructor(val name: String, val readOnly: Boolean, privat
         return this.database.update(update)
     }
 
+    /**
+     * Delete rows from table
+     * See documentation for more explanation about delete DSL syntax
+     * @return Number of deleted rows
+     */
     @DeleteSL
     fun delete(deleteCreator: Delete.() -> Unit): Int
     {
@@ -118,7 +188,7 @@ class Table internal constructor(val name: String, val readOnly: Boolean, privat
      * @return Row ID **OR** [ROW_NOT_EXISTS] **OR** [ROW_NOT_UNIQUE]
      */
     @WhereDSL
-    fun rowID(whereCreator: Where.()->Unit): Int
+    fun rowID(whereCreator: Where.() -> Unit): Int
     {
         val result = this.select {
             +COLUMN_ID

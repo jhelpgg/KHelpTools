@@ -17,6 +17,13 @@ import khelp.io.extensions.writeBigInteger
 import khelp.security.des.TripleDES
 import khelp.security.exception.LoginPasswordInvalidException
 
+/**
+ * RSA key pai.
+ *
+ * Since it contains the private key, be careful if share the instance.
+ *
+ * Only save it in a trust and secure place.
+ */
 class RSAKeyPair
 {
     private val privateKey: PrivateKey

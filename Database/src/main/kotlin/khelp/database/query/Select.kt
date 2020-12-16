@@ -5,8 +5,13 @@ import khelp.database.SelectDSL
 import khelp.database.Table
 import khelp.database.WhereDSL
 import khelp.database.condition.Condition
-import khelp.database.extensions.checkColumn
 
+/**
+ * Select rows in table.
+ * If no columns are selected, it slects automatically all columns in table at declaration order
+ *
+ * See documentation about selection DSL syntax
+ */
 class Select internal constructor(val table: Table) : Iterable<Column>
 {
     private val columns = ArrayList<Column>()
@@ -71,12 +76,18 @@ class Select internal constructor(val table: Table) : Iterable<Column>
         return columnIndex(column)
     }
 
+    /**
+     * Select a column to present
+     */
     @SelectDSL
     operator fun Column.unaryPlus()
     {
         this.name.unaryPlus()
     }
 
+    /**
+     * Select a column to present
+     */
     @SelectDSL
     operator fun String.unaryPlus()
     {
@@ -89,6 +100,9 @@ class Select internal constructor(val table: Table) : Iterable<Column>
         }
     }
 
+    /**
+     * Condition that selected rows must match
+     */
     @WhereDSL
     fun where(whereCreator: Where.() -> Unit)
     {
@@ -99,6 +113,9 @@ class Select internal constructor(val table: Table) : Iterable<Column>
         this.condition = condition
     }
 
+    /**
+     * If specified, it will sort result on given column in ascendant order
+     */
     @SelectDSL
     fun ascendant(column: Column)
     {
@@ -107,12 +124,33 @@ class Select internal constructor(val table: Table) : Iterable<Column>
         this.ascendant = true
     }
 
+    /**
+     * If specified, it will sort result on given column in ascendant order
+     */
+    @SelectDSL
+    fun ascendant(columnName: String)
+    {
+        this.ascendant(this.table.getColumn(columnName))
+    }
+
+    /**
+     * If specified, it will sort result on given column in descendant order
+     */
     @SelectDSL
     fun descendant(column: Column)
     {
         this.table.checkColumn(column)
         this.columnOrder = column
         this.ascendant = false
+    }
+
+    /**
+     * If specified, it will sort result on given column in descendant order
+     */
+    @SelectDSL
+    fun descendant(columnName: String)
+    {
+        this.descendant(this.table.getColumn(columnName))
     }
 
     internal fun selectSQL(): String

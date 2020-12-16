@@ -4,6 +4,11 @@ import khelp.database.Column
 import khelp.database.MatchDSL
 import khelp.database.query.Match
 
+/**
+ * Create condition that select rows, in given column, wih values match the result of given selection
+ *
+ * See documentation for match DSL syntax
+ */
 @MatchDSL
 infix fun Column.IN(matchCreator: Match.() -> Unit): Condition
 {

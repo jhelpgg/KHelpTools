@@ -8,10 +8,25 @@ import khelp.thread.parallel
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 
+/**
+ * Future result of an operation/task.
+ *
+ * The future result is said complete when result is computed, or computation failed or cancelled.
+ *
+ * Il is possible to link on each future complemetion status.
+ *
+ * It also possible to program some reaction when completion is known.
+ *
+ * For example, it it is possible to say :
+ * When **A** complete in success, use the result to do **B***, then when **B*** succeed do **C*** and so on.
+ */
 class FutureResult<R : Any> internal constructor(val taskContext: TaskContext)
 {
     companion object
     {
+        /**
+         * Create a future result that completes when all given futures completes
+         */
         fun joinAll(vararg futures: FutureResult<*>): FutureResult<Unit>
         {
             val futureJoinAll = FutureResult<Unit>(TaskContext.INDEPENDENT)
@@ -40,10 +55,20 @@ class FutureResult<R : Any> internal constructor(val taskContext: TaskContext)
             return futureJoinAll
         }
 
+        /**
+         * Create future result that completes when both given futures completes.
+         *
+         * The result future will have the futures as result to be able know their status and potential result
+         */
         fun <R1 : Any, R2 : Any> join(future1: FutureResult<R1>,
                                       future2: FutureResult<R2>): FutureResult<Pair<FutureResult<R1>, FutureResult<R2>>> =
             FutureResult.join(TaskContext.INDEPENDENT, future1, future2)
 
+        /**
+         * Create future result that completes when both given futures completes.
+         *
+         * The result future will have the futures as result to be able know their status and potential result
+         */
         fun <R1 : Any, R2 : Any> join(context: TaskContext,
                                       future1: FutureResult<R1>,
                                       future2: FutureResult<R2>): FutureResult<Pair<FutureResult<R1>, FutureResult<R2>>>
@@ -63,11 +88,17 @@ class FutureResult<R : Any> internal constructor(val taskContext: TaskContext)
             return futureJoin
         }
 
+        /**
+         * Combine the result on given future in a third one
+         */
         fun <R1 : Any, R2 : Any, R : Any> combine(future1: FutureResult<R1>,
                                                   future2: FutureResult<R2>,
                                                   combiner: (R1, R2) -> R): FutureResult<R> =
             FutureResult.combine(TaskContext.INDEPENDENT, future1, future2, combiner)
 
+        /**
+         * Combine the result on given future in a third one
+         */
         fun <R1 : Any, R2 : Any, R : Any> combine(context: TaskContext,
                                                   future1: FutureResult<R1>,
                                                   future2: FutureResult<R2>,
@@ -122,8 +153,20 @@ class FutureResult<R : Any> internal constructor(val taskContext: TaskContext)
     private val futureResultCallbacks = ArrayList<FutureResultCallback<R>>()
     private val lock = Object()
 
+    /**
+     * Current future status.
+     *
+     * It is indicative, often use when future complete to know if succeed or not.
+     *
+     * Don't loop on it, prefer use one other methods to wait completion done
+     */
     fun status(): FutureResultStatus = this.status.get()
 
+    /**
+     * Cancel the task.
+     *
+     * Does nothing if future already completed
+     */
     fun cancel(reason: String)
     {
         if (this.status.compareAndSet(FutureResultStatus.COMPUTING, FutureResultStatus.CANCELED))
@@ -134,6 +177,11 @@ class FutureResult<R : Any> internal constructor(val taskContext: TaskContext)
         }
     }
 
+    /**
+     * Register call back when completion is done.
+     *
+     * If future already complete, the callback is immediately called.
+     */
     fun registerCallback(futureResultCallback: FutureResultCallback<R>)
     {
         when (this.status.get())
@@ -146,6 +194,13 @@ class FutureResult<R : Any> internal constructor(val taskContext: TaskContext)
         }
     }
 
+    /**
+     * Launch a task when the future complete with success. The task will receive the future result.
+     *
+     * The task is only called on success.
+     *
+     * @return Future on the combination of this future followed by given task
+     */
     fun <R1 : Any> and(context: TaskContext = this.taskContext, task: (R) -> R1): FutureResult<R1>
     {
         val targetFuture = FutureResult<R1>(context)
@@ -153,6 +208,11 @@ class FutureResult<R : Any> internal constructor(val taskContext: TaskContext)
         return targetFuture
     }
 
+    /**
+     * Launch a task when the future complete.
+     *
+     * @return Future on the combination of this future followed by given task
+     */
     fun <R1 : Any> then(context: TaskContext = this.taskContext, task: (FutureResult<R>) -> R1): FutureResult<R1>
     {
         val targetFuture = FutureResult<R1>(context)
@@ -160,6 +220,13 @@ class FutureResult<R : Any> internal constructor(val taskContext: TaskContext)
         return targetFuture
     }
 
+    /**
+     * Launch a task when the future complete with success. The task will receive the future result.
+     *
+     * The task is only called on success.
+     *
+     * @return Future on the combination of this future followed by given task
+     */
     fun <R1 : Any> andUnwrap(context: TaskContext = this.taskContext, task: (R) -> FutureResult<R1>): FutureResult<R1>
     {
         val targetFuture = FutureResult<FutureResult<R1>>(context)
@@ -167,6 +234,11 @@ class FutureResult<R : Any> internal constructor(val taskContext: TaskContext)
         return targetFuture.unwrap()
     }
 
+    /**
+     * Launch a task when the future complete.
+     *
+     * @return Future on the combination of this future followed by given task
+     */
     fun <R1 : Any> thenUnwrap(context: TaskContext = this.taskContext,
                               task: (FutureResult<R>) -> FutureResult<R1>): FutureResult<R1>
     {
@@ -175,6 +247,9 @@ class FutureResult<R : Any> internal constructor(val taskContext: TaskContext)
         return targetFuture.unwrap()
     }
 
+    /**
+     * Register a callback if completion succeed.
+     */
     fun onResult(context: TaskContext = this.taskContext, task: (R) -> Unit)
     {
         this.registerCallback { result ->
@@ -189,6 +264,9 @@ class FutureResult<R : Any> internal constructor(val taskContext: TaskContext)
         }
     }
 
+    /**
+     * Register a callback if completion failed.
+     */
     fun onFailure(context: TaskContext = this.taskContext, task: (Throwable) -> Unit)
     {
         this.registerCallback(object : FutureResultCallback<R>
@@ -209,6 +287,9 @@ class FutureResult<R : Any> internal constructor(val taskContext: TaskContext)
                               })
     }
 
+    /**
+     * Register a callback if completion canceled.
+     */
     fun onCancel(context: TaskContext = this.taskContext, task: (CancellationException) -> Unit)
     {
         this.registerCallback(object : FutureResultCallback<R>
@@ -229,6 +310,9 @@ class FutureResult<R : Any> internal constructor(val taskContext: TaskContext)
                               })
     }
 
+    /**
+     * Block current thread until future completes
+     */
     fun waitCompletion()
     {
         synchronized(this.lock)

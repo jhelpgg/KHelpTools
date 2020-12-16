@@ -5,7 +5,6 @@ import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.IOException
 import java.sql.Connection
-import khelp.database.extensions.checkReadOnly
 import khelp.database.extensions.validName
 import khelp.database.query.Delete
 import khelp.database.query.Insert
@@ -19,27 +18,37 @@ import khelp.security.rsa.RSAKeyPair
 
 
 /**Table of meta data that stores the tables name*/
-const val METADATA_TABLE_TABLE = "TABLE_OF_TABLES"
+const val METADATA_TABLE_OF_TABLES = "TABLE_OF_TABLES"
 
-/**Table name column in [METADATA_TABLE_TABLE]*/
-const val METADATA_TABLE_COLUMN_TABLE = "name"
+/**Table name column in [METADATA_TABLE_OF_TABLES]*/
+const val METADATA_TABLE_OF_TABLES_COLUMN_TABLE = "name"
 
 /**Table of meta data that stores the columns description*/
-const val METADATA_COLUMN_TABLE = "TABLE_OF_TABLES_COLUMNS"
+const val METADATA_TABLE_OF_TABLES_COLUMNS = "TABLE_OF_TABLES_COLUMNS"
 
-/**Column name column in [METADATA_COLUMN_TABLE]*/
-const val METADATA_COLUMN_COLUMN_NAME = "name"
+/**Column name column in [METADATA_TABLE_OF_TABLES_COLUMNS]*/
+const val METADATA_TABLE_OF_TABLES_COLUMNS_COLUMN_NAME = "name"
 
-/**Column type column in [METADATA_COLUMN_TABLE]*/
-const val METADATA_COLUMN_COLUMN_TYPE = "type"
+/**Column type column in [METADATA_TABLE_OF_TABLES_COLUMNS]*/
+const val METADATA_TABLE_OF_TABLES_COLUMNS_COLUMN_TYPE = "type"
 
-/**Table ID where the column lies column in [METADATA_COLUMN_TABLE]*/
-const val METADATA_COLUMN_COLUMN_TABLE_ID = "tableID"
+/**Table ID where the column lies column in [METADATA_TABLE_OF_TABLES_COLUMNS]*/
+const val METADATA_TABLE_OF_TABLES_COLUMNS_COLUMN_TABLE_ID = "tableID"
 
+/**
+ * Returned by [Table.rowID] if no row match to condition
+ */
 const val ROW_NOT_EXISTS = -1
+/**
+ * Returned by [Table.rowID] if condition match to more than one row match
+ */
 const val ROW_NOT_UNIQUE = -2
 
-
+/**
+ * Represents the database
+ *
+ * It is recommend to close properly the database with [close] method when no more of it, at least before exit application.
+ */
 class Database private constructor(login: String, password: String, path: String) : Iterable<Table>
 {
     companion object
@@ -47,6 +56,9 @@ class Database private constructor(login: String, password: String, path: String
         private var database: Database? = null
         private var lock = Object()
 
+        /**
+         * Create or open database link
+         */
         fun database(login: String, password: String): Database
         {
             synchronized(lock)
@@ -70,8 +82,10 @@ class Database private constructor(login: String, password: String, path: String
     private val databaseConnection: Connection
     private val tables = ArrayList<Table>()
 
-    val metaDataTable: Table
-    val metaColumnTable: Table
+    /**Table taht cotains all tables reference*/
+    val metadataTableOfTables: Table
+    /**Table of tables' columns*/
+    val metadataTableOfTablesColumn: Table
 
     val closed get() = this.databaseConnection.isClosed
 
@@ -100,13 +114,13 @@ class Database private constructor(login: String, password: String, path: String
         this.databaseConnection = DatabaseAccess.createConnection(path, rsaKeyPair)
         this.databaseConnection.autoCommit = false
 
-        this.metaDataTable = this.table(METADATA_TABLE_TABLE, true) {
-            METADATA_TABLE_COLUMN_TABLE AS DataType.STRING
+        this.metadataTableOfTables = this.table(METADATA_TABLE_OF_TABLES, true) {
+            METADATA_TABLE_OF_TABLES_COLUMN_TABLE AS DataType.STRING
         }
-        this.metaColumnTable = this.table(METADATA_COLUMN_TABLE, true) {
-            METADATA_COLUMN_COLUMN_NAME AS DataType.STRING
-            METADATA_COLUMN_COLUMN_TYPE AS DataType.ENUM
-            METADATA_COLUMN_COLUMN_TABLE_ID AS DataType.INTEGER
+        this.metadataTableOfTablesColumn = this.table(METADATA_TABLE_OF_TABLES_COLUMNS, true) {
+            METADATA_TABLE_OF_TABLES_COLUMNS_COLUMN_NAME AS DataType.STRING
+            METADATA_TABLE_OF_TABLES_COLUMNS_COLUMN_TYPE AS DataType.ENUM
+            METADATA_TABLE_OF_TABLES_COLUMNS_COLUMN_TABLE_ID AS DataType.INTEGER
         }
     }
 
@@ -116,6 +130,9 @@ class Database private constructor(login: String, password: String, path: String
         return this.tripleDES.valid(login, password)
     }
 
+    /**
+     * Commit last changes and close the database properly
+     */
     fun close()
     {
         this.checkClose()
@@ -124,12 +141,20 @@ class Database private constructor(login: String, password: String, path: String
         this.databaseConnection.close()
     }
 
+    /**
+     * Obtain table by name
+     */
     fun obtainTable(name: String): Table?
     {
         this.checkClose()
         return this.tables.firstOrNull { table -> name.equals(table.name, true) }
     }
 
+    /**
+     * Create a table.
+     * See documentation to know lmore about table creation DSL syntax
+     * @return Created table
+     */
     @CreateTableDSL
     fun table(name: String, creator: Table.() -> Unit): Table
     {
@@ -147,10 +172,16 @@ class Database private constructor(login: String, password: String, path: String
         return this.table(name, false, creator)
     }
 
+    /**
+     * Remove a table from database
+     */
     fun dropTable(tableName: String) =
         this.obtainTable(tableName)
             ?.let { table -> this.dropTable(table) } ?: false
 
+    /**
+     * Remove a table from database
+     */
     fun dropTable(table: Table): Boolean
     {
         table.checkReadOnly()
@@ -164,21 +195,24 @@ class Database private constructor(login: String, password: String, path: String
         val tableName = table.name
         this.updateQuery("DROP TABLE $tableName")
 
-        this.delete(this.metaColumnTable) {
+        this.delete(this.metadataTableOfTablesColumn) {
             where {
-                condition = METADATA_COLUMN_COLUMN_TABLE_ID IN {
-                    select(metaDataTable) {
+                condition = METADATA_TABLE_OF_TABLES_COLUMNS_COLUMN_TABLE_ID IN {
+                    select(metadataTableOfTables) {
                         +COLUMN_ID
-                        where { condition = METADATA_TABLE_COLUMN_TABLE EQUALS tableName }
+                        where { condition = METADATA_TABLE_OF_TABLES_COLUMN_TABLE EQUALS tableName }
                     }
                 }
             }
         }
 
-        this.delete(this.metaDataTable) { where { condition = METADATA_TABLE_COLUMN_TABLE EQUALS tableName } }
+        this.delete(this.metadataTableOfTables) { where { condition = METADATA_TABLE_OF_TABLES_COLUMN_TABLE EQUALS tableName } }
         return true
     }
 
+    /**
+     * Current existing tables
+     */
     override fun iterator(): Iterator<Table>
     {
         this.checkClose()
@@ -208,7 +242,7 @@ class Database private constructor(login: String, password: String, path: String
             return rowID
         }
 
-        this.updateQuery(insert.insertSQL())
+        this.updateQuery(insert.insertSQL(this.biggestID(insert.table) + 1))
         return this.biggestID(insert.table)
     }
 
@@ -263,14 +297,14 @@ class Database private constructor(login: String, password: String, path: String
     {
         if (!table.readOnly)
         {
-            val id = this.metaDataTable.rowID { condition = METADATA_TABLE_COLUMN_TABLE EQUALS table.name }
+            val id = this.metadataTableOfTables.rowID { condition = METADATA_TABLE_OF_TABLES_COLUMN_TABLE EQUALS table.name }
 
             if (id != ROW_NOT_EXISTS)
             {
-                val result = this.metaColumnTable.select {
-                    +METADATA_COLUMN_COLUMN_NAME
-                    +METADATA_COLUMN_COLUMN_TYPE
-                    where { condition = METADATA_COLUMN_COLUMN_TABLE_ID EQUALS id }
+                val result = this.metadataTableOfTablesColumn.select {
+                    +METADATA_TABLE_OF_TABLES_COLUMNS_COLUMN_NAME
+                    +METADATA_TABLE_OF_TABLES_COLUMNS_COLUMN_TYPE
+                    where { condition = METADATA_TABLE_OF_TABLES_COLUMNS_COLUMN_TABLE_ID EQUALS id }
                 }
 
                 return this.createTable(table.name) {
@@ -315,16 +349,16 @@ class Database private constructor(login: String, password: String, path: String
 
         if (!table.readOnly)
         {
-            val tableID = this.insert(this.metaDataTable) {
-                this.table.getColumn(METADATA_TABLE_COLUMN_TABLE) IS table.name
+            val tableID = this.insert(this.metadataTableOfTables) {
+                this.table.getColumn(METADATA_TABLE_OF_TABLES_COLUMN_TABLE) IS table.name
             }
 
             for (column in table)
             {
-                this.insert(this.metaColumnTable) {
-                    this.table.getColumn(METADATA_COLUMN_COLUMN_NAME) IS column.name
-                    this.table.getColumn(METADATA_COLUMN_COLUMN_TYPE) IS column.type
-                    this.table.getColumn(METADATA_COLUMN_COLUMN_TABLE_ID) IS tableID
+                this.insert(this.metadataTableOfTablesColumn) {
+                    this.table.getColumn(METADATA_TABLE_OF_TABLES_COLUMNS_COLUMN_NAME) IS column.name
+                    this.table.getColumn(METADATA_TABLE_OF_TABLES_COLUMNS_COLUMN_TYPE) IS column.type
+                    this.table.getColumn(METADATA_TABLE_OF_TABLES_COLUMNS_COLUMN_TABLE_ID) IS tableID
                 }
             }
         }

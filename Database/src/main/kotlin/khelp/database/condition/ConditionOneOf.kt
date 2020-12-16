@@ -2,7 +2,6 @@ package khelp.database.condition
 
 import java.util.Calendar
 import khelp.database.Column
-import khelp.database.extensions.checkType
 import khelp.database.type.DataDate
 import khelp.database.type.DataTime
 import khelp.database.type.DataType
@@ -12,6 +11,9 @@ import khelp.utilities.extensions.transformArray
 import khelp.utilities.extensions.transformInt
 import khelp.utilities.extensions.transformLong
 
+/**
+ * Create condition that select rows, in given column, wih values are primary key inside given array
+ */
 infix fun Column.ONE_OF_ID(selection: IntArray): Condition
 {
     this.checkType(DataType.ID)
@@ -26,6 +28,9 @@ infix fun Column.ONE_OF_ID(selection: IntArray): Condition
     }
 }
 
+/**
+ * Create condition that select rows, in given column, wih values are inside given array
+ */
 infix fun Column.ONE_OF(selection: Array<String>): Condition
 {
     this.checkType(DataType.STRING)
@@ -40,6 +45,9 @@ infix fun Column.ONE_OF(selection: Array<String>): Condition
     }
 }
 
+/**
+ * Create condition that select rows, in given column, wih values are inside given array
+ */
 infix fun Column.ONE_OF(selection: BooleanArray): Condition
 {
     this.checkType(DataType.BOOLEAN)
@@ -54,6 +62,9 @@ infix fun Column.ONE_OF(selection: BooleanArray): Condition
     }
 }
 
+/**
+ * Create condition that select rows, in given column, wih values are inside given array
+ */
 infix fun Column.ONE_OF(selection: ByteArray): Condition
 {
     this.checkType(DataType.BYTE)
@@ -68,6 +79,9 @@ infix fun Column.ONE_OF(selection: ByteArray): Condition
     }
 }
 
+/**
+ * Create condition that select rows, in given column, wih values are inside given array
+ */
 infix fun Column.ONE_OF(selection: ShortArray): Condition
 {
     this.checkType(DataType.SHORT)
@@ -82,6 +96,9 @@ infix fun Column.ONE_OF(selection: ShortArray): Condition
     }
 }
 
+/**
+ * Create condition that select rows, in given column, wih values are inside given array
+ */
 infix fun Column.ONE_OF(selection: IntArray): Condition
 {
     this.checkType(DataType.INTEGER)
@@ -96,6 +113,9 @@ infix fun Column.ONE_OF(selection: IntArray): Condition
     }
 }
 
+/**
+ * Create condition that select rows, in given column, wih values are inside given array
+ */
 infix fun Column.ONE_OF(selection: LongArray): Condition
 {
     this.checkType(DataType.LONG)
@@ -110,6 +130,9 @@ infix fun Column.ONE_OF(selection: LongArray): Condition
     }
 }
 
+/**
+ * Create condition that select rows, in given column, wih values are inside given array
+ */
 infix fun Column.ONE_OF(selection: FloatArray): Condition
 {
     this.checkType(DataType.FLOAT)
@@ -124,6 +147,9 @@ infix fun Column.ONE_OF(selection: FloatArray): Condition
     }
 }
 
+/**
+ * Create condition that select rows, in given column, wih values are inside given array
+ */
 infix fun Column.ONE_OF(selection: DoubleArray): Condition
 {
     this.checkType(DataType.DOUBLE)
@@ -138,6 +164,9 @@ infix fun Column.ONE_OF(selection: DoubleArray): Condition
     }
 }
 
+/**
+ * Create condition that select rows, in given column, wih values are inside given array
+ */
 infix fun Column.ONE_OF(selection: Array<ByteArray>): Condition
 {
     this.checkType(DataType.BYTE_ARRAY)
@@ -155,6 +184,9 @@ infix fun Column.ONE_OF(selection: Array<ByteArray>): Condition
     }
 }
 
+/**
+ * Create condition that select rows, in given column, wih values are inside given array
+ */
 infix fun Column.ONE_OF(selection: Array<Calendar>): Condition
 {
     this.checkType(DataType.CALENDAR)
@@ -172,6 +204,9 @@ infix fun Column.ONE_OF(selection: Array<Calendar>): Condition
     }
 }
 
+/**
+ * Create condition that select rows, in given column, wih values are inside given array
+ */
 infix fun Column.ONE_OF(selection: Array<DataDate>): Condition
 {
     this.checkType(DataType.DATE)
@@ -189,6 +224,9 @@ infix fun Column.ONE_OF(selection: Array<DataDate>): Condition
     }
 }
 
+/**
+ * Create condition that select rows, in given column, wih values are inside given array
+ */
 infix fun Column.ONE_OF(selection: Array<DataTime>): Condition
 {
     this.checkType(DataType.TIME)
@@ -206,6 +244,9 @@ infix fun Column.ONE_OF(selection: Array<DataTime>): Condition
     }
 }
 
+/**
+ * Create condition that select rows, in given column, wih values are inside given array
+ */
 infix fun <E : Enum<E>> Column.ONE_OF(selection: Array<E>): Condition
 {
     this.checkType(DataType.ENUM)
@@ -222,4 +263,3 @@ infix fun <E : Enum<E>> Column.ONE_OF(selection: Array<E>): Condition
                       }")
     }
 }
-

@@ -4,10 +4,11 @@ import java.util.regex.Pattern
 import khelp.database.COLUMN_ID
 import khelp.database.Column
 import khelp.database.Table
-import khelp.database.extensions.checkColumn
-import khelp.database.extensions.checkType
 import khelp.database.type.DataType
 
+/**
+ * Create condition that select rows, in given column, with values match given regular expression
+ */
 fun Column.regex(table: Table, pattern: Pattern): Condition
 {
     table.checkColumn(this)

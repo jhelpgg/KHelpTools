@@ -8,6 +8,9 @@ private const val YEAR_MASK = 0b0000_0001_1111_1111_1111_1110_0000_0000
 private const val MONTH_SHIFT = 5
 private const val YEAR_SHIFT = MONTH_SHIFT + 4
 
+/**
+ * A day date : year/month/day
+ */
 class DataDate(year: Int, month: Int, day: Int) : Comparable<DataDate>
 {
     val year: Int

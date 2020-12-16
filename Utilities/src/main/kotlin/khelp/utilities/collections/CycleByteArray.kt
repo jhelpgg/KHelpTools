@@ -4,6 +4,9 @@ import khelp.utilities.extensions.appendHexadecimal
 import kotlin.math.max
 import kotlin.math.min
 
+/**
+ * Byte array where elements are internally manage in cycle
+ */
 class CycleByteArray(startSize: Int = 4096)
 {
     private var array = ByteArray(max(8, startSize))

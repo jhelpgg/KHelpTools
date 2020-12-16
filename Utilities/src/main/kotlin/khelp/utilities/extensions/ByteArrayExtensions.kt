@@ -8,6 +8,9 @@ val ByteArray.base64
     get() = Base64.getEncoder()
         .encodeToString(this)
 
+/**
+ * String representation with customizable header, separator and footer
+ */
 fun ByteArray.string(header: String = "[", separator: String = ", ", footer: String = "]"): String
 {
     val stringBuilder = StringBuilder()
