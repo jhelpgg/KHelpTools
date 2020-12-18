@@ -4,5 +4,6 @@ include ':Thread'
 include ':Security'
 include ':IO'
 include ':Database'
+include ':Samples'
 
 

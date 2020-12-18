@@ -433,7 +433,7 @@ class DataRow internal constructor(private val resultSet: ResultSet, private val
         this.getEnum<E>(this.select[columnRange - 1])
 
     /**
-     * Read table row ID from specified column and returns a string represention of the value
+     * Read table row ID from specified column and returns a string representation of the value
      *
      * **Warning** Column range start at **1** not **0**
      */

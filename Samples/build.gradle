@@ -1,0 +1,11 @@
+plugins {
+    id 'org.jetbrains.kotlin.jvm'
+}
+
+group 'khelp.samples'
+version '1.0-SNAPSHOT'
+
+dependencies {
+    implementation project(":Utilities")
+    implementation project(":Database")
+}
