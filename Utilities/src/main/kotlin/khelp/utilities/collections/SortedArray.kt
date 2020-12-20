@@ -1,6 +1,7 @@
 package khelp.utilities.collections
 
 import khelp.utilities.comparators.ComparableNaturalOrderComparator
+import khelp.utilities.extensions.bounds
 
 /**
  * Create an array of [Comparable] sorted on their "natural order"
@@ -255,4 +256,25 @@ class SortedArray<T>(private val comparator: Comparator<T>, val unique: Boolean 
 
         return differentDelta + maximum
     }
+
+    internal fun listIterator(): ListIterator<T> =
+        this.list.listIterator()
+
+    internal fun listIterator(index: Int): ListIterator<T> =
+        this.list.listIterator(index)
+
+    fun subList(start: Int, end: Int): SortedArray<T>
+    {
+        val subArray = SortedArray(this.comparator, this.unique)
+
+        for (index in start.bounds(0, this.size - 1) until end.bounds(0, this.size))
+        {
+            subArray += this[index]
+        }
+
+        return subArray
+    }
+
+    fun immutableList() : List<T> =
+        SortedArrayImmutable(this)
 }
