@@ -21,6 +21,7 @@ class Table internal constructor(val name: String, val readOnly: Boolean, privat
 {
     private val columns = ArrayList<Column>()
     val numberColumns get() = this.columns.size
+    private val columnID = Column("ID", DataType.ID)
 
     init
     {
@@ -29,7 +30,7 @@ class Table internal constructor(val name: String, val readOnly: Boolean, privat
             throw IllegalArgumentException("Invalid table name : ${this.name}")
         }
 
-        this.columns += COLUMN_ID
+        this.columns += this.columnID
     }
 
     /**
@@ -105,6 +106,41 @@ class Table internal constructor(val name: String, val readOnly: Boolean, privat
         }
 
         this@Table.columns += Column(this, dataType)
+    }
+
+    @CreateTableDSL
+    fun idForeign(table: Table, column: String)
+    {
+        this.idForeign(table, table.getColumn(column))
+    }
+
+    @CreateTableDSL
+    fun idForeign(table: Table, column: Column)
+    {
+        column.checkType(DataType.INTEGER)
+        table.checkColumn(column)
+        this.columnID.foreignTable = table.name
+        this.columnID.foreignColumn = column.name
+    }
+
+
+    @CreateTableDSL
+    infix fun String.FOREIGN(table: Table)
+    {
+        if (!this.validName())
+        {
+            throw IllegalArgumentException("Invalid column name : $name")
+        }
+
+        if (this@Table.obtainColumn(this) != null)
+        {
+            throw IllegalArgumentException("A column named $this already exists in table ${this@Table.name}")
+        }
+
+        val columnCreated = Column(this, DataType.INTEGER)
+        columnCreated.foreignTable = table.name
+        columnCreated.foreignColumn = "ID"
+        this@Table.columns += columnCreated
     }
 
     override fun iterator(): Iterator<Column> =

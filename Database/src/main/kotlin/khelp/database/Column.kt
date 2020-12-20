@@ -9,6 +9,9 @@ import khelp.database.type.DataType
  */
 data class Column internal constructor(val name: String, val type: DataType) : Comparable<Column>
 {
+    internal var foreignTable = ""
+    internal var foreignColumn = ""
+
     fun checkType(expectedType: DataType)
     {
         if (this.type != expectedType)

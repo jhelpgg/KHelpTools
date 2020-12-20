@@ -5,6 +5,8 @@ import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.IOException
 import java.sql.Connection
+import java.util.concurrent.atomic.AtomicBoolean
+import khelp.database.condition.not
 import khelp.database.extensions.validName
 import khelp.database.query.Delete
 import khelp.database.query.Insert
@@ -31,6 +33,13 @@ const val METADATA_TABLE_OF_TABLES_COLUMNS_COLUMN_NAME = "name"
 
 /**Column type column in [METADATA_TABLE_OF_TABLES_COLUMNS]*/
 const val METADATA_TABLE_OF_TABLES_COLUMNS_COLUMN_TYPE = "type"
+
+
+/**Column foreign table reference [METADATA_TABLE_OF_TABLES_COLUMNS]*/
+const val METADATA_TABLE_OF_TABLES_COLUMNS_COLUMN_FOREIGN_TABLE = "ForeignTable"
+
+/**Column foreign column reference [METADATA_TABLE_OF_TABLES_COLUMNS]*/
+const val METADATA_TABLE_OF_TABLES_COLUMNS_COLUMN_FOREIGN_COLUMN = "ForeignColumn"
 
 /**Table ID where the column lies column in [METADATA_TABLE_OF_TABLES_COLUMNS]*/
 const val METADATA_TABLE_OF_TABLES_COLUMNS_COLUMN_TABLE_ID = "tableID"
@@ -85,6 +94,8 @@ class Database private constructor(login: String, password: String, path: String
     private val tripleDES = TripleDES(login, password)
     private val databaseConnection: Connection
     private val tables = ArrayList<Table>()
+    private val checkForeignKey = AtomicBoolean(false)
+    private val checkingForeignKey = AtomicBoolean(false)
 
     /**Table taht cotains all tables reference*/
     val metadataTableOfTables: Table
@@ -125,6 +136,8 @@ class Database private constructor(login: String, password: String, path: String
         this.metadataTableOfTablesColumn = this.table(METADATA_TABLE_OF_TABLES_COLUMNS, true) {
             METADATA_TABLE_OF_TABLES_COLUMNS_COLUMN_NAME AS DataType.STRING
             METADATA_TABLE_OF_TABLES_COLUMNS_COLUMN_TYPE AS DataType.ENUM
+            METADATA_TABLE_OF_TABLES_COLUMNS_COLUMN_FOREIGN_TABLE AS DataType.STRING
+            METADATA_TABLE_OF_TABLES_COLUMNS_COLUMN_FOREIGN_COLUMN AS DataType.STRING
             METADATA_TABLE_OF_TABLES_COLUMNS_COLUMN_TABLE_ID AS DataType.INTEGER
         }
     }
@@ -254,13 +267,27 @@ class Database private constructor(login: String, password: String, path: String
     internal fun update(update: Update): Int
     {
         this.checkClose()
-        return this.updateQuery(update.updateSQL())
+        val numberUpdate = this.updateQuery(update.updateSQL())
+
+        if (numberUpdate > 0)
+        {
+            this.checkIdForeignKey()
+        }
+
+        return numberUpdate
     }
 
     internal fun delete(delete: Delete): Int
     {
         this.checkClose()
-        return this.updateQuery(delete.deleteSQL())
+        val numberDelete = this.updateQuery(delete.deleteSQL())
+
+        if (numberDelete > 0)
+        {
+            this.checkIdForeignKey()
+        }
+
+        return numberDelete
     }
 
     private fun biggestID(table: Table): Int
@@ -309,6 +336,8 @@ class Database private constructor(login: String, password: String, path: String
                 val result = this.metadataTableOfTablesColumn.select {
                     +METADATA_TABLE_OF_TABLES_COLUMNS_COLUMN_NAME
                     +METADATA_TABLE_OF_TABLES_COLUMNS_COLUMN_TYPE
+                    +METADATA_TABLE_OF_TABLES_COLUMNS_COLUMN_FOREIGN_TABLE
+                    +METADATA_TABLE_OF_TABLES_COLUMNS_COLUMN_FOREIGN_COLUMN
                     where { condition = METADATA_TABLE_OF_TABLES_COLUMNS_COLUMN_TABLE_ID EQUALS id }
                 }
 
@@ -318,9 +347,27 @@ class Database private constructor(login: String, password: String, path: String
                         result.next {
                             val type = getEnum<DataType>(2)
 
-                            if (type != DataType.ID)
+                            val foreignTable = getString(3)
+
+                            if (foreignTable.isEmpty())
                             {
-                                getString(1) AS type
+                                if (type != DataType.ID)
+                                {
+                                    getString(1) AS type
+                                }
+                            }
+                            else
+                            {
+                                val foreignColumn = getString(4)
+
+                                if (type == DataType.ID)
+                                {
+                                    idForeign(obtainTable(foreignTable)!!, foreignColumn)
+                                }
+                                else
+                                {
+                                    getString(1) FOREIGN obtainTable(foreignTable)!!
+                                }
                             }
                         }
                     }
@@ -346,6 +393,16 @@ class Database private constructor(login: String, password: String, path: String
             query.append(column.name)
             query.append(" ")
             query.append(column.type.typeSQL)
+
+            if (column.foreignTable.isNotEmpty() && column.type != DataType.ID)
+            {
+                query.append(" FOREIGN KEY REFERENCES ")
+                query.append(column.foreignTable)
+                query.append(" (")
+                query.append(column.foreignColumn)
+                query.append(") ON DELETE CASCADE ON UPDATE CASCADE")
+            }
+
             notFirst = true
         }
 
@@ -355,15 +412,17 @@ class Database private constructor(login: String, password: String, path: String
         if (!table.readOnly)
         {
             val tableID = this.insert(this.metadataTableOfTables) {
-                this.table.getColumn(METADATA_TABLE_OF_TABLES_COLUMN_TABLE) IS table.name
+                METADATA_TABLE_OF_TABLES_COLUMN_TABLE IS table.name
             }
 
             for (column in table)
             {
                 this.insert(this.metadataTableOfTablesColumn) {
-                    this.table.getColumn(METADATA_TABLE_OF_TABLES_COLUMNS_COLUMN_NAME) IS column.name
-                    this.table.getColumn(METADATA_TABLE_OF_TABLES_COLUMNS_COLUMN_TYPE) IS column.type
-                    this.table.getColumn(METADATA_TABLE_OF_TABLES_COLUMNS_COLUMN_TABLE_ID) IS tableID
+                    METADATA_TABLE_OF_TABLES_COLUMNS_COLUMN_NAME IS column.name
+                    METADATA_TABLE_OF_TABLES_COLUMNS_COLUMN_TYPE IS column.type
+                    METADATA_TABLE_OF_TABLES_COLUMNS_COLUMN_FOREIGN_TABLE IS column.foreignTable
+                    METADATA_TABLE_OF_TABLES_COLUMNS_COLUMN_FOREIGN_COLUMN IS column.foreignColumn
+                    METADATA_TABLE_OF_TABLES_COLUMNS_COLUMN_TABLE_ID IS tableID
                 }
             }
         }
@@ -446,6 +505,42 @@ class Database private constructor(login: String, password: String, path: String
         if (this.closed)
         {
             throw  IllegalStateException("The database is closed, call 'Database.database' to reopen it!")
+        }
+    }
+
+    private fun checkIdForeignKey()
+    {
+        this.checkForeignKey.set(true)
+
+        if (!this.checkingForeignKey.getAndSet(true))
+        {
+            this.checkingForeignKey()
+        }
+    }
+
+    private fun checkingForeignKey()
+    {
+        while (this.checkForeignKey.getAndSet(false))
+        {
+            for (table in this.tables)
+            {
+                val columnID = table[0]
+
+                if (columnID.foreignTable.isNotEmpty())
+                {
+                    this.delete(table) {
+                        where {
+                            condition = not("ID" IN {
+                                select(obtainTable(columnID.foreignTable)!!) {
+                                    +columnID.foreignColumn
+                                }
+                            })
+                        }
+                    }
+                }
+            }
+
+            this.checkForeignKey.set(this.checkingForeignKey.getAndSet(false))
         }
     }
 }
