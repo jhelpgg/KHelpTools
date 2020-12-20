@@ -6,9 +6,9 @@ At database creation, a login and a password are defined.
 They are used for create an encryption key.
 This encryption key is used for encrypt **HSQL** files.
 
-To open the database later , have to use the same login and password.
+To open the database later, have to use the same login and password.
 
-To simplify database manipulation we add over **HSQL** some objects and used **Kotlin DSL** to defined a syntax.
+To simplify database manipulation we add over **HSQL** some objects and used **Kotlin DSL** to define a syntax.
 
 This documentation will explains each query **DSL** syntax.
 

@@ -1,6 +1,7 @@
 # Create and open database
 
-The first thing is to create the database or open it if it exists. For now only one database can be used by application.
+The first thing is to create the database or open it if it exists. 
+Have to specify database relative path. Relative path separator is **/**
 
 To create or open the database:
 
@@ -12,7 +13,7 @@ import khelp.database.Database
 fun main()
 {
     // Create or open the database
-    val database = Database.database("login", "password")
+    val database = Database.database("login", "password", "data/createOpen/database")
 
     // TODO Manipulate the database
 

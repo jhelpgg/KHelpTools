@@ -44,7 +44,7 @@ const val COLUMN_VERSION = "Version"
 fun main()
 {
     // Create or open the database
-    val database = Database.database("login", "password")
+    val database = Database.database("login", "password", "data/selectPrint/database")
 
     val tableDevice = database.table("Device") {
         COLUMN_NAME AS DataType.STRING

@@ -39,6 +39,7 @@ const val METADATA_TABLE_OF_TABLES_COLUMNS_COLUMN_TABLE_ID = "tableID"
  * Returned by [Table.rowID] if no row match to condition
  */
 const val ROW_NOT_EXISTS = -1
+
 /**
  * Returned by [Table.rowID] if condition match to more than one row match
  */
@@ -53,27 +54,30 @@ class Database private constructor(login: String, password: String, path: String
 {
     companion object
     {
-        private var database: Database? = null
+        private val databases = HashMap<String, Database>()
         private var lock = Object()
 
         /**
          * Create or open database link
          */
-        fun database(login: String, password: String): Database
+        fun database(login: String, password: String, path: String): Database
         {
             synchronized(lock)
             {
-                if (database == null || database!!.closed)
+                var database = Database.databases[path]
+
+                if (database == null || database.closed)
                 {
-                    database = Database(login, password, "data/database")
+                    database = Database(login, password, path)
+                    Database.databases[path] = database
                 }
 
-                if (!database!!.valid(login, password))
+                if (!database.valid(login, password))
                 {
                     throw LoginPasswordInvalidException
                 }
 
-                return database!!
+                return database
             }
         }
     }
@@ -84,6 +88,7 @@ class Database private constructor(login: String, password: String, path: String
 
     /**Table taht cotains all tables reference*/
     val metadataTableOfTables: Table
+
     /**Table of tables' columns*/
     val metadataTableOfTablesColumn: Table
 

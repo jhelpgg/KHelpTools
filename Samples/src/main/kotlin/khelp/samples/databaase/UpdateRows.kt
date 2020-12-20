@@ -8,7 +8,7 @@ import khelp.database.type.DataType
 fun main()
 {
     // Create or open the database
-    val database = Database.database("login", "password")
+    val database = Database.database("login", "password", "data/updateRows/database")
 
     val tablePerson = database.table("Person") {
         "Name" AS DataType.STRING
@@ -16,7 +16,7 @@ fun main()
     }
 
     val date = Calendar.getInstance()
-    date.set(1985,Calendar.APRIL, 1)
+    date.set(1985, Calendar.APRIL, 1)
     val patternStartWithA = Pattern.compile("[aA].*")
 
     tablePerson.update {

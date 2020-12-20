@@ -21,7 +21,7 @@ import khelp.database.type.DataType
 fun main()
 {
     // Create or open the database
-    val database = Database.database("login", "password")
+    val database = Database.database("login", "password", "data/insertOrUpdate/database")
 
     val tablePerson = database.table("Person") {
         "Name" AS DataType.STRING
@@ -29,8 +29,8 @@ fun main()
     }
 
     val date = Calendar.getInstance()
-    date.set(1985,Calendar.APRIL, 1)
-    
+    date.set(1985, Calendar.APRIL, 1)
+
     tablePerson.insert {
         "Name" IS "Arthur"
         "Birthdate" IS date
@@ -44,14 +44,16 @@ fun main()
 
 Before the `IS` its the column name or column instance, after is the value to given to the column
 
-If not all table columns are specified, the system put a default value for them. Except for `enum` that throw an exception, if no values specifies for the column.
+If not all table columns are specified, the system put a default value for them. Except for `enum` that throw an
+exception, if no values specifies for the column.
 
-The value must be the same type as column support. See [Data types](ColumnsAndTable.md#data-types) for a list of data type.
+The value must be the same type as column support. See [Data types](ColumnsAndTable.md#data-types) for a list of data
+type.
 
 ## Insert or update one row
 
-The insert, have possibility to specifies a condition. If the condition match to exctly one row. 
-No insert is done, but the corresponding row is modified with given values.
+The insert, have possibility to specifies a condition. If the condition match to exctly one row. No insert is done, but
+the corresponding row is modified with given values.
 
 ```kotlin
 package khelp.samples.databaase
@@ -63,7 +65,7 @@ import khelp.database.type.DataType
 fun main()
 {
     // Create or open the database
-    val database = Database.database("login", "password")
+    val database = Database.database("login", "password", "data/insertOneRow/database")
 
     val tablePerson = database.table("Person") {
         "Name" AS DataType.STRING
@@ -101,7 +103,7 @@ import khelp.database.type.DataType
 fun main()
 {
     // Create or open the database
-    val database = Database.database("login", "password")
+    val database = Database.database("login", "password", "data/insertSeveralRows/database")
 
     val tablePerson = database.table("Person") {
         "Name" AS DataType.STRING
@@ -153,7 +155,7 @@ import khelp.database.type.DataType
 fun main()
 {
     // Create or open the database
-    val database = Database.database("login", "password")
+    val database = Database.database("login", "password", "data/updateRows/database")
 
     val tablePerson = database.table("Person") {
         "Name" AS DataType.STRING
@@ -161,7 +163,7 @@ fun main()
     }
 
     val date = Calendar.getInstance()
-    date.set(1985,Calendar.APRIL, 1)
+    date.set(1985, Calendar.APRIL, 1)
     val patternStartWithA = Pattern.compile("[aA].*")
 
     tablePerson.update {
@@ -175,8 +177,8 @@ fun main()
 }
 ```
 
-Like insert, specify neq colmum values with `IS`. 
-This time, if a column of the table not specified, the column value not change.
+Like insert, specify neq colmum values with `IS`. This time, if a column of the table not specified, the column value
+not change.
 
 The `where` specifies row to change. If not specified, it will modify the entire table.
 

@@ -13,18 +13,37 @@ private fun OutputStream.embed(): OutputStream =
     }
     else this
 
-internal class SecureFileUtil(private val rsaKeyPair: RSAKeyPair) : FileUtil()
+internal class SecureFileUtil : FileUtil()
 {
+    private val keyPairs = ArrayList<Pair<String, RSAKeyPair>>()
     private val reference = FileUtil.getFileUtil()
+
+    fun associate(path: String, rsaKeyPair: RSAKeyPair)
+    {
+        this.keyPairs += Pair(path, rsaKeyPair)
+    }
+
+    private fun obtainKeyPair(path: String): RSAKeyPair
+    {
+        for ((source, keyPair) in this.keyPairs)
+        {
+            if (path.startsWith(source) && path.indexOf('/', source.length) < 0)
+            {
+                return keyPair
+            }
+        }
+
+        throw RuntimeException("No key pair found for $path")
+    }
 
     override fun openInputStreamElement(path: String): InputStream
     {
-        return RSADecryptInputStream(this.rsaKeyPair, this.reference.openInputStreamElement(path))
+        return RSADecryptInputStream(this.obtainKeyPair(path), this.reference.openInputStreamElement(path))
     }
 
     override fun openOutputStreamElement(path: String): OutputStream
     {
-        return RSAEncryptOutputStream(this.rsaKeyPair.publicKey, this.reference.openOutputStreamElement(path))
+        return RSAEncryptOutputStream(this.obtainKeyPair(path).publicKey, this.reference.openOutputStreamElement(path))
     }
 
     override fun isStreamElement(path: String): Boolean
@@ -54,7 +73,7 @@ internal class SecureFileUtil(private val rsaKeyPair: RSAKeyPair) : FileUtil()
 
     override fun openOutputStreamElementAppend(streamName: String): OutputStream
     {
-        return RSAEncryptOutputStream(this.rsaKeyPair.publicKey,
+        return RSAEncryptOutputStream(this.obtainKeyPair(streamName).publicKey,
                                       this.reference.openOutputStreamElementAppend(streamName))
     }
 

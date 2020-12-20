@@ -8,9 +8,11 @@ import org.hsqldb.lib.SecureFileUtil
 
 internal object DatabaseAccess
 {
+    private val secureFileUtil: SecureFileUtil by lazy { SecureFileUtil() }
+
     fun createConnection(path: String, rsaKeyPair: RSAKeyPair): Connection
     {
-        val secureFileUtil = SecureFileUtil(rsaKeyPair)
+        this.secureFileUtil.associate(path, rsaKeyPair)
 
         try
         {

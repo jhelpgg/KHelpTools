@@ -7,7 +7,7 @@ import khelp.database.type.DataType
 fun main()
 {
     // Create or open the database
-    val database = Database.database("login", "password")
+    val database = Database.database("login", "password", "data/insertSeveralRows/database")
 
     val tablePerson = database.table("Person") {
         "Name" AS DataType.STRING

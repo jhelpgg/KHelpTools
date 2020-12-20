@@ -8,7 +8,7 @@ import khelp.utilities.log.mark
 fun main()
 {
     // Create or open the database
-    val database = Database.database("login", "password")
+    val database = Database.database("login", "password", "data/selectReadResult/database")
 
     val tableDevice = database.table("Device") {
         COLUMN_NAME AS DataType.STRING
