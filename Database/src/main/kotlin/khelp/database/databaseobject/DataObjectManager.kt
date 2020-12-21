@@ -106,10 +106,6 @@ internal object DataObjectManager
                             {
                                 columnName AS DataType.ENUM
                             }
-                            else
-                            {
-                                throw RuntimeException("Not managed type $type for field $field in ${classDatabaseObject.name}")
-                            }
                     }
                 }
             }

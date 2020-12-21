@@ -45,6 +45,14 @@ abstract class DatabaseObject(internal val database: Database)
             deleteCreator(deleteDatabaseObject)
             return database.delete(deleteDatabaseObject.delete)
         }
+
+        fun <DO : DatabaseObject> delete(databaseObject: DO): Boolean
+        {
+            val table = DatabaseObject.table(databaseObject.database, databaseObject.javaClass)
+            val done = table.delete { where { condition = "ID" EQUALS_ID databaseObject.databaseID } } > 0
+            databaseObject.databaseID = -1
+            return done
+        }
     }
 
     var databaseID: Int = -1

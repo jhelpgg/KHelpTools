@@ -26,6 +26,10 @@ fun main()
                          73,
                          TestAddress("Street", 21, database).waitCreated(),
                          database).waitCreated<TestPerson>()
+    val dandy = TestPerson("Space Dandy",
+                           21,
+                           TestAddress("Space", 7777777, database).waitCreated(),
+                           database).waitCreated<TestPerson>()
     TestPerson("John",
                45,
                TestAddress("Street", 21, database).waitCreated(),
@@ -54,6 +58,10 @@ fun main()
     }
 
     mark("nb=$nb")
+
+    val done = DatabaseObject.delete(dandy)
+    mark("done=$done")
+
     printDataRowResult(DatabaseObject.table(database, TestPerson::class.java)
                            .select { }, System.out)
     printDataRowResult(DatabaseObject.table(database, TestAddress::class.java)
