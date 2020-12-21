@@ -1,9 +1,11 @@
-package khelp.database.databaseobject
+package khelp.samples.databaase
 
 import khelp.database.Database
+import khelp.database.databaseobject.DatabaseObject
+import khelp.database.databaseobject.PrimaryKey
 import khelp.utilities.extensions.bounds
 
-class TestPerson(@PrimaryKey val name: String, age: Int, address: TestAddress, database: Database) :
+class Person(@PrimaryKey val name: String, age: Int, address: Address, database: Database) :
     DatabaseObject(database)
 {
     var age: Int = age.bounds(0, 123)
@@ -13,7 +15,7 @@ class TestPerson(@PrimaryKey val name: String, age: Int, address: TestAddress, d
             this.update()
         }
 
-    var address: TestAddress = address
+    var address: Address = address
         set(value)
         {
             field = value
