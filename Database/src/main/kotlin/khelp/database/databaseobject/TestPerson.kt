@@ -7,11 +7,9 @@ class TestPerson(@PrimaryKey val name: String, age: Int, var address: TestAddres
     DatabaseObject(database)
 {
     var age: Int = age.bounds(0, 123)
-        private set
-
-    fun setAge(age: Int)
-    {
-        this.age = age.bounds(0, 123)
-        this.update()
-    }
+        set(value: Int)
+        {
+            field = value.bounds(0, 123)
+            this.update()
+        }
 }

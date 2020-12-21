@@ -15,8 +15,8 @@ import khelp.database.query.DeleteDatabaseObject
 import khelp.database.query.SelectDatabaseObject
 import khelp.database.type.DataDate
 import khelp.database.type.DataTime
+import khelp.thread.delay
 import khelp.thread.future.FutureResult
-import khelp.thread.parallel
 
 abstract class DatabaseObject(internal val database: Database)
 {
@@ -51,10 +51,9 @@ abstract class DatabaseObject(internal val database: Database)
         private set
     private val futureResult: FutureResult<Unit>
 
-
     init
     {
-        this.futureResult = parallel { this.update() }
+        this.futureResult = delay(16) { this.update() }
     }
 
     fun <DO : DatabaseObject> waitCreated(): DO

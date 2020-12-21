@@ -49,7 +49,7 @@ fun main()
     result.close()
 
     mark("REMOVE")
-   val nb = DatabaseObject.delete<TestPerson>(database) {
+    val nb = DatabaseObject.delete<TestPerson>(database) {
         TestPerson::age EQUALS 42
     }
 
@@ -60,7 +60,7 @@ fun main()
                            .select { }, System.out)
 
     mark("Change Joe")
-    joe.setAge(37)
+    joe.age = 37
     printDataRowResult(DatabaseObject.table(database, TestPerson::class.java)
                            .select { }, System.out)
     printDataRowResult(DatabaseObject.table(database, TestAddress::class.java)
