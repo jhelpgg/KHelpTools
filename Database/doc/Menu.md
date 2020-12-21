@@ -19,4 +19,4 @@
 1. [Delete rows and table](DeleteRowsAndDropTable.md)
     1. [Delete some rows](DeleteRowsAndDropTable.md#delete-some-rows)
     1. [Delete a table](DeleteRowsAndDropTable.md#delete-a-table)
-    
+1. [Database objects](DatabaseObject.md)   
