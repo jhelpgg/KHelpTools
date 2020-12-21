@@ -13,7 +13,7 @@ internal object DataObjectManager
     internal fun tableDescription(databaseObject: DatabaseObject): TableDescription
     {
         val key = "${databaseObject.database.path}:${databaseObject::class.java.name}"
-        var tableDescription = this.tables[key]
+        val tableDescription = this.tables[key]
 
         if (tableDescription != null)
         {
@@ -105,10 +105,6 @@ internal object DataObjectManager
                             if (type.isEnum)
                             {
                                 columnName AS DataType.ENUM
-                            }
-                            else
-                            {
-                                throw RuntimeException("Not managed type $type for field $field in ${classDatabaseObject.name}")
                             }
                     }
                 }
