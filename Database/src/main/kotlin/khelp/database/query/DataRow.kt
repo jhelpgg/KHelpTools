@@ -423,6 +423,25 @@ class DataRow internal constructor(private val resultSet: ResultSet, private val
         return valueOf.invoke(null, enumName) as E
     }
 
+    @RowResultDSL
+    internal fun getEnumAny(column: Column) : Any{
+        column.checkType(DataType.ENUM)
+        val index = this.columnIndex(column)
+
+        if (index < 0)
+        {
+            throw IllegalArgumentException("Column ${column.name} not in selection list")
+        }
+
+        val serialized = this.resultSet.getString(index + 1)
+        val indexSeparator = serialized.indexOf(':')
+        val className = serialized.substring(0, indexSeparator)
+        val enumName = serialized.substring(indexSeparator + 1)
+        val valueOf = Class.forName(className)
+            .getDeclaredMethod("valueOf", String::class.java)
+        return valueOf.invoke(null, enumName)
+    }
+
     /**
      * Read table row ID from specified column range
      *

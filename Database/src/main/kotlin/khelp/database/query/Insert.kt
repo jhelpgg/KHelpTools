@@ -295,6 +295,23 @@ class Insert internal constructor(val table: Table)
         this@Insert.table.getColumn(this) IS value
     }
 
+    @InsertDSL
+    internal infix fun Column.IS_ENUM(value: Any)
+    {
+        this@Insert.table.checkColumn(this)
+        this.checkType(DataType.ENUM)
+        this@Insert.columnValues[this] = "'${value::class.java.name}:${value::class.java.getDeclaredField("name").get(value)}'"
+    }
+
+    /**
+     * Specifies value for a column
+     */
+    @InsertDSL
+    internal infix fun String.IS_ENUM(value: Any)
+    {
+        this@Insert.table.getColumn(this) IS_ENUM value
+    }
+
     /**
      * If specified and condition match to one and only one row, this row is updated.
      *

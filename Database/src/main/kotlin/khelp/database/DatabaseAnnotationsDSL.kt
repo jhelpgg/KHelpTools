@@ -24,4 +24,10 @@ annotation class MatchDSL
 @DslMarker
 annotation class WhereDSL
 
+@DslMarker
+annotation class SelectDatabaseObjectDSL
+
+@DslMarker
+annotation class DeleteDatabaseObjectDSL
+
 

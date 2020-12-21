@@ -20,6 +20,7 @@ import khelp.database.condition.UPPER_EQUALS
 import khelp.database.condition.regex
 import khelp.database.type.DataDate
 import khelp.database.type.DataTime
+import khelp.utilities.regex.RegularExpression
 
 /**
  * Where condition definition
@@ -652,4 +653,19 @@ class Where internal constructor(private val table: Table)
     infix fun String.REGEX(pattern: Pattern) =
         this@Where.table.getColumn(this)
             .regex(this@Where.table, pattern)
+
+    /**
+     * Create condition that select rows, in given column, with values match given regular expression
+     */
+    infix fun Column.REGEX(regularExpression: RegularExpression) =
+        this.regex(this@Where.table, regularExpression)
+
+    /**
+     * Create condition that select rows, in given column, with values match given regular expression
+     *
+     * Specification by column name
+     */
+    infix fun String.REGEX(regularExpression: RegularExpression) =
+        this@Where.table.getColumn(this)
+            .regex(this@Where.table, regularExpression)
 }

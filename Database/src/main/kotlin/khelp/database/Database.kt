@@ -6,6 +6,7 @@ import java.io.FileOutputStream
 import java.io.IOException
 import java.sql.Connection
 import java.util.concurrent.atomic.AtomicBoolean
+import khelp.database.condition.AND
 import khelp.database.condition.not
 import khelp.database.extensions.validName
 import khelp.database.query.Delete
@@ -59,7 +60,7 @@ const val ROW_NOT_UNIQUE = -2
  *
  * It is recommend to close properly the database with [close] method when no more of it, at least before exit application.
  */
-class Database private constructor(login: String, password: String, path: String) : Iterable<Table>
+class Database private constructor(login: String, password: String, val path: String) : Iterable<Table>
 {
     companion object
     {
@@ -168,6 +169,77 @@ class Database private constructor(login: String, password: String, path: String
         return this.tables.firstOrNull { table -> name.equals(table.name, true) }
     }
 
+    fun obtainTableOrReadIt(name: String): Table?
+    {
+        this.checkClose()
+        var table = this.tables.firstOrNull { table -> name.equals(table.name, true) }
+
+        if (table == null)
+        {
+            val id = this.metadataTableOfTables.rowID { condition = METADATA_TABLE_OF_TABLES_COLUMN_TABLE EQUALS name }
+
+            if (id != ROW_NOT_EXISTS)
+            {
+                val result = this.metadataTableOfTablesColumn.select {
+                    +METADATA_TABLE_OF_TABLES_COLUMNS_COLUMN_NAME
+                    +METADATA_TABLE_OF_TABLES_COLUMNS_COLUMN_TYPE
+                    +METADATA_TABLE_OF_TABLES_COLUMNS_COLUMN_FOREIGN_TABLE
+                    +METADATA_TABLE_OF_TABLES_COLUMNS_COLUMN_FOREIGN_COLUMN
+                    where { condition = METADATA_TABLE_OF_TABLES_COLUMNS_COLUMN_TABLE_ID EQUALS id }
+                }
+
+                table = this.createTable(name) {
+                    while (result.hasNext)
+                    {
+                        result.next {
+                            val type = getEnum<DataType>(2)
+
+                            val foreignTable = getString(3)
+
+                            if (foreignTable.isEmpty())
+                            {
+                                if (type != DataType.ID)
+                                {
+                                    getString(1) AS type
+                                }
+                            }
+                            else
+                            {
+                                val foreignColumn = getString(4)
+                                val tableForeign = obtainTable(foreignTable)
+
+                                if (tableForeign != null)
+                                {
+                                    if (type == DataType.ID)
+                                    {
+                                        idForeign(tableForeign, foreignColumn)
+                                    }
+                                    else
+                                    {
+                                        getString(1) FOREIGN tableForeign
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    result.close()
+                }
+
+                this.tables += table
+            }
+        }
+
+        return table
+    }
+
+    /**
+     * Remove a table from database
+     */
+    fun dropTable(tableName: String) =
+        this.obtainTable(tableName)
+            ?.let { table -> this.dropTable(table) } ?: false
+
     /**
      * Create a table.
      * See documentation to know lmore about table creation DSL syntax
@@ -189,13 +261,6 @@ class Database private constructor(login: String, password: String, path: String
 
         return this.table(name, false, creator)
     }
-
-    /**
-     * Remove a table from database
-     */
-    fun dropTable(tableName: String) =
-        this.obtainTable(tableName)
-            ?.let { table -> this.dropTable(table) } ?: false
 
     /**
      * Remove a table from database
@@ -237,7 +302,26 @@ class Database private constructor(login: String, password: String, path: String
         return this.tables.iterator()
     }
 
-    internal fun select(select: Select): DataRowResult
+    internal fun updateIDForeign(table: Table, foreignTable: String, foreignColumn: String)
+    {
+        table[0].foreignTable = foreignTable
+        table[0].foreignColumn = foreignColumn
+        this.update(this.metadataTableOfTablesColumn) {
+            METADATA_TABLE_OF_TABLES_COLUMNS_COLUMN_FOREIGN_TABLE IS foreignTable
+            METADATA_TABLE_OF_TABLES_COLUMNS_COLUMN_FOREIGN_COLUMN IS foreignColumn
+            where {
+                condition = (khelp.database.METADATA_TABLE_OF_TABLES_COLUMNS_COLUMN_NAME EQUALS "ID") AND
+                        (METADATA_TABLE_OF_TABLES_COLUMNS_COLUMN_TABLE_ID IN {
+                            select(metadataTableOfTables) {
+                                +"ID"
+                                where { condition = METADATA_TABLE_OF_TABLES_COLUMN_TABLE EQUALS table.name }
+                            }
+                        })
+            }
+        }
+    }
+
+    fun select(select: Select): DataRowResult
     {
         this.checkClose()
         val statement = this.databaseConnection.createStatement()
@@ -277,7 +361,7 @@ class Database private constructor(login: String, password: String, path: String
         return numberUpdate
     }
 
-    internal fun delete(delete: Delete): Int
+    fun delete(delete: Delete): Int
     {
         this.checkClose()
         val numberDelete = this.updateQuery(delete.deleteSQL())
@@ -359,14 +443,18 @@ class Database private constructor(login: String, password: String, path: String
                             else
                             {
                                 val foreignColumn = getString(4)
+                                val tableForeign = obtainTable(foreignTable)
 
-                                if (type == DataType.ID)
+                                if (tableForeign != null)
                                 {
-                                    idForeign(obtainTable(foreignTable)!!, foreignColumn)
-                                }
-                                else
-                                {
-                                    getString(1) FOREIGN obtainTable(foreignTable)!!
+                                    if (type == DataType.ID)
+                                    {
+                                        idForeign(tableForeign, foreignColumn)
+                                    }
+                                    else
+                                    {
+                                        getString(1) FOREIGN tableForeign
+                                    }
                                 }
                             }
                         }
@@ -473,6 +561,7 @@ class Database private constructor(login: String, password: String, path: String
             val statement = this.databaseConnection.createStatement()
             statement.executeQuery(query)
             statement.close()
+            this.databaseConnection.commit()
         }
     }
 
@@ -528,10 +617,11 @@ class Database private constructor(login: String, password: String, path: String
 
                 if (columnID.foreignTable.isNotEmpty())
                 {
+                    val tableForeign = obtainTable(columnID.foreignTable) ?: continue
                     this.delete(table) {
                         where {
                             condition = not("ID" IN {
-                                select(obtainTable(columnID.foreignTable)!!) {
+                                select(tableForeign) {
                                     +columnID.foreignColumn
                                 }
                             })

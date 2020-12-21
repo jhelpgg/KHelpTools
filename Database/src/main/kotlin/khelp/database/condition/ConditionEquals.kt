@@ -139,3 +139,12 @@ infix fun <E : Enum<E>> Column.EQUALS(value: E): Condition
     this.checkType(DataType.ENUM)
     return Condition(arrayOf(this), "${this.name}='${value::class.java.name}:${value.name}'")
 }
+
+internal infix fun Column.EQUALS_ENUM(value: Any): Condition
+{
+    this.checkType(DataType.ENUM)
+    val valueEnum = value::class.java.getField("name")
+        .get(value) as String
+    return Condition(arrayOf(this),
+                     "${this.name}='${value::class.java.name}:$valueEnum'")
+}
