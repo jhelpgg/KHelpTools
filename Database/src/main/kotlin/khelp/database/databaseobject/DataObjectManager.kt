@@ -1,5 +1,6 @@
 package khelp.database.databaseobject
 
+import java.lang.reflect.Modifier
 import java.util.Calendar
 import khelp.database.Database
 import khelp.database.type.DataDate
@@ -51,7 +52,7 @@ internal object DataObjectManager
         val primaryKeys = ArrayList<String>()
         val tableName = classDatabaseObject.name.replace('.', '_')
 
-         val table = database.table(tableName) {
+        val table = database.table(tableName) {
             if (foreignTable.isNotEmpty())
             {
                 idForeign(database.obtainTableOrReadIt(foreignTable)!!, foreignColumn)
@@ -63,6 +64,11 @@ internal object DataObjectManager
 
                 if (field.isAnnotationPresent(PrimaryKey::class.java))
                 {
+                    if (!Modifier.isFinal(field.modifiers))
+                    {
+                        throw RuntimeException("Primary key field ${field.name} of ${classDatabaseObject.name} must be final (declared val)")
+                    }
+
                     primaryKeys += columnName
                 }
 
@@ -70,6 +76,7 @@ internal object DataObjectManager
 
                 if (DatabaseObject::class.java.isAssignableFrom(type))
                 {
+                    @Suppress("UNCHECKED_CAST")
                     createUpdateTableDescription(database, type as Class<out DatabaseObject>, tableName, columnName)
                     columnName AS DataType.INTEGER
                 }

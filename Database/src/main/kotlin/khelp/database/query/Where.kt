@@ -27,7 +27,7 @@ import khelp.utilities.regex.RegularExpression
  *
  * See documentation for condition definition DSL syntax
  */
-class Where internal constructor(private val table: Table)
+open class Where internal constructor(private val table: Table)
 {
     /**Used for define the condition*/
     var condition: Condition? = null

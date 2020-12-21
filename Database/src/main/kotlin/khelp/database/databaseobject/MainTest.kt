@@ -1,6 +1,7 @@
 package khelp.database.databaseobject
 
 import khelp.database.Database
+import khelp.database.condition.AND
 import khelp.database.printDataRowResult
 import khelp.utilities.log.debug
 import khelp.utilities.log.mark
@@ -14,10 +15,10 @@ fun main()
     printDataRowResult(DatabaseObject.table(database, TestPerson::class.java)
                            .select { }, System.out)
 
-    val person = TestPerson("Hello",
-                            42,
-                            TestAddress("Street", 21, database).waitCreated(),
-                            database).waitCreated<TestPerson>()
+    TestPerson("Hello",
+               42,
+               TestAddress("Street", 21, database).waitCreated(),
+               database).waitCreated<TestPerson>()
     TestPerson("Arthur",
                42,
                TestAddress("Street", 21, database).waitCreated(),
@@ -42,8 +43,7 @@ fun main()
                            .select { }, System.out)
 
     val result = DatabaseObject.select<TestPerson>(database) {
-        TestPerson::age UPPER 40
-        TestPerson::age LOWER 50
+        condition = (TestPerson::age UPPER 40) AND (TestPerson::age LOWER 50)
     }
     while (result.hasNext)
     {
@@ -54,7 +54,7 @@ fun main()
 
     mark("REMOVE")
     val nb = DatabaseObject.delete<TestPerson>(database) {
-        TestPerson::age EQUALS 42
+        condition = TestPerson::age EQUALS 42
     }
 
     mark("nb=$nb")
@@ -69,6 +69,7 @@ fun main()
 
     mark("Change Joe")
     joe.age = 37
+    joe.address = TestAddress("Somewhere", 12, database).waitCreated()
     printDataRowResult(DatabaseObject.table(database, TestPerson::class.java)
                            .select { }, System.out)
     printDataRowResult(DatabaseObject.table(database, TestAddress::class.java)

@@ -25,9 +25,6 @@ annotation class MatchDSL
 annotation class WhereDSL
 
 @DslMarker
-annotation class SelectDatabaseObjectDSL
-
-@DslMarker
-annotation class DeleteDatabaseObjectDSL
+annotation class WhereDatabaseObjectDSL
 
 

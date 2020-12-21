@@ -3,16 +3,14 @@ package khelp.database.databaseobject
 import java.util.Calendar
 import khelp.database.Column
 import khelp.database.Database
-import khelp.database.DeleteDatabaseObjectDSL
-import khelp.database.SelectDatabaseObjectDSL
 import khelp.database.Table
+import khelp.database.WhereDatabaseObjectDSL
 import khelp.database.condition.AND
 import khelp.database.condition.Condition
 import khelp.database.condition.EQUALS
 import khelp.database.condition.EQUALS_ENUM
 import khelp.database.condition.NEVER_MATCH_CONDITION
-import khelp.database.query.DeleteDatabaseObject
-import khelp.database.query.SelectDatabaseObject
+import khelp.database.query.WhereDatabaseObject
 import khelp.database.type.DataDate
 import khelp.database.type.DataTime
 import khelp.thread.delay
@@ -25,25 +23,25 @@ abstract class DatabaseObject(internal val database: Database)
         fun table(database: Database, clazz: Class<out DatabaseObject>): Table =
             DataObjectManager.tableDescription(database, clazz).table
 
-        @SelectDatabaseObjectDSL
+        @WhereDatabaseObjectDSL
         inline fun <reified DO : DatabaseObject> select(database: Database,
-                                                        selectCreator: SelectDatabaseObject<DO>.() -> Unit): DatabaseObjectResult<DO>
+                                                        whereCreator: WhereDatabaseObject<DO>.() -> Unit): DatabaseObjectResult<DO>
         {
             val table = DatabaseObject.table(database, DO::class.java)
-            val selectDatabaseObject = SelectDatabaseObject<DO>(table)
-            selectCreator(selectDatabaseObject)
-            val result = database.select(selectDatabaseObject.select)
+            val selectDatabaseObject = WhereDatabaseObject<DO>(table)
+            whereCreator(selectDatabaseObject)
+            val result = table.select { where { condition = selectDatabaseObject.condition } }
             return DatabaseObjectResult(database, DO::class, result)
         }
 
-        @DeleteDatabaseObjectDSL
+        @WhereDatabaseObjectDSL
         inline fun <reified DO : DatabaseObject> delete(database: Database,
-                                                        deleteCreator: DeleteDatabaseObject<DO>.() -> Unit): Int
+                                                        deleteCreator: WhereDatabaseObject<DO>.() -> Unit): Int
         {
             val table = DatabaseObject.table(database, DO::class.java)
-            val deleteDatabaseObject = DeleteDatabaseObject<DO>(table)
+            val deleteDatabaseObject = WhereDatabaseObject<DO>(table)
             deleteCreator(deleteDatabaseObject)
-            return database.delete(deleteDatabaseObject.delete)
+            return table.delete { where { condition = deleteDatabaseObject.condition } }
         }
 
         fun <DO : DatabaseObject> delete(databaseObject: DO): Boolean
@@ -61,16 +59,22 @@ abstract class DatabaseObject(internal val database: Database)
 
     init
     {
-        this.futureResult = delay(16) { this.update() }
+        this.futureResult = delay(16) { this.update(true) }
     }
 
     fun <DO : DatabaseObject> waitCreated(): DO
     {
         this.futureResult.waitCompletion()
+        @Suppress("UNCHECKED_CAST")
         return this as DO
     }
 
     protected fun update()
+    {
+        this.update(false)
+    }
+
+    private fun update(checkID: Boolean)
     {
         val tableDescription = DataObjectManager.tableDescription(this)
 
@@ -249,6 +253,11 @@ abstract class DatabaseObject(internal val database: Database)
                     condition = "ID" EQUALS_ID databaseID
                 }
             }
+        }
+
+        if (checkID)
+        {
+            this.database.checkIdForeignKey()
         }
     }
 

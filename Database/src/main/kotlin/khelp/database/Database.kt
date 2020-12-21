@@ -155,6 +155,7 @@ class Database private constructor(login: String, password: String, val path: St
     fun close()
     {
         this.checkClose()
+        this.checkIdForeignKey()
         this.databaseConnection.commit()
         this.simpleQuery("SHUTDOWN")
         this.databaseConnection.close()
@@ -597,7 +598,7 @@ class Database private constructor(login: String, password: String, val path: St
         }
     }
 
-    private fun checkIdForeignKey()
+    internal fun checkIdForeignKey()
     {
         this.checkForeignKey.set(true)
 
