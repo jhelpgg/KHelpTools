@@ -53,8 +53,20 @@ fun printDataRowResult(dataRowResult: DataRowResult, printStream: PrintStream)
 
     dataRowResult.close()
 
+    val table = dataRowResult.table.name
+    val titleLength = 2 + table.length + 2
+    var maxWidthIndex = 0
+    var separatorLength = 2 + maxWidths.sum() + 3 * (numberColumn - 1) + 2
+
+    while (separatorLength < titleLength)
+    {
+        separatorLength++
+        maxWidths[maxWidthIndex]++
+        maxWidthIndex = (maxWidthIndex + 1) % maxWidths.size
+    }
+
     // Print result
-    val separatorCharacters = CharArray(2 + maxWidths.sum() + 3 * (numberColumn - 1) + 2)
+    val separatorCharacters = CharArray(separatorLength)
     separatorCharacters[0] = '+'
     var index = 1
     maxWidths.forEach { width ->
@@ -64,7 +76,6 @@ fun printDataRowResult(dataRowResult: DataRowResult, printStream: PrintStream)
         separatorCharacters[index++] = '+'
     }
     val separator = String(separatorCharacters, 0, index)
-    val table = dataRowResult.table.name
     val space = max(0, (separator.length - table.length) / 2 - 1)
     val left = max(0, separator.length - table.length - space - 2)
 

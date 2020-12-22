@@ -251,4 +251,171 @@ class Table internal constructor(val name: String, val readOnly: Boolean, privat
         result.close()
         return id
     }
+
+    /**
+     * Append a column at the end of the table
+     *
+     * For enumeration, use the other [appendColumn] method
+     */
+    fun appendColumn(name: String, type: DataType)
+    {
+        this.checkReadOnly()
+        if (!name.validName())
+        {
+            throw IllegalArgumentException("Invalid column name : $name")
+        }
+
+        if (this.obtainColumn(name) != null)
+        {
+            throw IllegalArgumentException("A column named $name already exists in table ${this.name}")
+        }
+
+        if (type == DataType.ID)
+        {
+            throw IllegalArgumentException("The primary key was already automatically defined")
+        }
+
+        if (type == DataType.ENUM)
+        {
+            throw java.lang.IllegalArgumentException("Type enum can't add by this method, use `appendColumn(name, Enum)`")
+        }
+
+        this.columns += Column(name, type)
+        this.database.addToTable(this, name, type, type.defaultValueSerialized)
+    }
+
+    /**
+     * Append a column of enumeration type
+     */
+    fun <E : Enum<E>> appendColumn(name: String, defaultValue: E)
+    {
+        this.checkReadOnly()
+        if (!name.validName())
+        {
+            throw IllegalArgumentException("Invalid column name : $name")
+        }
+
+        if (this.obtainColumn(name) != null)
+        {
+            throw IllegalArgumentException("A column named $name already exists in table ${this.name}")
+        }
+
+        this.columns += Column(name, DataType.ENUM)
+        this.database.addToTable(this, name, DataType.ENUM, "'${defaultValue.javaClass.name}:${defaultValue.name}'")
+    }
+
+    /**
+     * Insert a column before an other column before an other one
+     *
+     * For enumeration, use the other [insertColumn] method
+     */
+    fun insertColumn(name: String, type: DataType, before: Column)
+    {
+        this.checkReadOnly()
+        this.checkColumn(before)
+
+        if (!name.validName())
+        {
+            throw IllegalArgumentException("Invalid column name : $name")
+        }
+
+        if (this.obtainColumn(name) != null)
+        {
+            throw IllegalArgumentException("A column named $name already exists in table ${this.name}")
+        }
+
+        if (type == DataType.ID)
+        {
+            throw IllegalArgumentException("The primary key was already automatically defined")
+        }
+
+        if (type == DataType.ENUM)
+        {
+            throw java.lang.IllegalArgumentException("Type enum can't add by this method, use `insertColumn(name, Enum, Column)` or `insertColumn(name, Enum, String)`")
+        }
+
+        if (before.type == DataType.ID)
+        {
+            throw IllegalArgumentException("Can't add column before the identifier since identifier must always be the first column")
+        }
+
+        val index = this.columns.indexOfFirst { col -> col.name == before.name }
+        this.columns.add(index, Column(name, type))
+        this.database.addToTable(this, name, type, type.defaultValueSerialized, before.name)
+    }
+
+    /**
+     * Insert a column of enumeration before an other column before an other one
+     */
+    fun <E : Enum<E>> insertColumn(name: String, defaultValue: E, before: Column)
+    {
+        this.checkReadOnly()
+        this.checkColumn(before)
+
+        if (!name.validName())
+        {
+            throw IllegalArgumentException("Invalid column name : $name")
+        }
+
+        if (this.obtainColumn(name) != null)
+        {
+            throw IllegalArgumentException("A column named $name already exists in table ${this.name}")
+        }
+
+        if (before.type == DataType.ID)
+        {
+            throw IllegalArgumentException("Can't add column before the identifier since identifier must always be the first column")
+        }
+
+        val index = this.columns.indexOfFirst { col -> col.name == before.name }
+        this.columns.add(index, Column(name, DataType.ENUM))
+        this.database.addToTable(this,
+                                 name,
+                                 DataType.ENUM,
+                                 "'${defaultValue.javaClass.name}:${defaultValue.name}'",
+                                 before.name)
+    }
+
+    /**
+     * Insert a column before an other column before an other one
+     *
+     * For enumeration, use the other [insertColumn] method
+     */
+    fun insertColumn(name: String, type: DataType, beforeColumnName: String)
+    {
+        this.insertColumn(name, type, this.getColumn(beforeColumnName))
+    }
+
+    /**
+     * Insert a column of enumeration before an other column before an other one
+     */
+    fun <E : Enum<E>> insertColumn(name: String, defaultValue: E, beforeColumnName: String)
+    {
+        this.insertColumn(name, defaultValue, this.getColumn(beforeColumnName))
+    }
+
+    /**
+     * Remove a column from table
+     */
+    fun removeColumn(column: Column)
+    {
+        this.checkReadOnly()
+        this.checkColumn(column)
+
+        if (column.type == DataType.ID)
+        {
+            throw IllegalArgumentException("Can't remove the table ID column")
+        }
+
+        this.columns.removeIf { col -> col.name == column.name }
+        this.database.removeFromTable(this, column.name)
+    }
+
+    /**
+     * Remove a column from table
+     */
+    fun removeColumn(columnName: String)
+    {
+        this.removeColumn(this.getColumn(columnName))
+    }
 }

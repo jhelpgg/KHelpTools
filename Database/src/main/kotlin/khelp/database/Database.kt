@@ -18,6 +18,7 @@ import khelp.io.extensions.createFile
 import khelp.security.des.TripleDES
 import khelp.security.exception.LoginPasswordInvalidException
 import khelp.security.rsa.RSAKeyPair
+import khelp.utilities.log.exception
 
 
 /**Table of meta data that stores the tables name*/
@@ -98,6 +99,8 @@ class Database private constructor(login: String, password: String, val path: St
     private val checkForeignKey = AtomicBoolean(false)
     private val checkingForeignKey = AtomicBoolean(false)
 
+    private val initialized = AtomicBoolean(false)
+
     /**Table taht cotains all tables reference*/
     val metadataTableOfTables: Table
 
@@ -141,6 +144,8 @@ class Database private constructor(login: String, password: String, val path: St
             METADATA_TABLE_OF_TABLES_COLUMNS_COLUMN_FOREIGN_COLUMN AS DataType.STRING
             METADATA_TABLE_OF_TABLES_COLUMNS_COLUMN_TABLE_ID AS DataType.INTEGER
         }
+
+        this.initialized.set(true)
     }
 
     fun valid(login: String, password: String): Boolean
@@ -375,6 +380,69 @@ class Database private constructor(login: String, password: String, val path: St
         return numberDelete
     }
 
+    internal fun addToTable(table: Table,
+                            columnName: String,
+                            dataType: DataType,
+                            serializedDefaultValue: String,
+                            before: String? = null)
+    {
+        val tableID = this.metadataTableOfTables.rowID { condition = METADATA_TABLE_OF_TABLES_COLUMNS_COLUMN_NAME EQUALS table.name }
+
+        if (tableID < 0)
+        {
+            return
+        }
+
+        val query = StringBuilder()
+        query.append("ALTER TABLE ")
+        query.append(table.name)
+        query.append(" ADD COLUMN ")
+        query.append(columnName)
+        query.append(" ")
+        query.append(dataType.typeSQL)
+        query.append(" DEFAULT ")
+        query.append(serializedDefaultValue)
+
+        before?.let { beforeColumn ->
+            query.append(" BEFORE ")
+            query.append(beforeColumn)
+        }
+
+        this.updateQuery(query.toString())
+
+        this.delete(this.metadataTableOfTablesColumn) { where { condition = METADATA_TABLE_OF_TABLES_COLUMNS_COLUMN_TABLE_ID EQUALS tableID } }
+
+        for (column in table)
+        {
+            this.insert(this.metadataTableOfTablesColumn) {
+                METADATA_TABLE_OF_TABLES_COLUMNS_COLUMN_NAME IS column.name
+                METADATA_TABLE_OF_TABLES_COLUMNS_COLUMN_TYPE IS column.type
+                METADATA_TABLE_OF_TABLES_COLUMNS_COLUMN_FOREIGN_TABLE IS column.foreignTable
+                METADATA_TABLE_OF_TABLES_COLUMNS_COLUMN_FOREIGN_COLUMN IS column.foreignColumn
+                METADATA_TABLE_OF_TABLES_COLUMNS_COLUMN_TABLE_ID IS tableID
+            }
+        }
+    }
+
+    internal fun removeFromTable(table: Table, columnName: String)
+    {
+        val tableID = this.metadataTableOfTables.rowID { condition = METADATA_TABLE_OF_TABLES_COLUMNS_COLUMN_NAME EQUALS table.name }
+
+        if (tableID < 0)
+        {
+            return
+        }
+
+        this.updateQuery("ALTER TABLE ${table.name} DROP COLUMN $columnName")
+
+        this.delete(this.metadataTableOfTablesColumn) {
+            where {
+                condition = (METADATA_TABLE_OF_TABLES_COLUMNS_COLUMN_TABLE_ID EQUALS tableID) AND
+                        (METADATA_TABLE_OF_TABLES_COLUMNS_COLUMN_NAME EQUALS columnName)
+            }
+        }
+    }
+
     private fun biggestID(table: Table): Int
     {
         val result = table.select {
@@ -582,8 +650,12 @@ class Database private constructor(login: String, password: String, val path: St
                 this.databaseConnection.commit()
                 return count
             }
-            catch (_: Exception)
+            catch (exception: Exception)
             {
+                if (this.initialized.get())
+                {
+                    exception(exception, "Failed while do query : '", query, "'")
+                }
             }
         }
 
