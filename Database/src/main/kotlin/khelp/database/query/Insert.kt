@@ -14,6 +14,7 @@ import khelp.database.type.DataDate
 import khelp.database.type.DataTime
 import khelp.database.type.DataType
 import khelp.utilities.extensions.base64
+import khelp.utilities.extensions.serializeToByteArray
 
 /**
  * For insert a row in table
@@ -211,6 +212,26 @@ class Insert internal constructor(val table: Table)
      */
     @InsertDSL
     infix fun String.IS(value: ByteArray)
+    {
+        this@Insert.table.getColumn(this) IS value
+    }
+
+    /**
+     * Specifies value for a column
+     */
+    @InsertDSL
+    infix fun Column.IS(value: IntArray)
+    {
+        this@Insert.table.checkColumn(this)
+        this.checkType(DataType.INT_ARRAY)
+        this@Insert.columnValues[this] = "'${value.serializeToByteArray().base64}'"
+    }
+
+    /**
+     * Specifies value for a column
+     */
+    @InsertDSL
+    infix fun String.IS(value: IntArray)
     {
         this@Insert.table.getColumn(this) IS value
     }

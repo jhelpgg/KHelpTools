@@ -15,6 +15,7 @@ import khelp.database.type.DataDate
 import khelp.database.type.DataTime
 import khelp.thread.delay
 import khelp.thread.future.FutureResult
+import khelp.utilities.extensions.transformInt
 
 abstract class DatabaseObject(internal val database: Database)
 {
@@ -30,7 +31,9 @@ abstract class DatabaseObject(internal val database: Database)
             val table = DatabaseObject.table(database, DO::class.java)
             val selectDatabaseObject = WhereDatabaseObject<DO>(table)
             whereCreator(selectDatabaseObject)
-            val result = table.select { where { condition = selectDatabaseObject.condition } }
+            val result =
+                selectDatabaseObject.condition?.let { cond -> table.select { where { condition = cond } } }
+                ?: table.select {}
             return DatabaseObjectResult(database, DO::class, result)
         }
 
@@ -110,37 +113,47 @@ abstract class DatabaseObject(internal val database: Database)
 
                         when
                         {
-                            DatabaseObject::class.java.isAssignableFrom(type) ->
+                            type.isArray && DatabaseObject::class.java.isAssignableFrom(type.componentType) ->
+                            {
+                                val array = (field[this@DatabaseObject] as Array<DatabaseObject>)
+                                field.name IS array.transformInt { databaseObject ->
+                                    databaseObject.update()
+                                    databaseObject.databaseID
+                                }
+                            }
+                            DatabaseObject::class.java.isAssignableFrom(type)                               ->
                             {
                                 val dataObject = (field[this@DatabaseObject] as DatabaseObject)
                                 dataObject.update()
                                 field.name IS dataObject.databaseID
                             }
-                            type == Boolean::class.java                       ->
+                            type == Boolean::class.java                                                     ->
                                 field.name IS field.getBoolean(this@DatabaseObject)
-                            type == Byte::class.java                          ->
+                            type == Byte::class.java                                                        ->
                                 field.name IS field.getByte(this@DatabaseObject)
-                            type == Short::class.java                         ->
+                            type == Short::class.java                                                       ->
                                 field.name IS field.getShort(this@DatabaseObject)
-                            type == Int::class.java                           ->
+                            type == Int::class.java                                                         ->
                                 field.name IS field.getInt(this@DatabaseObject)
-                            type == Long::class.java                          ->
+                            type == Long::class.java                                                        ->
                                 field.name IS field.getLong(this@DatabaseObject)
-                            type == Float::class.java                         ->
+                            type == Float::class.java                                                       ->
                                 field.name IS field.getFloat(this@DatabaseObject)
-                            type == Double::class.java                        ->
+                            type == Double::class.java                                                      ->
                                 field.name IS field.getDouble(this@DatabaseObject)
-                            type == String::class.java                        ->
+                            type == String::class.java                                                      ->
                                 field.name IS field.get(this@DatabaseObject) as String
-                            type == ByteArray::class.java                     ->
+                            type == ByteArray::class.java                                                   ->
                                 field.name IS field.get(this@DatabaseObject) as ByteArray
-                            type == Calendar::class.java                      ->
+                            type == IntArray::class.java                                                    ->
+                                field.name IS field.get(this@DatabaseObject) as IntArray
+                            type == Calendar::class.java                                                    ->
                                 field.name IS field.get(this@DatabaseObject) as Calendar
-                            type == DataTime::class.java                      ->
+                            type == DataTime::class.java                                                    ->
                                 field.name IS field.get(this@DatabaseObject) as DataTime
-                            type == DataDate::class.java                      ->
+                            type == DataDate::class.java                                                    ->
                                 field.name IS field.get(this@DatabaseObject) as DataDate
-                            type.isEnum                                       ->
+                            type.isEnum                                                                     ->
                                 field.name IS_ENUM field.get(this@DatabaseObject)
                         }
                     }
@@ -156,37 +169,47 @@ abstract class DatabaseObject(internal val database: Database)
 
                         when
                         {
-                            DatabaseObject::class.java.isAssignableFrom(type) ->
+                            type.isArray && DatabaseObject::class.java.isAssignableFrom(type.componentType) ->
+                            {
+                                val array = (field[this@DatabaseObject] as Array<DatabaseObject>)
+                                field.name IS array.transformInt { databaseObject ->
+                                    databaseObject.update()
+                                    databaseObject.databaseID
+                                }
+                            }
+                            DatabaseObject::class.java.isAssignableFrom(type)                               ->
                             {
                                 val dataObject = (field[this@DatabaseObject] as DatabaseObject)
                                 dataObject.update()
                                 field.name IS dataObject.databaseID
                             }
-                            type == Boolean::class.java                       ->
+                            type == Boolean::class.java                                                     ->
                                 field.name IS field.getBoolean(this@DatabaseObject)
-                            type == Byte::class.java                          ->
+                            type == Byte::class.java                                                        ->
                                 field.name IS field.getByte(this@DatabaseObject)
-                            type == Short::class.java                         ->
+                            type == Short::class.java                                                       ->
                                 field.name IS field.getShort(this@DatabaseObject)
-                            type == Int::class.java                           ->
+                            type == Int::class.java                                                         ->
                                 field.name IS field.getInt(this@DatabaseObject)
-                            type == Long::class.java                          ->
+                            type == Long::class.java                                                        ->
                                 field.name IS field.getLong(this@DatabaseObject)
-                            type == Float::class.java                         ->
+                            type == Float::class.java                                                       ->
                                 field.name IS field.getFloat(this@DatabaseObject)
-                            type == Double::class.java                        ->
+                            type == Double::class.java                                                      ->
                                 field.name IS field.getDouble(this@DatabaseObject)
-                            type == String::class.java                        ->
+                            type == String::class.java                                                      ->
                                 field.name IS field.get(this@DatabaseObject) as String
-                            type == ByteArray::class.java                     ->
+                            type == ByteArray::class.java                                                   ->
                                 field.name IS field.get(this@DatabaseObject) as ByteArray
-                            type == Calendar::class.java                      ->
+                            type == IntArray::class.java                                                    ->
+                                field.name IS field.get(this@DatabaseObject) as IntArray
+                            type == Calendar::class.java                                                    ->
                                 field.name IS field.get(this@DatabaseObject) as Calendar
-                            type == DataTime::class.java                      ->
+                            type == DataTime::class.java                                                    ->
                                 field.name IS field.get(this@DatabaseObject) as DataTime
-                            type == DataDate::class.java                      ->
+                            type == DataDate::class.java                                                    ->
                                 field.name IS field.get(this@DatabaseObject) as DataDate
-                            type.isEnum                                       ->
+                            type.isEnum                                                                     ->
                                 field.name IS_ENUM field.get(this@DatabaseObject)
                         }
                     }
@@ -239,6 +262,8 @@ abstract class DatabaseObject(internal val database: Database)
                             field.name IS field.get(this@DatabaseObject) as String
                         type == ByteArray::class.java                     ->
                             field.name IS field.get(this@DatabaseObject) as ByteArray
+                        type == IntArray::class.java                      ->
+                            field.name IS field.get(this@DatabaseObject) as IntArray
                         type == Calendar::class.java                      ->
                             field.name IS field.get(this@DatabaseObject) as Calendar
                         type == DataTime::class.java                      ->
@@ -295,6 +320,8 @@ abstract class DatabaseObject(internal val database: Database)
                 column EQUALS field.get(this@DatabaseObject) as String
             type == ByteArray::class.java                     ->
                 column EQUALS field.get(this@DatabaseObject) as ByteArray
+            type == IntArray::class.java                      ->
+                column EQUALS field.get(this@DatabaseObject) as IntArray
             type == Calendar::class.java                      ->
                 column EQUALS field.get(this@DatabaseObject) as Calendar
             type == DataTime::class.java                      ->

@@ -1,5 +1,6 @@
 package khelp.database.databaseobject
 
+import java.lang.reflect.Array
 import java.util.Calendar
 import khelp.database.DataRowResult
 import khelp.database.Database
@@ -34,9 +35,28 @@ class DatabaseObjectResult<DO : DatabaseObject>(private val database: Database,
 
                 when
                 {
-                    type == Database::class.java                      ->
+                    type == Database::class.java                                                    ->
                         parameters[index] = database
-                    DatabaseObject::class.java.isAssignableFrom(type) ->
+                    type.isArray && DatabaseObject::class.java.isAssignableFrom(type.componentType) ->
+                    {
+                        val arrayInt = getIntArray(table.getColumn(columnName))
+                        val componentType = declaredConstructor.parameterTypes[index].componentType
+                        val array = Array.newInstance(componentType, arrayInt.size)
+
+                        for ((indexElement, id) in arrayInt.withIndex())
+                        {
+                            val result = DatabaseObject.table(database,
+                                                              componentType as Class<out DatabaseObject>)
+                                .select { where { condition = "ID" EQUALS_ID id } }
+                            val dor = DatabaseObjectResult(database,
+                                                           componentType.kotlin as KClass<out DatabaseObject>,
+                                                           result)
+                            Array.set(array, indexElement, dor.next())
+                            dor.close()
+                        }
+                        parameters[index] = array
+                    }
+                    DatabaseObject::class.java.isAssignableFrom(type)                               ->
                     {
                         val id = getInt(table.getColumn(columnName))
                         val result = DatabaseObject.table(database,
@@ -53,31 +73,33 @@ class DatabaseObjectResult<DO : DatabaseObject>(private val database: Database,
 
                         dor.close()
                     }
-                    type == Boolean::class.java                       ->
+                    type == Boolean::class.java                                                     ->
                         parameters[index] = getBoolean(table.getColumn(columnName))
-                    type == Byte::class.java                          ->
+                    type == Byte::class.java                                                        ->
                         parameters[index] = getByte(table.getColumn(columnName))
-                    type == Short::class.java                         ->
+                    type == Short::class.java                                                       ->
                         parameters[index] = getShort(table.getColumn(columnName))
-                    type == Int::class.java                           ->
+                    type == Int::class.java                                                         ->
                         parameters[index] = getInt(table.getColumn(columnName))
-                    type == Long::class.java                          ->
+                    type == Long::class.java                                                        ->
                         parameters[index] = getLong(table.getColumn(columnName))
-                    type == Float::class.java                         ->
+                    type == Float::class.java                                                       ->
                         parameters[index] = getFloat(table.getColumn(columnName))
-                    type == Double::class.java                        ->
+                    type == Double::class.java                                                      ->
                         parameters[index] = getDouble(table.getColumn(columnName))
-                    type == String::class.java                        ->
+                    type == String::class.java                                                      ->
                         parameters[index] = getString(table.getColumn(columnName))
-                    type == ByteArray::class.java                     ->
+                    type == ByteArray::class.java                                                   ->
                         parameters[index] = getByteArray(table.getColumn(columnName))
-                    type == Calendar::class.java                      ->
+                    type == IntArray::class.java                                                    ->
+                        parameters[index] = getIntArray(table.getColumn(columnName))
+                    type == Calendar::class.java                                                    ->
                         parameters[index] = getCalendar(table.getColumn(columnName))
-                    type == DataDate::class.java                      ->
+                    type == DataDate::class.java                                                    ->
                         parameters[index] = getDate(table.getColumn(columnName))
-                    type == DataTime::class.java                      ->
+                    type == DataTime::class.java                                                    ->
                         parameters[index] = getTime(table.getColumn(columnName))
-                    type.isEnum                                       ->
+                    type.isEnum                                                                     ->
                         parameters[index] = getEnumAny(table.getColumn(columnName))
                 }
             }

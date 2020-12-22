@@ -10,6 +10,7 @@ import khelp.database.type.DataDate
 import khelp.database.type.DataTime
 import khelp.database.type.DataType
 import khelp.utilities.extensions.base64
+import khelp.utilities.extensions.serializeToByteArray
 
 /**
  * Update query definition
@@ -223,6 +224,28 @@ class Update internal constructor(val table: Table)
      */
     @UpdateDSL
     infix fun String.IS(value: ByteArray)
+    {
+        this@Update.table.getColumn(this) IS value
+    }
+
+    /**
+     * Defines column new value
+     */
+    @UpdateDSL
+    infix fun Column.IS(value: IntArray)
+    {
+        this@Update.table.checkColumn(this)
+        this.checkType(DataType.INT_ARRAY)
+        this@Update.columnValues[this] = "'${value.serializeToByteArray().base64}'"
+    }
+
+    /**
+     * Defines column new value
+     *
+     * Specification by column name
+     */
+    @UpdateDSL
+    infix fun String.IS(value: IntArray)
     {
         this@Update.table.getColumn(this) IS value
     }

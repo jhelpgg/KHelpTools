@@ -6,6 +6,7 @@ import khelp.database.type.DataDate
 import khelp.database.type.DataTime
 import khelp.database.type.DataType
 import khelp.utilities.extensions.base64
+import khelp.utilities.extensions.serializeToByteArray
 
 /**
  * Create condition that select rows, in given column, wih values are primary key equals to given parameter
@@ -102,6 +103,15 @@ infix fun Column.EQUALS(value: ByteArray): Condition
 {
     this.checkType(DataType.BYTE_ARRAY)
     return Condition(arrayOf(this), "${this.name}='${value.base64}'")
+}
+
+/**
+ * Create condition that select rows, in given column, wih values are equals to given parameter
+ */
+infix fun Column.EQUALS(value: IntArray): Condition
+{
+    this.checkType(DataType.INT_ARRAY)
+    return Condition(arrayOf(this), "${this.name}='${value.serializeToByteArray().base64}'")
 }
 
 /**

@@ -10,6 +10,7 @@ import khelp.database.type.DataTime
 import khelp.database.type.DataType
 import khelp.utilities.extensions.base64
 import khelp.utilities.extensions.fullString
+import khelp.utilities.extensions.parseToIntArray
 import khelp.utilities.extensions.string
 
 /**
@@ -311,6 +312,23 @@ class DataRow internal constructor(private val resultSet: ResultSet, private val
     }
 
     /**
+     * Read table row ID from specified column
+     */
+    @RowResultDSL
+    fun getIntArray(column: Column): IntArray
+    {
+        column.checkType(DataType.INT_ARRAY)
+        val index = this.columnIndex(column)
+
+        if (index < 0)
+        {
+            throw IllegalArgumentException("Column ${column.name} not in selection list")
+        }
+
+        return this.resultSet.getString(index + 1).base64.parseToIntArray()
+    }
+
+    /**
      * Read table row ID from specified column range
      *
      * **Warning** Column range start at **1** not **0**
@@ -318,6 +336,10 @@ class DataRow internal constructor(private val resultSet: ResultSet, private val
     @RowResultDSL
     fun getByteArray(columnRange: Int) =
         this.getByteArray(this.select[columnRange - 1])
+
+    @RowResultDSL
+    fun getIntArray(columnRange: Int) =
+        this.getIntArray(this.select[columnRange - 1])
 
     /**
      * Read table row ID from specified column
@@ -424,7 +446,8 @@ class DataRow internal constructor(private val resultSet: ResultSet, private val
     }
 
     @RowResultDSL
-    internal fun getEnumAny(column: Column) : Any{
+    internal fun getEnumAny(column: Column): Any
+    {
         column.checkType(DataType.ENUM)
         val index = this.columnIndex(column)
 
@@ -478,6 +501,7 @@ class DataRow internal constructor(private val resultSet: ResultSet, private val
             DataType.DOUBLE     -> this.resultSet.getDouble(columnRange)
                 .toString()
             DataType.BYTE_ARRAY -> this.resultSet.getString(columnRange).base64.string()
+            DataType.INT_ARRAY -> this.resultSet.getString(columnRange).base64.parseToIntArray().string()
             DataType.CALENDAR   ->
             {
                 val calendar = Calendar.getInstance()

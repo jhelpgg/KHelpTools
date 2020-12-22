@@ -114,6 +114,13 @@ open class Where internal constructor(private val table: Table)
      *
      * Specification by column name
      */
+    infix fun String.EQUALS(value: IntArray) = this@Where.table.getColumn(this) EQUALS value
+
+    /**
+     * Create condition that select rows, in given column, wih values are equals to given parameter
+     *
+     * Specification by column name
+     */
     infix fun String.EQUALS(value: Calendar) = this@Where.table.getColumn(this) EQUALS value
 
     /**
@@ -208,6 +215,13 @@ open class Where internal constructor(private val table: Table)
      * Specification by column name
      */
     infix fun String.NOT_EQUALS(value: ByteArray) = this@Where.table.getColumn(this) NOT_EQUALS value
+
+    /**
+     * Create condition that select rows, in given column, wih values are not equals to given parameter
+     *
+     * Specification by column name
+     */
+    infix fun String.NOT_EQUALS(value: IntArray) = this@Where.table.getColumn(this) NOT_EQUALS value
 
     /**
      * Create condition that select rows, in given column, wih values are not equals to given parameter
@@ -608,6 +622,13 @@ open class Where internal constructor(private val table: Table)
      * Specification by column name
      */
     infix fun String.ONE_OF(selection: Array<ByteArray>) = this@Where.table.getColumn(this) ONE_OF selection
+
+    /**
+     * Create condition that select rows, in given column, wih values are inside given array
+     *
+     * Specification by column name
+     */
+    infix fun String.ONE_OF(selection: Array<IntArray>) = this@Where.table.getColumn(this) ONE_OF selection
 
     /**
      * Create condition that select rows, in given column, wih values are inside given array

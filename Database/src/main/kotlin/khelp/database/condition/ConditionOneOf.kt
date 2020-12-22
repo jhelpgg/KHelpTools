@@ -6,6 +6,7 @@ import khelp.database.type.DataDate
 import khelp.database.type.DataTime
 import khelp.database.type.DataType
 import khelp.utilities.extensions.base64
+import khelp.utilities.extensions.serializeToByteArray
 import khelp.utilities.extensions.string
 import khelp.utilities.extensions.transformArray
 import khelp.utilities.extensions.transformInt
@@ -179,6 +180,26 @@ infix fun Column.ONE_OF(selection: Array<ByteArray>): Condition
             Condition(arrayOf(this),
                       "${this.name} IN ${
                           selection.transformArray { array -> array.base64 }
+                              .string("('", "', '", "')")
+                      }")
+    }
+}
+
+/**
+ * Create condition that select rows, in given column, wih values are inside given array
+ */
+infix fun Column.ONE_OF(selection: Array<IntArray>): Condition
+{
+    this.checkType(DataType.INT_ARRAY)
+
+    return when
+    {
+        selection.isEmpty() -> NEVER_MATCH_CONDITION
+        selection.size == 1 -> this EQUALS selection[0]
+        else                ->
+            Condition(arrayOf(this),
+                      "${this.name} IN ${
+                          selection.transformArray { array -> array.serializeToByteArray().base64 }
                               .string("('", "', '", "')")
                       }")
     }

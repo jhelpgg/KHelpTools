@@ -131,7 +131,16 @@ internal object DataObjectManager
 
                 val type = field.type
 
-                if (DatabaseObject::class.java.isAssignableFrom(type))
+                if (type.isArray && DatabaseObject::class.java.isAssignableFrom(type.componentType))
+                {
+                    @Suppress("UNCHECKED_CAST")
+                    createUpdateTableDescription(database,
+                                                 type.componentType as Class<out DatabaseObject>,
+                                                 "",
+                                                 "")
+                    columnName AS DataType.INT_ARRAY
+                }
+                else if (DatabaseObject::class.java.isAssignableFrom(type))
                 {
                     @Suppress("UNCHECKED_CAST")
                     createUpdateTableDescription(database, type as Class<out DatabaseObject>, tableName, columnName)
@@ -159,6 +168,8 @@ internal object DataObjectManager
                             columnName AS DataType.STRING
                         ByteArray::class.java ->
                             columnName AS DataType.BYTE_ARRAY
+                        IntArray::class.java  ->
+                            columnName AS DataType.INT_ARRAY
                         Calendar::class.java  ->
                             columnName AS DataType.CALENDAR
                         DataTime::class.java  ->

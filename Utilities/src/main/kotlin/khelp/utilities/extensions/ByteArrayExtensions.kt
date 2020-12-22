@@ -1,5 +1,6 @@
 package khelp.utilities.extensions
 
+import java.io.ByteArrayInputStream
 import java.util.Base64
 
 val ByteArray.utf8 get() = String(this, Charsets.UTF_8)
@@ -49,4 +50,19 @@ fun ByteArray.same(other: ByteArray): Boolean
     }
 
     return true
+}
+
+fun ByteArray.parseToIntArray(): IntArray
+{
+    val byteArrayInputStream = ByteArrayInputStream(this)
+    return IntArray(this.size / 4) {
+        val data0 = byteArrayInputStream.read()
+        val data1 = byteArrayInputStream.read()
+        val data2 = byteArrayInputStream.read()
+        val data3 = byteArrayInputStream.read()
+        ((data0 and 0xFF) shl 24) or
+                ((data1 and 0xFF) shl 16) or
+                ((data2 and 0xFF) shl 8) or
+                (data3 and 0xFF)
+    }
 }

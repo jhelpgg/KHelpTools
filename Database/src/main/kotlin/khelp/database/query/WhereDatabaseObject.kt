@@ -68,6 +68,10 @@ class WhereDatabaseObject<DO : DatabaseObject>(table: Table) : Where(table)
         name EQUALS value
 
     @WhereDatabaseObjectDSL
+    infix fun KProperty1<DO, IntArray>.EQUALS(value: IntArray): Condition =
+        name EQUALS value
+
+    @WhereDatabaseObjectDSL
     infix fun <E : Enum<E>> KProperty1<DO, E>.EQUALS(value: E): Condition =
         name EQUALS value
 
@@ -130,6 +134,10 @@ class WhereDatabaseObject<DO : DatabaseObject>(table: Table) : Where(table)
         name NOT_EQUALS value
 
     @WhereDatabaseObjectDSL
+    infix fun KProperty1<DO, IntArray>.NOT_EQUALS(value: IntArray): Condition =
+        name NOT_EQUALS value
+
+    @WhereDatabaseObjectDSL
     infix fun <E : Enum<E>> KProperty1<DO, E>.NOT_EQUALS(value: E): Condition =
         name NOT_EQUALS value
 
@@ -189,6 +197,10 @@ class WhereDatabaseObject<DO : DatabaseObject>(table: Table) : Where(table)
 
     @WhereDatabaseObjectDSL
     infix fun KProperty1<DO, ByteArray>.ONE_OF(value: Array<ByteArray>): Condition =
+        name ONE_OF value
+
+    @WhereDatabaseObjectDSL
+    infix fun KProperty1<DO, IntArray>.ONE_OF(value: Array<IntArray>): Condition =
         name ONE_OF value
 
     @WhereDatabaseObjectDSL

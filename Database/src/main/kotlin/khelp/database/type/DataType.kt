@@ -14,6 +14,7 @@ enum class DataType(internal val typeSQL: String, internal val defaultValueSeria
     FLOAT("DOUBLE", "0"),
     DOUBLE("DOUBLE", "0"),
     BYTE_ARRAY("VARCHAR(16384)", "''"),
+    INT_ARRAY("VARCHAR(16384)", "''"),
     CALENDAR("BIGINT", "0"),
     DATE("INTEGER", "0"),
     TIME("INTEGER", "0"),
@@ -35,6 +36,7 @@ fun Class<*>.toDataType(): DataType =
         Float::class.java     -> DataType.FLOAT
         Double::class.java    -> DataType.DOUBLE
         ByteArray::class.java -> DataType.BYTE_ARRAY
+        IntArray::class.java  -> DataType.INT_ARRAY
         Calendar::class.java  -> DataType.CALENDAR
         DataDate::class.java  -> DataType.DATE
         DataTime::class.java  -> DataType.TIME

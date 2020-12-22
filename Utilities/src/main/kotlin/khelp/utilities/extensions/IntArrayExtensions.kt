@@ -1,5 +1,7 @@
 package khelp.utilities.extensions
 
+import java.io.ByteArrayOutputStream
+
 /**
  * String representation with customizable header, separator and footer
  */
@@ -41,4 +43,21 @@ fun IntArray.same(other: IntArray): Boolean
     }
 
     return true
+}
+
+fun IntArray.serializeToByteArray(): ByteArray
+{
+    val byteArrayOutputStream = ByteArrayOutputStream()
+
+    for (integer in this)
+    {
+        byteArrayOutputStream.write(byteArrayOf(((integer shr 24) and 0xFF).toByte(),
+                                                ((integer shr 16) and 0xFF).toByte(),
+                                                ((integer shr 8) and 0xFF).toByte(),
+                                                (integer and 0xFF).toByte()))
+    }
+
+    byteArrayOutputStream.flush()
+    byteArrayOutputStream.close()
+    return byteArrayOutputStream.toByteArray()
 }
