@@ -175,7 +175,7 @@ class Database private constructor(login: String, password: String, val path: St
         return this.tables.firstOrNull { table -> name.equals(table.name, true) }
     }
 
-    fun obtainTableOrReadIt(name: String): Table?
+    internal fun obtainTableOrReadIt(name: String, alsoAddIt: Boolean): Table?
     {
         this.checkClose()
         var table = this.tables.firstOrNull { table -> name.equals(table.name, true) }
@@ -232,7 +232,10 @@ class Database private constructor(login: String, password: String, val path: St
                     result.close()
                 }
 
-                this.tables += table
+                if (alsoAddIt)
+                {
+                    this.tables += table
+                }
             }
         }
 

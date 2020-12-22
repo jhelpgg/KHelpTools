@@ -6,6 +6,7 @@ import khelp.database.Database
 import khelp.database.type.DataDate
 import khelp.database.type.DataTime
 import khelp.database.type.DataType
+import khelp.database.type.toDataType
 
 internal object DataObjectManager
 {
@@ -52,10 +53,66 @@ internal object DataObjectManager
         val primaryKeys = ArrayList<String>()
         val tableName = classDatabaseObject.name.replace('.', '_')
 
+        val oldTable = database.obtainTableOrReadIt(tableName, false)
+
+        if (oldTable != null)
+        {
+            val fields = classDatabaseObject.declaredFields
+            var oldSize = oldTable.numberColumns
+            val newSize = fields.size
+            var oldIndex = 1
+            var newIndex = 0
+
+            while (oldIndex < oldSize && newIndex < newSize)
+            {
+                if (oldTable[oldIndex].name == fields[newIndex].name)
+                {
+                    oldIndex++
+                    newIndex++
+                }
+                else if (newIndex + 1 < newSize && oldTable[oldIndex].name == fields[newIndex + 1].name)
+                {
+                    val field = fields[newIndex]
+
+                    if (field.type.isEnum || DatabaseObject::class.java.isAssignableFrom(field.type))
+                    {
+                        throw IllegalStateException("Can't add automatically enum or DataObject : ${field.name}")
+                    }
+
+                    oldTable.insertColumn(field.name, field.type.toDataType(), oldTable[oldIndex])
+                    oldSize++
+                    oldIndex++
+                    newIndex++
+                }
+                else
+                {
+                    oldTable.removeColumn(oldTable[oldIndex])
+                    oldSize--
+                }
+            }
+
+            for (index in oldSize - 1 downTo oldIndex)
+            {
+                oldTable.removeColumn(oldTable[index])
+            }
+
+            for (index in newIndex until newSize)
+            {
+                val field = fields[index]
+
+                if (field.type.isEnum || DatabaseObject::class.java.isAssignableFrom(field.type))
+                {
+                    throw IllegalStateException("Can't add automatically enum or DataObject : ${field.name}")
+                }
+
+                oldTable.appendColumn(field.name, field.type.toDataType())
+            }
+        }
+
         val table = database.table(tableName) {
             if (foreignTable.isNotEmpty())
             {
-                idForeign(database.obtainTableOrReadIt(foreignTable)!!, foreignColumn)
+                idForeign(database.obtainTableOrReadIt(foreignTable, true)!!, foreignColumn)
             }
 
             for (field in classDatabaseObject.declaredFields)
