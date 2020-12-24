@@ -46,3 +46,5 @@ val EMAIL =
 val INTEGER = DIGIT.oneOrMore()
 
 val REAL = INTEGER + ('.' + INTEGER).zeroOrOne()
+
+val LOCALE_SEPARATOR = charArrayOf('-', '_').regularExpression

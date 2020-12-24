@@ -56,6 +56,37 @@ class FutureResult<R : Any> internal constructor(val taskContext: TaskContext)
         }
 
         /**
+         * Create a future result that completes when all given futures completes
+         */
+        fun joinAll(futures: List<FutureResult<*>>): FutureResult<Unit>
+        {
+            val futureJoinAll = FutureResult<Unit>(TaskContext.INDEPENDENT)
+
+            when (futures.size)
+            {
+                0    -> futureJoinAll.result(Unit)
+                1    -> futures[0].then { futureJoinAll.result(Unit) }
+                else ->
+                {
+                    val left = AtomicInteger(futures.size)
+                    val action: () -> Unit = {
+                        if (left.decrementAndGet() == 0)
+                        {
+                            futureJoinAll.result(Unit)
+                        }
+                    }
+
+                    for (future in futures)
+                    {
+                        future.then { action() }
+                    }
+                }
+            }
+
+            return futureJoinAll
+        }
+
+        /**
          * Create future result that completes when both given futures completes.
          *
          * The result future will have the futures as result to be able know their status and potential result

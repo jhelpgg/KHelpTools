@@ -1,5 +1,7 @@
 package khelp.utilities.extensions
 
+import java.util.Objects
+
 /**
  * String representation with customizable header, separator and footer
  */
@@ -42,3 +44,16 @@ fun DoubleArray.same(other: DoubleArray): Boolean
 
     return true
 }
+
+val DoubleArray.hash: Int
+    get()
+    {
+        var hash = this.size
+
+        for (element in this)
+        {
+            hash = hash * 31 + Objects.hashCode(element)
+        }
+
+        return hash
+    }

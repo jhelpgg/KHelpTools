@@ -1,6 +1,8 @@
 package khelp.utilities.extensions
 
 import java.util.Base64
+import java.util.Locale
+import khelp.utilities.regex.LOCALE_SEPARATOR
 import khelp.utilities.regex.RegularExpression
 import khelp.utilities.regex.RegularExpressionGroup
 
@@ -37,3 +39,14 @@ infix fun String.OR(regularExpression: RegularExpression) =
 infix fun String.OR(regularExpression: RegularExpressionGroup) =
     this.regularExpression OR regularExpression
 
+fun String.toLocale(): Locale
+{
+    val split = LOCALE_SEPARATOR.split(this, 3)
+
+    return when (split.size)
+    {
+        1    -> Locale(split[0])
+        2    -> Locale(split[0], split[1])
+        else -> Locale(split[0], split[1], split[2])
+    }
+}

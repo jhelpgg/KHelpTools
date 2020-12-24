@@ -105,6 +105,10 @@ class RegularExpression internal constructor(private val format: String,
     fun matcher(text: String): ResultMatcher =
         ResultMatcher(this, this.obtainMatcher(text), text)
 
+    fun split(text: String, limit: Int = Int.MAX_VALUE): Array<String> =
+        this.getPattern()
+            .split(text, limit)
+
     operator fun plus(regularExpression: RegularExpression): RegularExpression =
         when
         {
