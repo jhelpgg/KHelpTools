@@ -4,8 +4,8 @@ import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import khelp.security.des.TripleDES
 import khelp.security.exception.LoginPasswordInvalidException
-import org.junit.Assert
-import org.junit.Test
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
 
 class RSAKeyPairTests
 {
@@ -22,32 +22,32 @@ class RSAKeyPairTests
         try
         {
             RSAKeyPair(TripleDES("other login", "password"), ByteArrayInputStream(data))
-            Assert.fail("Should throw LoginPasswordInvalidException")
+            Assertions.fail("Should throw LoginPasswordInvalidException")
         }
         catch (exception: LoginPasswordInvalidException)
         {
-            Assert.assertSame(LoginPasswordInvalidException, exception)
+            Assertions.assertSame(LoginPasswordInvalidException, exception)
         }
 
 
         try
         {
             RSAKeyPair(TripleDES("login", "other password"), ByteArrayInputStream(data))
-            Assert.fail("Should throw LoginPasswordInvalidException")
+            Assertions.fail("Should throw LoginPasswordInvalidException")
         }
         catch (exception: LoginPasswordInvalidException)
         {
-            Assert.assertSame(LoginPasswordInvalidException, exception)
+            Assertions.assertSame(LoginPasswordInvalidException, exception)
         }
 
         try
         {
             RSAKeyPair(TripleDES("other login", "other password"), ByteArrayInputStream(data))
-            Assert.fail("Should throw LoginPasswordInvalidException")
+            Assertions.fail("Should throw LoginPasswordInvalidException")
         }
         catch (exception: LoginPasswordInvalidException)
         {
-            Assert.assertSame(LoginPasswordInvalidException, exception)
+            Assertions.assertSame(LoginPasswordInvalidException, exception)
         }
     }
 }

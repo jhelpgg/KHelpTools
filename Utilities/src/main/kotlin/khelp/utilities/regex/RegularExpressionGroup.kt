@@ -1,6 +1,7 @@
 package khelp.utilities.regex
 
 import khelp.utilities.extensions.regularExpression
+import khelp.utilities.stateCheck
 import khelp.utilities.text.CharactersInterval
 
 class RegularExpressionGroup internal constructor(internal val regularExpression: RegularExpression) :
@@ -163,10 +164,7 @@ class RegularExpressionGroup internal constructor(internal val regularExpression
     {
         if (this.parent != null)
         {
-            if (!parent.insideHierarchy(this.parent!!))
-            {
-                throw IllegalStateException("The group have already an other parent")
-            }
+            stateCheck(parent.insideHierarchy(this.parent!!)) {"The group have already an other parent"}
         }
         else
         {

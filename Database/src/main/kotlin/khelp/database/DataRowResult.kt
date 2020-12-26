@@ -4,6 +4,7 @@ import java.sql.ResultSet
 import java.sql.Statement
 import khelp.database.query.DataRow
 import khelp.database.query.Select
+import khelp.utilities.stateCheck
 
 /**
  * Selected row result from [Table.select]
@@ -47,11 +48,7 @@ class DataRowResult internal constructor(private val statement: Statement,
     @RowResultDSL
     fun next(dataRowReader: DataRow.() -> Unit)
     {
-        if (this.closed)
-        {
-            throw IllegalStateException("No more data to read")
-        }
-
+        stateCheck(!this.closed) {"No more data to read"}
         val dataRow = DataRow(this.resultSet, this.select, this.table)
         dataRowReader(dataRow)
 

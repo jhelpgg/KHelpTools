@@ -1,7 +1,8 @@
 package khelp.utilities.extensions
 
-import org.junit.Assert
-import org.junit.Test
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
+
 
 class StringBuilderExtensionsTests
 {
@@ -17,7 +18,7 @@ class StringBuilderExtensionsTests
         stringBuilder.appendHexadecimal(0x98.toByte())
         stringBuilder.append(", ")
         stringBuilder.appendHexadecimal(0xDE.toByte())
-        Assert.assertEquals("Yop 01, 7f, 98, de", stringBuilder.toString())
+        Assertions.assertEquals("Yop 01, 7f, 98, de", stringBuilder.toString())
     }
 
     @Test
@@ -33,6 +34,6 @@ class StringBuilderExtensionsTests
         stringBuilder.appendMinimumDigit(9, 123456)
         stringBuilder.append(", ")
         stringBuilder.appendMinimumDigit(12, 987654321)
-        Assert.assertEquals("00005, 1234, -006, 000123456, 000987654321", stringBuilder.toString())
+        Assertions.assertEquals("00005, 1234, -006, 000123456, 000987654321", stringBuilder.toString())
     }
 }

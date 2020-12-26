@@ -3,8 +3,8 @@ package khelp.security.rsa
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import khelp.io.extensions.readSomeBytes
-import org.junit.Assert
-import org.junit.Test
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
 
 class EncryptDecryptStreamTests
 {
@@ -21,11 +21,11 @@ class EncryptDecryptStreamTests
         val clearStream = RSADecryptInputStream(keyPair, ByteArrayInputStream(byteArrayOutputStream.toByteArray()))
         val readData = clearStream.readSomeBytes(4096)
         clearStream.close()
-        Assert.assertEquals("Data size", 1024, readData.size)
+        Assertions.assertEquals(1024, readData.size, "Data size")
 
         for (index in 0 until 1024)
         {
-            Assert.assertEquals("index=$index", data[index], readData[index])
+            Assertions.assertEquals(data[index], readData[index], "index=$index")
         }
     }
 }

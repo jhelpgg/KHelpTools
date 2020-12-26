@@ -18,7 +18,9 @@ import khelp.io.extensions.createFile
 import khelp.security.des.TripleDES
 import khelp.security.exception.LoginPasswordInvalidException
 import khelp.security.rsa.RSAKeyPair
+import khelp.utilities.argumentCheck
 import khelp.utilities.log.exception
+import khelp.utilities.stateCheck
 
 
 /**Table of meta data that stores the tables name*/
@@ -258,16 +260,8 @@ class Database private constructor(login: String, password: String, val path: St
     fun table(name: String, creator: Table.() -> Unit): Table
     {
         this.checkClose()
-        if (!name.validName())
-        {
-            throw IllegalArgumentException("Invalid table name : $name")
-        }
-
-        if (this.obtainTable(name) != null)
-        {
-            throw IllegalArgumentException("A table $name already exists")
-        }
-
+        argumentCheck(name.validName()) { "Invalid table name : $name" }
+        argumentCheck(this.obtainTable(name) == null) { "A table $name already exists" }
         return this.table(name, false, creator)
     }
 
@@ -667,10 +661,7 @@ class Database private constructor(login: String, password: String, val path: St
 
     private fun checkClose()
     {
-        if (this.closed)
-        {
-            throw  IllegalStateException("The database is closed, call 'Database.database' to reopen it!")
-        }
+        stateCheck(!this.closed) { "The database is closed, call 'Database.database' to reopen it!" }
     }
 
     internal fun checkIdForeignKey()

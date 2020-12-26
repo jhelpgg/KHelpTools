@@ -9,5 +9,10 @@ dependencies {
     implementation project(":Utilities")
     implementation project(":IO")
     implementation project(":Thread")
-    testImplementation group: 'junit', name: 'junit', version: '4.12'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.3.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.3.1'
+}
+
+tasks.test {
+    useJUnitPlatform()
 }

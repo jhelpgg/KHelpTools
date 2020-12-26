@@ -8,6 +8,7 @@ import khelp.database.Table
 import khelp.database.type.DataDate
 import khelp.database.type.DataTime
 import khelp.database.type.DataType
+import khelp.utilities.argumentCheck
 import khelp.utilities.extensions.base64
 import khelp.utilities.extensions.fullString
 import khelp.utilities.extensions.parseToIntArray
@@ -66,12 +67,7 @@ class DataRow internal constructor(private val resultSet: ResultSet, private val
     {
         column.checkType(DataType.ID)
         val index = this.columnIndex(column)
-
-        if (index < 0)
-        {
-            throw IllegalArgumentException("Column ${column.name} not in selection list")
-        }
-
+        argumentCheck(index >= 0) { "Column ${column.name} not in selection list" }
         return this.resultSet.getInt(index + 1)
     }
 
@@ -93,12 +89,7 @@ class DataRow internal constructor(private val resultSet: ResultSet, private val
     {
         column.checkType(DataType.STRING)
         val index = this.columnIndex(column)
-
-        if (index < 0)
-        {
-            throw IllegalArgumentException("Column ${column.name} not in selection list")
-        }
-
+        argumentCheck(index >= 0) { "Column ${column.name} not in selection list" }
         return this.resultSet.getString(index + 1)
     }
 
@@ -119,12 +110,7 @@ class DataRow internal constructor(private val resultSet: ResultSet, private val
     {
         column.checkType(DataType.BOOLEAN)
         val index = this.columnIndex(column)
-
-        if (index < 0)
-        {
-            throw IllegalArgumentException("Column ${column.name} not in selection list")
-        }
-
+        argumentCheck(index >= 0) { "Column ${column.name} not in selection list" }
         return this.resultSet.getBoolean(index + 1)
     }
 
@@ -145,12 +131,7 @@ class DataRow internal constructor(private val resultSet: ResultSet, private val
     {
         column.checkType(DataType.BYTE)
         val index = this.columnIndex(column)
-
-        if (index < 0)
-        {
-            throw IllegalArgumentException("Column ${column.name} not in selection list")
-        }
-
+        argumentCheck(index >= 0) { "Column ${column.name} not in selection list" }
         return this.resultSet.getByte(index + 1)
     }
 
@@ -171,12 +152,7 @@ class DataRow internal constructor(private val resultSet: ResultSet, private val
     {
         column.checkType(DataType.SHORT)
         val index = this.columnIndex(column)
-
-        if (index < 0)
-        {
-            throw IllegalArgumentException("Column ${column.name} not in selection list")
-        }
-
+        argumentCheck(index >= 0) { "Column ${column.name} not in selection list" }
         return this.resultSet.getShort(index + 1)
     }
 
@@ -197,12 +173,7 @@ class DataRow internal constructor(private val resultSet: ResultSet, private val
     {
         column.checkType(DataType.INTEGER)
         val index = this.columnIndex(column)
-
-        if (index < 0)
-        {
-            throw IllegalArgumentException("Column ${column.name} not in selection list")
-        }
-
+        argumentCheck(index >= 0) { "Column ${column.name} not in selection list" }
         return this.resultSet.getInt(index + 1)
     }
 
@@ -223,12 +194,7 @@ class DataRow internal constructor(private val resultSet: ResultSet, private val
     {
         column.checkType(DataType.LONG)
         val index = this.columnIndex(column)
-
-        if (index < 0)
-        {
-            throw IllegalArgumentException("Column ${column.name} not in selection list")
-        }
-
+        argumentCheck(index >= 0) { "Column ${column.name} not in selection list" }
         return this.resultSet.getLong(index + 1)
     }
 
@@ -249,12 +215,7 @@ class DataRow internal constructor(private val resultSet: ResultSet, private val
     {
         column.checkType(DataType.FLOAT)
         val index = this.columnIndex(column)
-
-        if (index < 0)
-        {
-            throw IllegalArgumentException("Column ${column.name} not in selection list")
-        }
-
+        argumentCheck(index >= 0) { "Column ${column.name} not in selection list" }
         return this.resultSet.getDouble(index + 1)
             .toFloat()
     }
@@ -276,12 +237,7 @@ class DataRow internal constructor(private val resultSet: ResultSet, private val
     {
         column.checkType(DataType.DOUBLE)
         val index = this.columnIndex(column)
-
-        if (index < 0)
-        {
-            throw IllegalArgumentException("Column ${column.name} not in selection list")
-        }
-
+        argumentCheck(index >= 0) { "Column ${column.name} not in selection list" }
         return this.resultSet.getDouble(index + 1)
     }
 
@@ -302,12 +258,7 @@ class DataRow internal constructor(private val resultSet: ResultSet, private val
     {
         column.checkType(DataType.BYTE_ARRAY)
         val index = this.columnIndex(column)
-
-        if (index < 0)
-        {
-            throw IllegalArgumentException("Column ${column.name} not in selection list")
-        }
-
+        argumentCheck(index >= 0) { "Column ${column.name} not in selection list" }
         return this.resultSet.getString(index + 1).base64
     }
 
@@ -319,12 +270,7 @@ class DataRow internal constructor(private val resultSet: ResultSet, private val
     {
         column.checkType(DataType.INT_ARRAY)
         val index = this.columnIndex(column)
-
-        if (index < 0)
-        {
-            throw IllegalArgumentException("Column ${column.name} not in selection list")
-        }
-
+        argumentCheck(index >= 0) { "Column ${column.name} not in selection list" }
         return this.resultSet.getString(index + 1).base64.parseToIntArray()
     }
 
@@ -349,12 +295,7 @@ class DataRow internal constructor(private val resultSet: ResultSet, private val
     {
         column.checkType(DataType.CALENDAR)
         val index = this.columnIndex(column)
-
-        if (index < 0)
-        {
-            throw IllegalArgumentException("Column ${column.name} not in selection list")
-        }
-
+        argumentCheck(index >= 0) { "Column ${column.name} not in selection list" }
         val calendar = Calendar.getInstance()
         calendar.timeInMillis = this.resultSet.getLong(index + 1)
         return calendar
@@ -377,12 +318,7 @@ class DataRow internal constructor(private val resultSet: ResultSet, private val
     {
         column.checkType(DataType.DATE)
         val index = this.columnIndex(column)
-
-        if (index < 0)
-        {
-            throw IllegalArgumentException("Column ${column.name} not in selection list")
-        }
-
+        argumentCheck(index >= 0) { "Column ${column.name} not in selection list" }
         return DataDate(this.resultSet.getInt(index + 1))
     }
 
@@ -403,12 +339,7 @@ class DataRow internal constructor(private val resultSet: ResultSet, private val
     {
         column.checkType(DataType.TIME)
         val index = this.columnIndex(column)
-
-        if (index < 0)
-        {
-            throw IllegalArgumentException("Column ${column.name} not in selection list")
-        }
-
+        argumentCheck(index >= 0) { "Column ${column.name} not in selection list" }
         return DataTime(this.resultSet.getInt(index + 1))
     }
 
@@ -429,12 +360,7 @@ class DataRow internal constructor(private val resultSet: ResultSet, private val
     {
         column.checkType(DataType.ENUM)
         val index = this.columnIndex(column)
-
-        if (index < 0)
-        {
-            throw IllegalArgumentException("Column ${column.name} not in selection list")
-        }
-
+        argumentCheck(index >= 0) { "Column ${column.name} not in selection list" }
         val serialized = this.resultSet.getString(index + 1)
         val indexSeparator = serialized.indexOf(':')
         val className = serialized.substring(0, indexSeparator)
@@ -450,12 +376,7 @@ class DataRow internal constructor(private val resultSet: ResultSet, private val
     {
         column.checkType(DataType.ENUM)
         val index = this.columnIndex(column)
-
-        if (index < 0)
-        {
-            throw IllegalArgumentException("Column ${column.name} not in selection list")
-        }
-
+        argumentCheck(index >= 0) { "Column ${column.name} not in selection list" }
         val serialized = this.resultSet.getString(index + 1)
         val indexSeparator = serialized.indexOf(':')
         val className = serialized.substring(0, indexSeparator)
@@ -501,7 +422,8 @@ class DataRow internal constructor(private val resultSet: ResultSet, private val
             DataType.DOUBLE     -> this.resultSet.getDouble(columnRange)
                 .toString()
             DataType.BYTE_ARRAY -> this.resultSet.getString(columnRange).base64.string()
-            DataType.INT_ARRAY -> this.resultSet.getString(columnRange).base64.parseToIntArray().string()
+            DataType.INT_ARRAY  -> this.resultSet.getString(columnRange).base64.parseToIntArray()
+                .string()
             DataType.CALENDAR   ->
             {
                 val calendar = Calendar.getInstance()

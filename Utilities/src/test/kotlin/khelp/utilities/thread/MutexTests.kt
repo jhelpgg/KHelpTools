@@ -2,8 +2,8 @@ package khelp.utilities.thread
 
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.math.max
-import org.junit.Assert
-import org.junit.Test
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
 
 class MutexTests
 {
@@ -35,7 +35,7 @@ class MutexTests
             thread.join()
         }
 
-        Assert.assertEquals(0, counter.get())
-        Assert.assertEquals(1, maxCounter.get())
+        Assertions.assertEquals(0, counter.get())
+        Assertions.assertEquals(1, maxCounter.get())
     }
 }

@@ -15,3 +15,13 @@ inline fun stateCheck(condition: Boolean, messageIfFail: () -> String)
         throw  IllegalStateException(messageIfFail())
     }
 }
+
+inline fun <T> notNullCheck(value: T?, messageIfNull: () -> String): T
+{
+    if (value == null)
+    {
+        throw NullPointerException(messageIfNull())
+    }
+
+    return value
+}

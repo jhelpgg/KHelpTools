@@ -5,8 +5,8 @@ import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.atomic.AtomicReference
 import khelp.thread.future.FutureResultStatus
-import org.junit.Assert
-import org.junit.Test
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
 
 class TaskManagerTests
 {
@@ -35,12 +35,12 @@ class TaskManagerTests
 
         future.waitCompletion()
 
-        Assert.assertFalse("complete", complete.get())
-        Assert.assertEquals(Int.MIN_VALUE, resultReach.get())
-        Assert.assertNull("Failure", failReach.get())
+        Assertions.assertFalse(complete.get(), "complete")
+        Assertions.assertEquals(Int.MIN_VALUE, resultReach.get())
+        Assertions.assertNull(failReach.get(), "Failure")
         val cancelException = cancelReach.get()
-        Assert.assertNotNull("Cancel", cancelException)
-        Assert.assertEquals("Test", cancelException?.message)
+        Assertions.assertNotNull(cancelException, "Cancel")
+        Assertions.assertEquals("Test", cancelException?.message)
     }
 
     @Test
@@ -65,12 +65,12 @@ class TaskManagerTests
 
         future.waitCompletion()
 
-        Assert.assertFalse("complete", complete.get())
-        Assert.assertEquals(Int.MIN_VALUE, resultReach.get())
+        Assertions.assertFalse(complete.get(), "complete")
+        Assertions.assertEquals(Int.MIN_VALUE, resultReach.get())
         val throwable = failReach.get()
-        Assert.assertNotNull("Failure", throwable)
-        Assert.assertTrue("Should be arithmetic exception", throwable is ArithmeticException)
-        Assert.assertNull("Cancel", cancelReach.get())
+        Assertions.assertNotNull(throwable, "Failure")
+        Assertions.assertTrue(throwable is ArithmeticException, "Should be arithmetic exception")
+        Assertions.assertNull(cancelReach.get(), "Cancel")
     }
 
     @Test
@@ -95,10 +95,10 @@ class TaskManagerTests
 
         future.waitCompletion()
 
-        Assert.assertTrue("complete", complete.get())
-        Assert.assertEquals(42, resultReach.get())
-        Assert.assertNull("Failure", failReach.get())
-        Assert.assertNull("Cancel", cancelReach.get())
+        Assertions.assertTrue(complete.get(), "complete")
+        Assertions.assertEquals(42, resultReach.get())
+        Assertions.assertNull(failReach.get(), "Failure")
+        Assertions.assertNull(cancelReach.get(), "Cancel")
     }
 
     @Test
@@ -109,8 +109,8 @@ class TaskManagerTests
         Thread.sleep(512)
         future.cancel("Test")
         future.waitCompletion()
-        Assert.assertEquals(FutureResultStatus.CANCELED, futureSource.status())
-        Assert.assertEquals(FutureResultStatus.CANCELED, future.status())
+        Assertions.assertEquals(FutureResultStatus.CANCELED, futureSource.status())
+        Assertions.assertEquals(FutureResultStatus.CANCELED, future.status())
     }
 
     @Test
@@ -125,8 +125,8 @@ class TaskManagerTests
         future.cancel("Test")
         future.waitCompletion()
         // Success because had time to execute
-        Assert.assertEquals(FutureResultStatus.SUCCEED, futureSource.status())
-        Assert.assertEquals(FutureResultStatus.CANCELED, future.status())
+        Assertions.assertEquals(FutureResultStatus.SUCCEED, futureSource.status())
+        Assertions.assertEquals(FutureResultStatus.CANCELED, future.status())
     }
 
     @Test
@@ -138,7 +138,7 @@ class TaskManagerTests
             .and { it + 31 }
         future.onResult { result.set(it) }
         future.waitCompletion()
-        Assert.assertEquals(73, result.get())
+        Assertions.assertEquals(73, result.get())
     }
 
     @Test
@@ -156,6 +156,6 @@ class TaskManagerTests
                 }
             }
         future.waitCompletion()
-        Assert.assertEquals(-987, result.get())
+        Assertions.assertEquals(-987, result.get())
     }
 }

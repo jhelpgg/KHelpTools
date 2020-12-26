@@ -7,6 +7,7 @@ import khelp.utilities.extensions.regularExpression
 import khelp.utilities.extensions.toUnicode
 import khelp.utilities.regex.dsl.MatcherReplacement
 import khelp.utilities.regex.dsl.ReplacementDSL
+import khelp.utilities.stateCheck
 import khelp.utilities.text.CharactersInterval
 import khelp.utilities.text.EmptyCharactersInterval
 import khelp.utilities.text.SimpleCharactersInterval
@@ -122,10 +123,7 @@ class RegularExpression internal constructor(private val format: String,
 
     operator fun plus(regularExpressionGroup: RegularExpressionGroup): RegularExpression
     {
-        if (this.patternComputed.get())
-        {
-            throw  IllegalStateException("This regular expression already have computed its pattern, so can't be combined")
-        }
+        stateCheck(!this.patternComputed.get()) { "This regular expression already have computed its pattern, so can't be combined" }
 
         val parent = RegularExpression("%s%s", this, regularExpressionGroup)
         regularExpressionGroup.setParent(parent)

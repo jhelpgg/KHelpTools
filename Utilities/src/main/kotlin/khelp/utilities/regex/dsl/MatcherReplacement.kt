@@ -1,5 +1,6 @@
 package khelp.utilities.regex.dsl
 
+import khelp.utilities.argumentCheck
 import khelp.utilities.regex.RegularExpression
 import khelp.utilities.regex.RegularExpressionGroup
 
@@ -17,11 +18,7 @@ class MatcherReplacement internal constructor(private val regularExpression: Reg
     @ReplacementDSL
     operator fun RegularExpressionGroup.unaryPlus()
     {
-        if (this !in this@MatcherReplacement.regularExpression)
-        {
-            throw IllegalArgumentException("The given group is not linked to regular expression")
-        }
-
+        argumentCheck(this in this@MatcherReplacement.regularExpression) { "The given group is not linked to regular expression" }
         this@MatcherReplacement.replacement.append('$')
         this@MatcherReplacement.replacement.append(this.groupID)
     }

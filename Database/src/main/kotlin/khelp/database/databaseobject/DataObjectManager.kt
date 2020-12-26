@@ -7,6 +7,7 @@ import khelp.database.type.DataDate
 import khelp.database.type.DataTime
 import khelp.database.type.DataType
 import khelp.database.type.toDataType
+import khelp.utilities.stateCheck
 
 internal object DataObjectManager
 {
@@ -74,11 +75,7 @@ internal object DataObjectManager
                 {
                     val field = fields[newIndex]
 
-                    if (field.type.isEnum || DatabaseObject::class.java.isAssignableFrom(field.type))
-                    {
-                        throw IllegalStateException("Can't add automatically enum or DataObject : ${field.name}")
-                    }
-
+                    stateCheck(!field.type.isEnum && !DatabaseObject::class.java.isAssignableFrom(field.type)) { "Can't add automatically enum or DataObject : ${field.name}" }
                     oldTable.insertColumn(field.name, field.type.toDataType(), oldTable[oldIndex])
                     oldSize++
                     oldIndex++
@@ -99,12 +96,7 @@ internal object DataObjectManager
             for (index in newIndex until newSize)
             {
                 val field = fields[index]
-
-                if (field.type.isEnum || DatabaseObject::class.java.isAssignableFrom(field.type))
-                {
-                    throw IllegalStateException("Can't add automatically enum or DataObject : ${field.name}")
-                }
-
+                stateCheck(!field.type.isEnum && !DatabaseObject::class.java.isAssignableFrom(field.type)) {"Can't add automatically enum or DataObject : ${field.name}"}
                 oldTable.appendColumn(field.name, field.type.toDataType())
             }
         }

@@ -1,7 +1,8 @@
 package khelp.utilities.collections
 
-import org.junit.Assert
-import org.junit.Test
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
+
 
 class SortedArrayTests
 {
@@ -14,12 +15,12 @@ class SortedArrayTests
         sortedArray += "hello"
         sortedArray += "array"
         sortedArray += "iterator"
-        Assert.assertEquals(5, sortedArray.size)
-        Assert.assertEquals("array", sortedArray[0])
-        Assert.assertEquals("hello", sortedArray[1])
-        Assert.assertEquals("hello", sortedArray[2])
-        Assert.assertEquals("iterator", sortedArray[3])
-        Assert.assertEquals("world", sortedArray[4])
+        Assertions.assertEquals(5, sortedArray.size)
+        Assertions.assertEquals("array", sortedArray[0])
+        Assertions.assertEquals("hello", sortedArray[1])
+        Assertions.assertEquals("hello", sortedArray[2])
+        Assertions.assertEquals("iterator", sortedArray[3])
+        Assertions.assertEquals("world", sortedArray[4])
     }
 
     @Test
@@ -31,11 +32,11 @@ class SortedArrayTests
         sortedArray += "hello"
         sortedArray += "array"
         sortedArray += "iterator"
-        Assert.assertEquals(4, sortedArray.size)
-        Assert.assertEquals("array", sortedArray[0])
-        Assert.assertEquals("hello", sortedArray[1])
-        Assert.assertEquals("iterator", sortedArray[2])
-        Assert.assertEquals("world", sortedArray[3])
+        Assertions.assertEquals(4, sortedArray.size)
+        Assertions.assertEquals("array", sortedArray[0])
+        Assertions.assertEquals("hello", sortedArray[1])
+        Assertions.assertEquals("iterator", sortedArray[2])
+        Assertions.assertEquals("world", sortedArray[3])
     }
 
     @Test
@@ -47,10 +48,10 @@ class SortedArrayTests
         sortedArray += "HellO"
         sortedArray += "array"
         sortedArray += "iterator"
-        Assert.assertEquals(4, sortedArray.size)
-        Assert.assertEquals("array", sortedArray[0])
-        Assert.assertEquals("hello", sortedArray[1])
-        Assert.assertEquals("iterator", sortedArray[2])
-        Assert.assertEquals("world", sortedArray[3])
+        Assertions.assertEquals(4, sortedArray.size)
+        Assertions.assertEquals("array", sortedArray[0])
+        Assertions.assertEquals("hello", sortedArray[1])
+        Assertions.assertEquals("iterator", sortedArray[2])
+        Assertions.assertEquals("world", sortedArray[3])
     }
 }

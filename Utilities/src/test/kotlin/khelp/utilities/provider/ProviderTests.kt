@@ -1,7 +1,8 @@
 package khelp.utilities.provider
 
-import org.junit.Assert
-import org.junit.Test
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
+
 
 class ProviderTests
 {
@@ -13,25 +14,25 @@ class ProviderTests
     fun single()
     {
         provideSingle<TestInterface> { MagicTest }
-        Assert.assertEquals(73, test.int())
-        Assert.assertEquals(73, test.int())
-        Assert.assertEquals(73, test.int())
+        Assertions.assertEquals(73, test.int())
+        Assertions.assertEquals(73, test.int())
+        Assertions.assertEquals(73, test.int())
         provideSingle<TestInterface> { AnswerTest }
-        Assert.assertEquals(42, test.int())
-        Assert.assertEquals(42, test.int())
-        Assert.assertEquals(42, test.int())
+        Assertions.assertEquals(42, test.int())
+        Assertions.assertEquals(42, test.int())
+        Assertions.assertEquals(42, test.int())
     }
 
     @Test
     fun multiple()
     {
         provideMultiple(::cycle)
-        Assert.assertEquals(42, test.int())
-        Assert.assertEquals(73, test.int())
-        Assert.assertEquals(42, test.int())
-        Assert.assertEquals(73, test.int())
-        Assert.assertEquals(42, test.int())
-        Assert.assertEquals(73, test.int())
+        Assertions.assertEquals(42, test.int())
+        Assertions.assertEquals(73, test.int())
+        Assertions.assertEquals(42, test.int())
+        Assertions.assertEquals(73, test.int())
+        Assertions.assertEquals(42, test.int())
+        Assertions.assertEquals(73, test.int())
     }
 
     @Test
@@ -39,11 +40,11 @@ class ProviderTests
     {
         provideSingle<TestInterface>("Label1") { MagicTest }
         provideSingle<TestInterface>("Label2") { AnswerTest }
-        Assert.assertEquals(73, label1.int())
-        Assert.assertEquals(42, label2.int())
-        Assert.assertEquals(73, label1.int())
-        Assert.assertEquals(42, label2.int())
-        Assert.assertEquals(73, label1.int())
-        Assert.assertEquals(42, label2.int())
+        Assertions.assertEquals(73, label1.int())
+        Assertions.assertEquals(42, label2.int())
+        Assertions.assertEquals(73, label1.int())
+        Assertions.assertEquals(42, label2.int())
+        Assertions.assertEquals(73, label1.int())
+        Assertions.assertEquals(42, label2.int())
     }
 }

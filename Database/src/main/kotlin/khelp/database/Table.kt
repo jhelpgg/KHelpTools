@@ -10,6 +10,7 @@ import khelp.database.query.Select
 import khelp.database.query.Update
 import khelp.database.query.Where
 import khelp.database.type.DataType
+import khelp.utilities.argumentCheck
 import khelp.utilities.extensions.transform
 
 
@@ -25,11 +26,7 @@ class Table internal constructor(val name: String, val readOnly: Boolean, privat
 
     init
     {
-        if (!this.name.validName())
-        {
-            throw IllegalArgumentException("Invalid table name : ${this.name}")
-        }
-
+        argumentCheck(this.name.validName()) { "Invalid table name : ${this.name}" }
         this.columns += this.columnID
     }
 
@@ -90,21 +87,9 @@ class Table internal constructor(val name: String, val readOnly: Boolean, privat
     @CreateTableDSL
     infix fun String.AS(dataType: DataType)
     {
-        if (!this.validName())
-        {
-            throw IllegalArgumentException("Invalid column name : $this")
-        }
-
-        if (this@Table.obtainColumn(this) != null)
-        {
-            throw IllegalArgumentException("A column named $this already exists in table ${this@Table.name}")
-        }
-
-        if (dataType == DataType.ID)
-        {
-            throw IllegalArgumentException("The primary key was already automatically defined")
-        }
-
+        argumentCheck(this.validName()) { "Invalid column name : $this" }
+        argumentCheck(this@Table.obtainColumn(this) == null) { "A column named $this already exists in table ${this@Table.name}" }
+        argumentCheck(dataType != DataType.ID) { "The primary key was already automatically defined" }
         this@Table.columns += Column(this, dataType)
     }
 
@@ -127,16 +112,8 @@ class Table internal constructor(val name: String, val readOnly: Boolean, privat
     @CreateTableDSL
     infix fun String.FOREIGN(table: Table)
     {
-        if (!this.validName())
-        {
-            throw IllegalArgumentException("Invalid column name : $name")
-        }
-
-        if (this@Table.obtainColumn(this) != null)
-        {
-            throw IllegalArgumentException("A column named $this already exists in table ${this@Table.name}")
-        }
-
+        argumentCheck(this.validName()) { "Invalid column name : $name" }
+        argumentCheck(this@Table.obtainColumn(this) == null) { "A column named $this already exists in table ${this@Table.name}" }
         val columnCreated = Column(this, DataType.INTEGER)
         columnCreated.foreignTable = table.name
         columnCreated.foreignColumn = "ID"
@@ -260,25 +237,10 @@ class Table internal constructor(val name: String, val readOnly: Boolean, privat
     fun appendColumn(name: String, type: DataType)
     {
         this.checkReadOnly()
-        if (!name.validName())
-        {
-            throw IllegalArgumentException("Invalid column name : $name")
-        }
-
-        if (this.obtainColumn(name) != null)
-        {
-            throw IllegalArgumentException("A column named $name already exists in table ${this.name}")
-        }
-
-        if (type == DataType.ID)
-        {
-            throw IllegalArgumentException("The primary key was already automatically defined")
-        }
-
-        if (type == DataType.ENUM)
-        {
-            throw java.lang.IllegalArgumentException("Type enum can't add by this method, use `appendColumn(name, Enum)`")
-        }
+        argumentCheck(name.validName()) { "Invalid column name : $name" }
+        argumentCheck(this.obtainColumn(name) == null) { "A column named $name already exists in table ${this.name}" }
+        argumentCheck(type != DataType.ID) { "The primary key was already automatically defined" }
+        argumentCheck(type != DataType.ENUM) { "Type enum can't add by this method, use `appendColumn(name, Enum)`" }
 
         this.columns += Column(name, type)
         this.database.addToTable(this, name, type, type.defaultValueSerialized)
@@ -290,15 +252,8 @@ class Table internal constructor(val name: String, val readOnly: Boolean, privat
     fun <E : Enum<E>> appendColumn(name: String, defaultValue: E)
     {
         this.checkReadOnly()
-        if (!name.validName())
-        {
-            throw IllegalArgumentException("Invalid column name : $name")
-        }
-
-        if (this.obtainColumn(name) != null)
-        {
-            throw IllegalArgumentException("A column named $name already exists in table ${this.name}")
-        }
+        argumentCheck(name.validName()) { "Invalid column name : $name" }
+        argumentCheck(this.obtainColumn(name) == null) { "A column named $name already exists in table ${this.name}" }
 
         this.columns += Column(name, DataType.ENUM)
         this.database.addToTable(this, name, DataType.ENUM, "'${defaultValue.javaClass.name}:${defaultValue.name}'")
@@ -314,30 +269,11 @@ class Table internal constructor(val name: String, val readOnly: Boolean, privat
         this.checkReadOnly()
         this.checkColumn(before)
 
-        if (!name.validName())
-        {
-            throw IllegalArgumentException("Invalid column name : $name")
-        }
-
-        if (this.obtainColumn(name) != null)
-        {
-            throw IllegalArgumentException("A column named $name already exists in table ${this.name}")
-        }
-
-        if (type == DataType.ID)
-        {
-            throw IllegalArgumentException("The primary key was already automatically defined")
-        }
-
-        if (type == DataType.ENUM)
-        {
-            throw java.lang.IllegalArgumentException("Type enum can't add by this method, use `insertColumn(name, Enum, Column)` or `insertColumn(name, Enum, String)`")
-        }
-
-        if (before.type == DataType.ID)
-        {
-            throw IllegalArgumentException("Can't add column before the identifier since identifier must always be the first column")
-        }
+        argumentCheck(name.validName()) { "Invalid column name : $name" }
+        argumentCheck(this.obtainColumn(name) == null) { "A column named $name already exists in table ${this.name}" }
+        argumentCheck(type != DataType.ID) { "The primary key was already automatically defined" }
+        argumentCheck(type != DataType.ENUM) { "Type enum can't add by this method, use `insertColumn(name, Enum, Column)` or `insertColumn(name, Enum, String)`" }
+        argumentCheck(before.type != DataType.ID) { "Can't add column before the identifier since identifier must always be the first column" }
 
         val index = this.columns.indexOfFirst { col -> col.name == before.name }
         this.columns.add(index, Column(name, type))
@@ -351,21 +287,9 @@ class Table internal constructor(val name: String, val readOnly: Boolean, privat
     {
         this.checkReadOnly()
         this.checkColumn(before)
-
-        if (!name.validName())
-        {
-            throw IllegalArgumentException("Invalid column name : $name")
-        }
-
-        if (this.obtainColumn(name) != null)
-        {
-            throw IllegalArgumentException("A column named $name already exists in table ${this.name}")
-        }
-
-        if (before.type == DataType.ID)
-        {
-            throw IllegalArgumentException("Can't add column before the identifier since identifier must always be the first column")
-        }
+        argumentCheck(name.validName()) { "Invalid column name : $name" }
+        argumentCheck(this.obtainColumn(name) == null) { "A column named $name already exists in table ${this.name}" }
+        argumentCheck(before.type != DataType.ID) { "Can't add column before the identifier since identifier must always be the first column" }
 
         val index = this.columns.indexOfFirst { col -> col.name == before.name }
         this.columns.add(index, Column(name, DataType.ENUM))

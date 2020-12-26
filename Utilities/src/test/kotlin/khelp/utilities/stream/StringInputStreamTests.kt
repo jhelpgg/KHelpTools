@@ -1,8 +1,8 @@
 package khelp.utilities.stream
 
 import khelp.utilities.extensions.utf8
-import org.junit.Assert
-import org.junit.Test
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
 
 class StringInputStreamTests
 {
@@ -26,6 +26,6 @@ class StringInputStreamTests
 
         stringInputStream.close()
         val data = ByteArray(bytes.size) { index -> bytes[index] }
-        Assert.assertEquals("Hello world!\nThis is a test.", data.utf8)
+        Assertions.assertEquals("Hello world!\nThis is a test.", data.utf8)
     }
 }

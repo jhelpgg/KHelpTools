@@ -11,6 +11,7 @@ import khelp.database.type.DataTime
 import khelp.database.type.DataType
 import khelp.utilities.extensions.base64
 import khelp.utilities.extensions.serializeToByteArray
+import khelp.utilities.stateCheck
 
 /**
  * Update query definition
@@ -361,11 +362,7 @@ class Update internal constructor(val table: Table)
 
     internal fun updateSQL(): String
     {
-        if (this.columnValues.isEmpty())
-        {
-            throw IllegalStateException("Must update at least one thing")
-        }
-
+        stateCheck(this.columnValues.isNotEmpty()) {"Must update at least one thing"}
         val query = StringBuilder()
         query.append("UPDATE ")
         query.append(this.table.name)

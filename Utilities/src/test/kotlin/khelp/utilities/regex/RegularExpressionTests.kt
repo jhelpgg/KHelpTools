@@ -2,8 +2,8 @@ package khelp.utilities.regex
 
 import khelp.utilities.extensions.plus
 import khelp.utilities.extensions.regularExpression
-import org.junit.Assert
-import org.junit.Test
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
 
 class RegularExpressionTests
 {
@@ -11,33 +11,33 @@ class RegularExpressionTests
     fun justText()
     {
         val regularExpression = "Hello".regularExpression
-        Assert.assertTrue(regularExpression.matches("Hello"))
-        Assert.assertFalse(regularExpression.matches("HellO"))
-        Assert.assertFalse(regularExpression.matches("World"))
+        Assertions.assertTrue(regularExpression.matches("Hello"))
+        Assertions.assertFalse(regularExpression.matches("HellO"))
+        Assertions.assertFalse(regularExpression.matches("World"))
 
         val replacement = regularExpression.replacement {
             +"Hi"
         }
-        Assert.assertEquals("Hi every one. Hello world!", replacement.replaceFirst("Hello every one. Hello world!"))
-        Assert.assertEquals("Hi every one. Hi world!", replacement.replaceAll("Hello every one. Hello world!"))
+        Assertions.assertEquals("Hi every one. Hello world!", replacement.replaceFirst("Hello every one. Hello world!"))
+        Assertions.assertEquals("Hi every one. Hi world!", replacement.replaceAll("Hello every one. Hello world!"))
 
         val matcher = regularExpression.matcher("Hello every one. Hello world!")
         val stringBuilder = StringBuilder()
-        Assert.assertTrue(matcher.find())
-        Assert.assertEquals(0, matcher.start())
-        Assert.assertEquals(5, matcher.end())
+        Assertions.assertTrue(matcher.find())
+        Assertions.assertEquals(0, matcher.start())
+        Assertions.assertEquals(5, matcher.end())
         matcher.appendReplacement(stringBuilder) {
             +"Hi"
         }
-        Assert.assertTrue(matcher.find())
-        Assert.assertEquals(17, matcher.start())
-        Assert.assertEquals(22, matcher.end())
+        Assertions.assertTrue(matcher.find())
+        Assertions.assertEquals(17, matcher.start())
+        Assertions.assertEquals(22, matcher.end())
         matcher.appendReplacement(stringBuilder) {
             +"Hallo"
         }
-        Assert.assertFalse(matcher.find())
+        Assertions.assertFalse(matcher.find())
         matcher.appendTail(stringBuilder)
-        Assert.assertEquals("Hi every one. Hallo world!", stringBuilder.toString())
+        Assertions.assertEquals("Hi every one. Hallo world!", stringBuilder.toString())
     }
 
     @Test
@@ -51,8 +51,8 @@ class RegularExpressionTests
             +" WAS "
             +first
         }
-        Assert.assertEquals("red WAS color", replacement.replaceAll("color IS red"))
-        Assert.assertEquals("[red WAS color] and [shoe WAS foot]",
+        Assertions.assertEquals("red WAS color", replacement.replaceAll("color IS red"))
+        Assertions.assertEquals("[red WAS color] and [shoe WAS foot]",
                             replacement.replaceAll("[color IS red] and [foot IS shoe]"))
     }
 
@@ -61,11 +61,11 @@ class RegularExpressionTests
     {
         val digitGroup = DIGIT.group()
         val passcodeTooSimple = digitGroup + digitGroup.zeroOrMore()
-        Assert.assertTrue(passcodeTooSimple.matches("0"))
-        Assert.assertTrue(passcodeTooSimple.matches("1111"))
-        Assert.assertTrue(passcodeTooSimple.matches("55555"))
-        Assert.assertTrue(passcodeTooSimple.matches("999999999"))
-        Assert.assertFalse(passcodeTooSimple.matches("1191"))
+        Assertions.assertTrue(passcodeTooSimple.matches("0"))
+        Assertions.assertTrue(passcodeTooSimple.matches("1111"))
+        Assertions.assertTrue(passcodeTooSimple.matches("55555"))
+        Assertions.assertTrue(passcodeTooSimple.matches("999999999"))
+        Assertions.assertFalse(passcodeTooSimple.matches("1191"))
     }
 
     @Test
@@ -100,6 +100,6 @@ class RegularExpressionTests
                 }
             }
         )
-        Assert.assertEquals("-H-First<=>One-I-Second<=>Two-I-Third<=>Three-T-", result)
+        Assertions.assertEquals("-H-First<=>One-I-Second<=>Two-I-Third<=>Three-T-", result)
     }
 }

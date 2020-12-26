@@ -1,7 +1,7 @@
 package khelp.utilities.text
 
-import org.junit.Assert
-import org.junit.Test
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
 
 class StringCutterTests
 {
@@ -9,38 +9,38 @@ class StringCutterTests
     fun noEmpty()
     {
         val stringCutter = StringCutter("test|testing", '|')
-        Assert.assertEquals("test", stringCutter.next())
-        Assert.assertEquals("testing", stringCutter.next())
-        Assert.assertNull(stringCutter.next())
+        Assertions.assertEquals("test", stringCutter.next())
+        Assertions.assertEquals("testing", stringCutter.next())
+        Assertions.assertNull(stringCutter.next())
     }
 
     @Test
     fun firstEmpty()
     {
         val stringCutter = StringCutter("|test|testing", '|')
-        Assert.assertEquals("", stringCutter.next())
-        Assert.assertEquals("test", stringCutter.next())
-        Assert.assertEquals("testing", stringCutter.next())
-        Assert.assertNull(stringCutter.next())
+        Assertions.assertEquals("", stringCutter.next())
+        Assertions.assertEquals("test", stringCutter.next())
+        Assertions.assertEquals("testing", stringCutter.next())
+        Assertions.assertNull(stringCutter.next())
     }
 
     @Test
     fun lastEmpty()
     {
         val stringCutter = StringCutter("test|testing|", '|')
-        Assert.assertEquals("test", stringCutter.next())
-        Assert.assertEquals("testing", stringCutter.next())
-        Assert.assertEquals("", stringCutter.next())
-        Assert.assertNull(stringCutter.next())
+        Assertions.assertEquals("test", stringCutter.next())
+        Assertions.assertEquals("testing", stringCutter.next())
+        Assertions.assertEquals("", stringCutter.next())
+        Assertions.assertNull(stringCutter.next())
     }
 
     @Test
     fun middleEmpty()
     {
         val stringCutter = StringCutter("test||testing", '|')
-        Assert.assertEquals("test", stringCutter.next())
-        Assert.assertEquals("", stringCutter.next())
-        Assert.assertEquals("testing", stringCutter.next())
-        Assert.assertNull(stringCutter.next())
+        Assertions.assertEquals("test", stringCutter.next())
+        Assertions.assertEquals("", stringCutter.next())
+        Assertions.assertEquals("testing", stringCutter.next())
+        Assertions.assertNull(stringCutter.next())
     }
 }

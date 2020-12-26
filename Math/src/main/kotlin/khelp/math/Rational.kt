@@ -2,6 +2,7 @@ package khelp.math
 
 import java.util.Objects
 import khelp.math.extensions.toRational
+import khelp.utilities.argumentCheck
 import khelp.utilities.extensions.GCD
 import khelp.utilities.extensions.LCM
 import khelp.utilities.math.equals
@@ -128,6 +129,7 @@ class Rational private constructor(private val numerator: Long, private val deno
          * @throws NullPointerException     If string is {@code null}
          * @throws IllegalArgumentException If string can't be parsed as a rational
          */
+        @Throws(IllegalArgumentException::class)
         fun parse(string: String): Rational
         {
             if (INVALID_RATIONAL == string)
@@ -146,7 +148,7 @@ class Rational private constructor(private val numerator: Long, private val deno
                 }
                 catch (exception: Exception)
                 {
-                    throw IllegalArgumentException(string + " can't be parsed as a rational", exception)
+                    throw IllegalArgumentException("$string can't be parsed as a rational", exception)
                 }
             }
 
@@ -161,7 +163,7 @@ class Rational private constructor(private val numerator: Long, private val deno
             }
             catch (exception: Exception)
             {
-                throw IllegalArgumentException(string + " can't be parsed as a rational", exception)
+                throw IllegalArgumentException("$string can't be parsed as a rational", exception)
             }
         }
 
@@ -174,14 +176,10 @@ class Rational private constructor(private val numerator: Long, private val deno
          * @param negativeSymbol Character used to represents "negative" values
          * @return Computed proportion
          */
+        @Throws(IllegalArgumentException::class)
         fun proportion(numberPositive: Long, positiveSymbol: Char, numberNegative: Long, negativeSymbol: Char): String
         {
-            if (numberPositive < 0 || numberNegative < 0)
-            {
-                throw IllegalArgumentException(
-                    "Number of positive and negative can't be negative. Here we have numberPositive=" +
-                    numberPositive + " and numberNegative=" + numberNegative)
-            }
+            argumentCheck(numberPositive >= 0 && numberNegative >= 0) { "Number of positive and negative can't be negative. Here we have numberPositive=$numberPositive and numberNegative=$numberNegative" }
 
             val rational = Rational.createRational(numberPositive, numberPositive + numberNegative)
 

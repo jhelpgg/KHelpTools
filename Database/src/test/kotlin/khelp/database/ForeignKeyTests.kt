@@ -3,8 +3,7 @@ package khelp.database
 import khelp.database.condition.EQUALS_ID
 import khelp.database.type.DataType
 import khelp.utilities.log.mark
-import org.junit.Test
-
+import org.junit.jupiter.api.Test
 
 class ForeignKeyTests
 {

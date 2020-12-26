@@ -3,8 +3,8 @@ package khelp.security.rsa
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import khelp.security.des.TripleDES
-import org.junit.Assert
-import org.junit.Test
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
 
 class EncryptDecryptDirectTests
 {
@@ -19,11 +19,11 @@ class EncryptDecryptDirectTests
         byteArrayOutputStream = ByteArrayOutputStream()
         keyPair.decrypt(byteArrayInputStream, byteArrayOutputStream)
         val readData = byteArrayOutputStream.toByteArray()
-        Assert.assertEquals("Data size", 1024, readData.size)
+        Assertions.assertEquals(1024, readData.size, "Data size")
 
         for (index in 0 until 1024)
         {
-            Assert.assertEquals("index=$index", data[index], readData[index])
+            Assertions.assertEquals(data[index], readData[index], "index=$index")
         }
     }
 
@@ -44,11 +44,11 @@ class EncryptDecryptDirectTests
         byteArrayOutputStream = ByteArrayOutputStream()
         keyPair2.decrypt(byteArrayInputStream, byteArrayOutputStream)
         val readData = byteArrayOutputStream.toByteArray()
-        Assert.assertEquals("Data size", 1024, readData.size)
+        Assertions.assertEquals(1024, readData.size, "Data size")
 
         for (index in 0 until 1024)
         {
-            Assert.assertEquals("index=$index", data[index], readData[index])
+            Assertions.assertEquals(data[index], readData[index], "index=$index")
         }
     }
 }

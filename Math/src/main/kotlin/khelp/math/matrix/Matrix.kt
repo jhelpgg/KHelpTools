@@ -5,7 +5,9 @@ import khelp.thread.TaskContext
 import khelp.thread.extensions.futureResult
 import khelp.thread.future.FutureResult
 import khelp.thread.parallel
+import khelp.utilities.argumentCheck
 import khelp.utilities.extensions.hash
+import khelp.utilities.stateCheck
 
 
 /**
@@ -54,10 +56,7 @@ class Matrix(val width: Int, val height: Int)
 
     init
     {
-        if (this.width <= 0 || this.height <= 0)
-        {
-            throw IllegalArgumentException("Width and height must be >0, not ${this.width}x${this.height}")
-        }
+        argumentCheck(this.width > 0 && this.height > 0) { "Width and height must be >0, not ${this.width}x${this.height}" }
 
         this.size = this.width * this.height
         this.matrix = DoubleArray(this.size)
@@ -322,10 +321,7 @@ class Matrix(val width: Int, val height: Int)
      */
     fun adjacent(): FutureResult<Matrix>
     {
-        if (this.width != this.height)
-        {
-            throw IllegalStateException("Adjacent only for square matrix")
-        }
+        stateCheck(this.width == this.height) { "Adjacent only for square matrix" }
 
         if (this.width == 1)
         {
@@ -398,10 +394,7 @@ class Matrix(val width: Int, val height: Int)
      */
     fun determinant(): Double
     {
-        if (this.width != this.height)
-        {
-            throw IllegalStateException("Matrix must be square")
-        }
+        stateCheck(this.width == this.height) { "Matrix must be square" }
 
         if (this.determinantKnown)
         {
@@ -435,11 +428,7 @@ class Matrix(val width: Int, val height: Int)
      */
     fun interExchangeRow(y1: Int, y2: Int)
     {
-        if (y1 < 0 || y1 >= this.height || y2 < 0 || y2 >= this.height)
-        {
-            throw IllegalArgumentException(
-                "It is a " + this.width + "x" + this.height + " matrix, but y1=" + y1 + " and y2=" + y2)
-        }
+        argumentCheck((y1 in 0 until this.height) && (y2 in 0 until this.height)) { "It is a ${this.width}x${this.height} matrix, but y1=$y1 and y2=$y2" }
 
         if (y1 == y2)
         {
@@ -458,17 +447,10 @@ class Matrix(val width: Int, val height: Int)
      */
     fun invert(): FutureResult<Matrix>
     {
-        if (this.width != this.height)
-        {
-            throw IllegalStateException("Only square matrix can be invert")
-        }
+        stateCheck(this.width == this.height) { "Only square matrix can be invert" }
 
         val determinant = this.determinant()
-
-        if (Matrix.isNul(determinant))
-        {
-            throw IllegalArgumentException("Matrix determinant is zero, so have no invert")
-        }
+        argumentCheck(!Matrix.isNul(determinant)) { "Matrix determinant is zero, so have no invert" }
 
         return this.adjacent()
             .and { invert ->
@@ -582,11 +564,7 @@ class Matrix(val width: Int, val height: Int)
      */
     fun multiplication(matrix: Matrix): FutureResult<Matrix>
     {
-        if (this.width != matrix.height || this.height != matrix.width)
-        {
-            throw IllegalArgumentException(
-                "The multiplied matrix must have size : " + this.height + "x" + this.width)
-        }
+        argumentCheck(this.width == matrix.height && this.height == matrix.width) { "The multiplied matrix must have size : ${this.height}x${this.width}" }
 
         val result = Matrix(matrix.width, this.height)
         val futures = ArrayList<FutureResult<Unit>>()
@@ -626,10 +604,7 @@ class Matrix(val width: Int, val height: Int)
      */
     fun pivot(xy: Int)
     {
-        if (xy < 0 || xy >= this.width || xy >= this.height)
-        {
-            throw IllegalArgumentException("It is a " + this.width + "x" + this.height + " matrix, but xy=" + xy)
-        }
+        argumentCheck(xy >= 0 && xy < this.width && xy < this.height) { "It is a ${this.width}x${this.height} matrix, but xy=$xy" }
 
         if (Matrix.isNul(this.matrix[xy + xy * this.width]))
         {
@@ -662,10 +637,7 @@ class Matrix(val width: Int, val height: Int)
      */
     operator fun minusAssign(matrix: Matrix)
     {
-        if (this.width != matrix.width || this.height != matrix.height)
-        {
-            throw IllegalArgumentException("Matrix must have same size !")
-        }
+        argumentCheck(this.width == matrix.width && this.height == matrix.height) { "Matrix must have same size !" }
 
         for (i in 0 until this.size)
         {
@@ -870,13 +842,7 @@ class Matrix(val width: Int, val height: Int)
      */
     private fun check(x: Int, y: Int)
     {
-        if (x < 0 || x >= this.width || y < 0 || y >= this.height)
-        {
-            throw IllegalArgumentException(
-                "x must be in [0, " + this.width +
-                "[ and y in [0, " + this.height +
-                "[ not (" + x + ", " + y + ")")
-        }
+        argumentCheck((x in 0 until this.width) && (y in 0 until this.height)) { "x must be in [0, ${this.width}[ and y in [0, ${this.height}[ not ($x, $y)" }
     }
 
     /**

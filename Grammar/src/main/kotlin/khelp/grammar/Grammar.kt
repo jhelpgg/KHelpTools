@@ -2,6 +2,7 @@ package khelp.grammar
 
 import java.util.Stack
 import java.util.TreeSet
+import khelp.utilities.argumentCheck
 import khelp.utilities.extensions.string
 import khelp.utilities.log.information
 import khelp.utilities.log.mark
@@ -16,17 +17,8 @@ class Grammar
     {
         this.rules = Rules()
         rulesCreator(this.rules)
-
-        if (this.rules.rules.isEmpty())
-        {
-            throw IllegalArgumentException("Must define at least one rule !")
-        }
-
-        if (this.rules.mainRule !in rules.rules)
-        {
-            throw IllegalArgumentException("Main rule '${rules.mainRule}' is not defined in given rules")
-        }
-
+        argumentCheck(this.rules.rules.isNotEmpty()) { "Must define at least one rule !" }
+        argumentCheck(this.rules.mainRule in rules.rules) { "Main rule '${rules.mainRule}' is not defined in given rules" }
         this.checkIfAllReferenceHaveADefinition()
     }
 
@@ -125,12 +117,11 @@ class Grammar
             }
         }
 
-        if (missingDefinitions.isNotEmpty())
-        {
-            throw IllegalArgumentException("Missing definition for : ${
+        argumentCheck(missingDefinitions.isEmpty()) {
+            "Missing definition for : ${
                 missingDefinitions.toTypedArray()
                     .string()
-            }")
+            }"
         }
     }
 }

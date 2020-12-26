@@ -1,15 +1,14 @@
 package khelp.utilities.reflect
 
-import java.util.Calendar
-import org.junit.Assert
-import org.junit.Test
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
 
 class ReflectorTests
 {
     @Test
     fun defaultValueTest()
     {
-        Assert.assertEquals(0, defaultValue(Int::class.java))
+        Assertions.assertEquals(0, defaultValue(Int::class.java))
         val person = defaultValue(Person::class.java)
         println(person)
     }

@@ -1,5 +1,7 @@
 package khelp.grammar
 
+import khelp.utilities.argumentCheck
+
 @GrammarRulesDSL
 class Rules
 {
@@ -9,17 +11,9 @@ class Rules
     @GrammarRulesDSL
     infix fun String.IS(definitionCreator: RuleDefinition.() -> Unit)
     {
-        if (this.isEmpty())
-        {
-            throw IllegalArgumentException("Rule definition must not be empty")
-        }
-
+        argumentCheck(this.isNotEmpty()) {"Rule definition must not be empty"}
         checkRuleName(this)
-
-        if (this@Rules.rules.containsKey(this))
-        {
-            throw IllegalArgumentException("A rule '$this' al ready defined")
-        }
+        argumentCheck(!this@Rules.rules.containsKey(this)) {"A rule '$this' already defined"}
 
         if (this@Rules.mainRule.isEmpty())
         {

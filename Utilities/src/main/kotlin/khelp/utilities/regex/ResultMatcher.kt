@@ -1,6 +1,7 @@
 package khelp.utilities.regex
 
 import java.util.regex.Matcher
+import khelp.utilities.argumentCheck
 import khelp.utilities.regex.dsl.MatchDSL
 import khelp.utilities.regex.dsl.MatcherHeader
 import khelp.utilities.regex.dsl.MatcherIntermediate
@@ -15,11 +16,7 @@ class ResultMatcher internal constructor(private val regularExpression: RegularE
 {
     fun group(regularExpressionGroup: RegularExpressionGroup): String
     {
-        if (regularExpressionGroup !in this.regularExpression)
-        {
-            throw IllegalArgumentException("The given group is not linked to regular expression")
-        }
-
+        argumentCheck(regularExpressionGroup in this.regularExpression) { "The given group is not linked to regular expression" }
         return this.matcher.group(regularExpressionGroup.groupID)
     }
 
@@ -34,11 +31,7 @@ class ResultMatcher internal constructor(private val regularExpression: RegularE
 
     fun start(regularExpressionGroup: RegularExpressionGroup): Int
     {
-        if (regularExpressionGroup !in this.regularExpression)
-        {
-            throw IllegalArgumentException("The given group is not linked to regular expression")
-        }
-
+        argumentCheck(regularExpressionGroup in this.regularExpression) { "The given group is not linked to regular expression" }
         return this.matcher.start(regularExpressionGroup.groupID)
     }
 
@@ -47,11 +40,7 @@ class ResultMatcher internal constructor(private val regularExpression: RegularE
 
     fun end(regularExpressionGroup: RegularExpressionGroup): Int
     {
-        if (regularExpressionGroup !in this.regularExpression)
-        {
-            throw IllegalArgumentException("The given group is not linked to regular expression")
-        }
-
+        argumentCheck(regularExpressionGroup in this.regularExpression) { "The given group is not linked to regular expression" }
         return this.matcher.end(regularExpressionGroup.groupID)
     }
 
