@@ -17,7 +17,7 @@ class ResultMatcher internal constructor(private val regularExpression: RegularE
     fun group(regularExpressionGroup: RegularExpressionGroup): String
     {
         argumentCheck(regularExpressionGroup in this.regularExpression) { "The given group is not linked to regular expression" }
-        return this.matcher.group(regularExpressionGroup.groupID)
+        return this.matcher.group(regularExpressionGroup.groupID) ?: ""
     }
 
     fun matches(): Boolean =

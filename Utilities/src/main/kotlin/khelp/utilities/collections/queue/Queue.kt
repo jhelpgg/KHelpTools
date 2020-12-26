@@ -80,20 +80,6 @@ class Queue<T> : Collection<T>
         this.head?.element ?: throw IllegalStateException("The queue is empty")
 
     /**
-     * Do action on each queue elements
-     */
-    fun forEach(action: (T) -> Unit)
-    {
-        var queueElement = this.head
-
-        while (queueElement != null)
-        {
-            action(queueElement.element)
-            queueElement = queueElement.next
-        }
-    }
-
-    /**
      * Remove all elements in queue that match given condition
      */
     fun removeIf(condition: (T) -> Boolean)
