@@ -23,6 +23,9 @@ class ResultMatcher internal constructor(private val regularExpression: RegularE
         return this.matcher.group(regularExpressionGroup.groupID)
     }
 
+    fun matches(): Boolean =
+        this.matcher.matches()
+
     fun find(): Boolean =
         this.matcher.find()
 
