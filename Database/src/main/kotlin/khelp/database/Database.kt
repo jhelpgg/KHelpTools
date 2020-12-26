@@ -279,7 +279,11 @@ class Database private constructor(login: String, password: String, val path: St
 
         this.tables.remove(table)
         val tableName = table.name
-        this.updateQuery("DROP TABLE $tableName")
+
+        if (this.updateQuery("DROP TABLE $tableName") < 0)
+        {
+            return false
+        }
 
         this.delete(this.metadataTableOfTablesColumn) {
             where {
@@ -653,6 +657,8 @@ class Database private constructor(login: String, password: String, val path: St
                 {
                     exception(exception, "Failed while do query : '", query, "'")
                 }
+
+                return -1
             }
         }
 
