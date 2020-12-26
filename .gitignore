@@ -4,3 +4,4 @@ build/
 local*
 data/
 /Database/unitTest/
+/Grammar/out/
