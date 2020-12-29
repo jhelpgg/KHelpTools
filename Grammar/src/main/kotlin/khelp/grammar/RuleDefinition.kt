@@ -3,6 +3,7 @@ package khelp.grammar
 import khelp.utilities.argumentCheck
 import khelp.utilities.regex.NAME
 import khelp.utilities.regex.RegularExpression
+import khelp.utilities.regex.WHITE_SPACE
 
 internal fun checkRuleName(ruleName: String): String
 {
@@ -10,8 +11,10 @@ internal fun checkRuleName(ruleName: String): String
     return ruleName
 }
 
+val WHITE_SPACES = RuleDefinitionRegularExpression(WHITE_SPACE.zeroOrMore())
+
 @GrammarRuleDefinitionDSL
-class RuleDefinition
+class RuleDefinition(val automaticWhiteSpace: Boolean)
 {
     var rule: RuleDefinitionElement? = null
 
@@ -157,6 +160,31 @@ class RuleDefinition
                 RuleDefinitionReferenceBetween(checkRuleName(this), minimumTimes, maximumTimes)
         }
 
+    //
+
+    fun RuleDefinitionElement.zeroOrMore(): RuleDefinitionElement =
+        RuleDefinitionElementZeroOrMore(this)
+
+    fun RuleDefinitionElement.oneOrMore(): RuleDefinitionElement =
+        RuleDefinitionElementOneOrMore(this)
+
+    fun RuleDefinitionElement.zeroOrOne(): RuleDefinitionElement =
+        RuleDefinitionElementZeroOrOne(this)
+
+    fun RuleDefinitionElement.exactTimes(numberTimes: Int): RuleDefinitionElement =
+        RuleDefinitionElementExactTimes(this, numberTimes)
+
+    fun RuleDefinitionElement.atLeast(minimumTimes: Int): RuleDefinitionElement =
+        RuleDefinitionElementAtLeast(this, minimumTimes)
+
+    fun RuleDefinitionElement.atMost(maximumTimes: Int): RuleDefinitionElement =
+        RuleDefinitionElementAtMost(this, maximumTimes)
+
+    fun RuleDefinitionElement.between(minimumTimes: Int, maximumTimes: Int): RuleDefinitionElement =
+        RuleDefinitionElementBetween(this, minimumTimes, maximumTimes)
+
+    //
+
     @GrammarRuleDefinitionDSL
     operator fun RuleDefinitionElement.times(ruleDefinitionElement: RuleDefinitionElement): RuleDefinitionElement =
         when
@@ -165,6 +193,12 @@ class RuleDefinition
             {
                 val ruleDefinitionElementConcatenate = RuleDefinitionElementConcatenate()
                 ruleDefinitionElementConcatenate.ruleElements.addAll(this.ruleElements)
+
+                if (automaticWhiteSpace)
+                {
+                    ruleDefinitionElementConcatenate.ruleElements.add(WHITE_SPACES)
+                }
+
                 ruleDefinitionElementConcatenate.ruleElements.addAll(ruleDefinitionElement.ruleElements)
                 ruleDefinitionElementConcatenate
             }
@@ -172,6 +206,12 @@ class RuleDefinition
             {
                 val ruleDefinitionElementConcatenate = RuleDefinitionElementConcatenate()
                 ruleDefinitionElementConcatenate.ruleElements.addAll(this.ruleElements)
+
+                if (automaticWhiteSpace)
+                {
+                    ruleDefinitionElementConcatenate.ruleElements.add(WHITE_SPACES)
+                }
+
                 ruleDefinitionElementConcatenate.ruleElements.add(ruleDefinitionElement)
                 ruleDefinitionElementConcatenate
             }
@@ -179,6 +219,12 @@ class RuleDefinition
             {
                 val ruleDefinitionElementConcatenate = RuleDefinitionElementConcatenate()
                 ruleDefinitionElementConcatenate.ruleElements.add(this)
+
+                if (automaticWhiteSpace)
+                {
+                    ruleDefinitionElementConcatenate.ruleElements.add(WHITE_SPACES)
+                }
+
                 ruleDefinitionElementConcatenate.ruleElements.addAll(ruleDefinitionElement.ruleElements)
                 ruleDefinitionElementConcatenate
             }
@@ -186,6 +232,12 @@ class RuleDefinition
             {
                 val ruleDefinitionElementConcatenate = RuleDefinitionElementConcatenate()
                 ruleDefinitionElementConcatenate.ruleElements.add(this)
+
+                if (automaticWhiteSpace)
+                {
+                    ruleDefinitionElementConcatenate.ruleElements.add(WHITE_SPACES)
+                }
+
                 ruleDefinitionElementConcatenate.ruleElements.add(ruleDefinitionElement)
                 ruleDefinitionElementConcatenate
             }

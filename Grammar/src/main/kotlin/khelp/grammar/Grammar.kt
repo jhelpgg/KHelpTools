@@ -8,14 +8,14 @@ import khelp.utilities.log.information
 import khelp.utilities.log.mark
 import khelp.utilities.stateCheck
 
-class Grammar
+class Grammar(val automaticWhiteSpaces: Boolean = false, val stopAtFirstAlternativeMatch: Boolean = true)
 {
-    private var rules = Rules()
+    private var rules = Rules(this.automaticWhiteSpaces)
 
     @GrammarRulesDSL
     fun rules(rulesCreator: Rules.() -> Unit)
     {
-        this.rules = Rules()
+        this.rules = Rules(this.automaticWhiteSpaces)
         rulesCreator(this.rules)
         argumentCheck(this.rules.rules.isNotEmpty()) { "Must define at least one rule !" }
         argumentCheck(this.rules.mainRule in rules.rules) { "Main rule '${rules.mainRule}' is not defined in given rules" }
@@ -26,7 +26,10 @@ class Grammar
     {
         stateCheck(this.rules.mainRule.isNotEmpty()) { "Rules must be defined before call this method" }
 
-        val ruleMatcher = RuleMatcher(StringPositionReader(text), this.rules.mainRule, this.rules)
+        val ruleMatcher = RuleMatcher(StringPositionReader(text),
+                                      this.rules.mainRule,
+                                      this.rules,
+                                      stopAtFirstAlternativeMatch = this.stopAtFirstAlternativeMatch)
         var grammarNode = ruleMatcher.find()
 
         while (grammarNode != null && !ruleMatcher.finished)
@@ -114,6 +117,7 @@ class Grammar
                     {
                         stack.push(ruleElement)
                     }
+                else                                 -> Unit
             }
         }
 

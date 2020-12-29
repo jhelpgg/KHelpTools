@@ -1,4 +1,4 @@
-package khelp.grammar.properties
+package khelp.grammar.prebuilt
 
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -8,8 +8,7 @@ class PropertiesTest
     @Test
     fun propertiesTest()
     {
-        val properties = Properties()
-        val grammarNode = properties.parse(PropertiesTest::class.java.getResourceAsStream("PropertiesTest.properties"))
+        val grammarNode = Properties.parse(PropertiesTest::class.java.getResourceAsStream("PropertiesTest.properties"))
         Assertions.assertNotNull(grammarNode)
         Assertions.assertEquals(PROPERTIES_RULE_PROPERTIES, grammarNode!!.rule)
         Assertions.assertEquals("""

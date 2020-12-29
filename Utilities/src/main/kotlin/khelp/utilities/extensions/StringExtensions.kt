@@ -33,6 +33,17 @@ val String.ignoreCaseRegularExpression: RegularExpression
         return regularExpression
     }
 
+val String.anyWordExceptThis: RegularExpression
+    get()
+    {
+        if (this.isEmpty())
+        {
+            return this.regularExpression
+        }
+
+        return RegularExpression("\\w*(?<!$this)")
+    }
+
 infix fun String.OR(regularExpression: RegularExpression) =
     this.regularExpression OR regularExpression
 

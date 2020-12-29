@@ -1,4 +1,4 @@
-package khelp.grammar.properties
+package khelp.grammar.prebuilt
 
 import java.io.BufferedReader
 import java.io.InputStream
@@ -20,7 +20,7 @@ const val PROPERTIES_RULE_COMMENT = "COMMENT"
 const val PROPERTIES_RULE_NAME = "NAME"
 const val PROPERTIES_RULE_VALUE = "VALUE"
 
-class Properties
+object Properties
 {
     private val grammar = Grammar()
 
@@ -31,7 +31,7 @@ class Properties
             PROPERTIES_RULE_LINE IS { rule = PROPERTIES_RULE_WHITE_SPACE * PROPERTIES_RULE_PROPERTY_LINE * PROPERTIES_RULE_END_LINE }
             PROPERTIES_RULE_WHITE_SPACE IS { rule = +charArrayOf(' ', '\t').zeroOrMore() }
             PROPERTIES_RULE_END_LINE IS { rule = +(charArrayOf(' ', '\t').zeroOrMore() + '\n') }
-            PROPERTIES_RULE_PROPERTY_LINE IS { rule = PROPERTIES_RULE_WHITE_SPACE I PROPERTIES_RULE_DEFINITION I PROPERTIES_RULE_COMMENT }
+            PROPERTIES_RULE_PROPERTY_LINE IS { rule =  PROPERTIES_RULE_DEFINITION I PROPERTIES_RULE_COMMENT I PROPERTIES_RULE_WHITE_SPACE }
             PROPERTIES_RULE_DEFINITION IS {
                 rule = PROPERTIES_RULE_NAME *
                        (charArrayOf(' ', '\t').zeroOrMore() + '=' + charArrayOf(' ', '\t').zeroOrMore()) *
@@ -56,6 +56,7 @@ class Properties
             line = bufferedReader.readLine()
         }
 
+        bufferedReader.close()
         return this.grammar.parse(stringBuilder.toString())
     }
 }
