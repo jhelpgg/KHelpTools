@@ -1,5 +1,7 @@
 package khelp.utilities.regex
 
+import khelp.utilities.extensions.anyNonWhiteSpaceExceptThis
+import khelp.utilities.extensions.anyWordExceptThis
 import khelp.utilities.extensions.plus
 import khelp.utilities.extensions.regularExpression
 import org.junit.jupiter.api.Assertions
@@ -53,7 +55,7 @@ class RegularExpressionTests
         }
         Assertions.assertEquals("red WAS color", replacement.replaceAll("color IS red"))
         Assertions.assertEquals("[red WAS color] and [shoe WAS foot]",
-                            replacement.replaceAll("[color IS red] and [foot IS shoe]"))
+                                replacement.replaceAll("[color IS red] and [foot IS shoe]"))
     }
 
     @Test
@@ -101,5 +103,75 @@ class RegularExpressionTests
             }
         )
         Assertions.assertEquals("-H-First<=>One-I-Second<=>Two-I-Third<=>Three-T-", result)
+    }
+
+    @Test
+    fun exceptWordTest()
+    {
+        val text = "I remove the store. So I am a store remover. Only 'remove' should be removed"
+        val matcher = "remove".anyWordExceptThis.matcher(text)
+        Assertions.assertTrue(matcher.find())
+        Assertions.assertEquals("I", text.substring(matcher.start(), matcher.end()))
+        Assertions.assertTrue(matcher.find())
+        Assertions.assertEquals("the", text.substring(matcher.start(), matcher.end()))
+        Assertions.assertTrue(matcher.find())
+        Assertions.assertEquals("store", text.substring(matcher.start(), matcher.end()))
+        Assertions.assertTrue(matcher.find())
+        Assertions.assertEquals("So", text.substring(matcher.start(), matcher.end()))
+        Assertions.assertTrue(matcher.find())
+        Assertions.assertEquals("I", text.substring(matcher.start(), matcher.end()))
+        Assertions.assertTrue(matcher.find())
+        Assertions.assertEquals("am", text.substring(matcher.start(), matcher.end()))
+        Assertions.assertTrue(matcher.find())
+        Assertions.assertEquals("a", text.substring(matcher.start(), matcher.end()))
+        Assertions.assertTrue(matcher.find())
+        Assertions.assertEquals("store", text.substring(matcher.start(), matcher.end()))
+        Assertions.assertTrue(matcher.find())
+        Assertions.assertEquals("remover", text.substring(matcher.start(), matcher.end()))
+        Assertions.assertTrue(matcher.find())
+        Assertions.assertEquals("Only", text.substring(matcher.start(), matcher.end()))
+        Assertions.assertTrue(matcher.find())
+        Assertions.assertEquals("should", text.substring(matcher.start(), matcher.end()))
+        Assertions.assertTrue(matcher.find())
+        Assertions.assertEquals("be", text.substring(matcher.start(), matcher.end()))
+        Assertions.assertTrue(matcher.find())
+        Assertions.assertEquals("removed", text.substring(matcher.start(), matcher.end()))
+        Assertions.assertFalse(matcher.find())
+    }
+
+    @Test
+    fun exceptNonWhiteSpaceTest()
+    {
+        val text = "I remove the store. So I am a store remover. Only 'remove' should be removed"
+        val matcher = "remove".anyNonWhiteSpaceExceptThis.matcher(text)
+        Assertions.assertTrue(matcher.find())
+        Assertions.assertEquals("I", text.substring(matcher.start(), matcher.end()))
+        Assertions.assertTrue(matcher.find())
+        Assertions.assertEquals("the", text.substring(matcher.start(), matcher.end()))
+        Assertions.assertTrue(matcher.find())
+        Assertions.assertEquals("store.", text.substring(matcher.start(), matcher.end()))
+        Assertions.assertTrue(matcher.find())
+        Assertions.assertEquals("So", text.substring(matcher.start(), matcher.end()))
+        Assertions.assertTrue(matcher.find())
+        Assertions.assertEquals("I", text.substring(matcher.start(), matcher.end()))
+        Assertions.assertTrue(matcher.find())
+        Assertions.assertEquals("am", text.substring(matcher.start(), matcher.end()))
+        Assertions.assertTrue(matcher.find())
+        Assertions.assertEquals("a", text.substring(matcher.start(), matcher.end()))
+        Assertions.assertTrue(matcher.find())
+        Assertions.assertEquals("store", text.substring(matcher.start(), matcher.end()))
+        Assertions.assertTrue(matcher.find())
+        Assertions.assertEquals("remover.", text.substring(matcher.start(), matcher.end()))
+        Assertions.assertTrue(matcher.find())
+        Assertions.assertEquals("Only", text.substring(matcher.start(), matcher.end()))
+        Assertions.assertTrue(matcher.find())
+        Assertions.assertEquals("'remove'", text.substring(matcher.start(), matcher.end()))
+        Assertions.assertTrue(matcher.find())
+        Assertions.assertEquals("should", text.substring(matcher.start(), matcher.end()))
+        Assertions.assertTrue(matcher.find())
+        Assertions.assertEquals("be", text.substring(matcher.start(), matcher.end()))
+        Assertions.assertTrue(matcher.find())
+        Assertions.assertEquals("removed", text.substring(matcher.start(), matcher.end()))
+        Assertions.assertFalse(matcher.find())
     }
 }

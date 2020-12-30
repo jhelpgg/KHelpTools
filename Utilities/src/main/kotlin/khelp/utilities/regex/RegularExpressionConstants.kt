@@ -35,6 +35,8 @@ val LETTER_OR_DIGIT = letterOrDigitInterval.regularExpression
 
 val WORD = LETTER.oneOrMore()
 
+val WORD_EXTEND =  RegularExpression("\\w").oneOrMore()
+
 val NAME = LETTER + letterOrDigitUnderscoreInterval.zeroOrMore()
 
 val EMAIL =
