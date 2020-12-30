@@ -161,3 +161,44 @@ fun String.toLocale(): Locale
         else -> Locale(split[0], split[1], split[2])
     }
 }
+
+fun String.ellipseIfMoreThan(maximumNumberCharacters: Int): String
+{
+    argumentCheck(maximumNumberCharacters >= 5) { "The maximum number if characters must be >=5, not $maximumNumberCharacters" }
+    val size = this.length
+
+    if (size <= maximumNumberCharacters)
+    {
+        return this
+    }
+
+    val rightSize = (maximumNumberCharacters - 3) / 2
+    val leftSize = maximumNumberCharacters - 3 - rightSize
+    return "${this.substring(0, leftSize)}...${this.substring(size - rightSize)}"
+}
+
+fun String.onlyFirst(maximumNumberCharacters: Int): String
+{
+    argumentCheck(maximumNumberCharacters >= 5) { "The maximum number if characters must be >=5, not $maximumNumberCharacters" }
+    val size = this.length
+
+    if (size <= maximumNumberCharacters)
+    {
+        return this
+    }
+
+    return "${this.substring(0, maximumNumberCharacters - 3)}..."
+}
+
+fun String.onlyLast(maximumNumberCharacters: Int): String
+{
+    argumentCheck(maximumNumberCharacters >= 5) { "The maximum number if characters must be >=5, not $maximumNumberCharacters" }
+    val size = this.length
+
+    if (size <= maximumNumberCharacters)
+    {
+        return this
+    }
+
+    return "...${this.substring(size - (maximumNumberCharacters - 3))}"
+}

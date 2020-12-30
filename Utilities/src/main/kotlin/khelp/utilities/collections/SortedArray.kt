@@ -2,6 +2,7 @@ package khelp.utilities.collections
 
 import khelp.utilities.comparators.ComparableNaturalOrderComparator
 import khelp.utilities.extensions.bounds
+import khelp.utilities.extensions.forEachReversed
 
 /**
  * Create an array of [Comparable] sorted on their "natural order"
@@ -156,6 +157,11 @@ class SortedArray<T>(private val comparator: Comparator<T>, val unique: Boolean 
     fun clear()
     {
         this.list.clear()
+    }
+
+    fun forEachReversed(action: (T) -> Unit)
+    {
+        this.list.forEachReversed(action)
     }
 
     /**

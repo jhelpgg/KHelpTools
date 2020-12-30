@@ -10,7 +10,6 @@ class RuleMatcher(private val stringPositionReader: StringPositionReader,
 
     fun find(): GrammarNode?
     {
-        println("$ruleName : ${stringPositionReader.currentIndex}")
         val ruleDefinitionElement = this.ruleDefinitionElement
 
         when (ruleDefinitionElement)
