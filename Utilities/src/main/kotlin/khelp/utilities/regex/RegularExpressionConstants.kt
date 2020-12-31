@@ -13,40 +13,92 @@ import khelp.utilities.text.letterOrDigitUnderscoreInterval
 import khelp.utilities.text.lowerCaseInterval
 import khelp.utilities.text.upperCaseInterval
 
-val ANY = RegularExpression(".")
+/**
+ * Any charachter except line return
+ */
+val ANY: RegularExpression get() = RegularExpression(".")
 
-val WHITE_SPACE = RegularExpression("\\s")
+/**
+ * Any white space (space, tabulation, line feed, line return)
+ */
+val WHITE_SPACE: RegularExpression get() = RegularExpression("\\s")
 
-val NOT_WHITE_SPACE = RegularExpression("\\S")
+/**
+ * Any character except white space
+ */
+val NOT_WHITE_SPACE: RegularExpression get() = RegularExpression("\\S")
 
-val LOWER_CASE = lowerCaseInterval.regularExpression
+/**
+ * Letter lower case character
+ */
+val LOWER_CASE: RegularExpression get() = lowerCaseInterval.regularExpression
 
-val UPPER_CASE = upperCaseInterval.regularExpression
+/**
+ * Letter upper case character
+ */
+val UPPER_CASE: RegularExpression get() = upperCaseInterval.regularExpression
 
-val LETTER = letterInterval.regularExpression
+/**
+ * Letter lower or upper case character
+ */
+val LETTER: RegularExpression get() = letterInterval.regularExpression
 
-val NOT_LETTER = letterInterval.allCharactersExcludeThose
+/**
+ * All characters except lower or upper case character
+ */
+val NOT_LETTER: RegularExpression get() = letterInterval.allCharactersExcludeThose
 
-val DIGIT = digitInterval.regularExpression
+/**
+ * Digit character
+ */
+val DIGIT: RegularExpression get() = digitInterval.regularExpression
 
-val NOT_DIGIT = digitInterval.allCharactersExcludeThose
+/**
+ * Any character except digit
+ */
+val NOT_DIGIT: RegularExpression get() = digitInterval.allCharactersExcludeThose
 
-val LETTER_OR_DIGIT = letterOrDigitInterval.regularExpression
+/**
+ * Letter or digit character
+ */
+val LETTER_OR_DIGIT: RegularExpression get() = letterOrDigitInterval.regularExpression
 
-val WORD = LETTER.oneOrMore()
+/**
+ * Any String composed of letters only
+ */
+val WORD: RegularExpression get() = LETTER.oneOrMore()
 
-val WORD_EXTEND =  RegularExpression("\\w").oneOrMore()
+/**
+ * Any string composed of letters (with accent or not, latin or not), symbols (underscore, punctuation mark, operation), digits
+ */
+val WORD_EXTEND: RegularExpression get() = RegularExpression("\\w").oneOrMore()
 
-val NAME = LETTER + letterOrDigitUnderscoreInterval.zeroOrMore()
+/**
+ * Any string start with letter follow by letters, digits, underscores
+ */
+val NAME: RegularExpression get() = LETTER + letterOrDigitUnderscoreInterval.zeroOrMore()
 
-val EMAIL =
-    (letterOrDigitInterval + '+' + '.' + '_' + '%' + '-').between(1, 256) +
-    '@' +
-    LETTER_OR_DIGIT + (letterOrDigitInterval + '-').atMost(64) +
-    ('.' + LETTER_OR_DIGIT + (letterOrDigitInterval + '-').atMost(25)).oneOrMore()
+/**
+ * Any email address
+ */
+val EMAIL: RegularExpression
+    get() =
+        (letterOrDigitInterval + '+' + '.' + '_' + '%' + '-').between(1, 256) +
+        '@' +
+        LETTER_OR_DIGIT + (letterOrDigitInterval + '-').atMost(64) +
+        ('.' + LETTER_OR_DIGIT + (letterOrDigitInterval + '-').atMost(25)).oneOrMore()
 
-val INTEGER = DIGIT.oneOrMore()
+/**
+ * Any string look like an integer
+ */
+val INTEGER: RegularExpression get() = DIGIT.oneOrMore()
 
-val REAL = INTEGER + ('.' + INTEGER).zeroOrOne()
+/**
+ * Any string look like a real
+ */
+val REAL: RegularExpression get() = INTEGER + ('.' + INTEGER).zeroOrOne()
 
-val LOCALE_SEPARATOR = charArrayOf('-', '_').regularExpression
+/**
+ * Separator used in locale string representation
+ */
+val LOCALE_SEPARATOR: RegularExpression get() = charArrayOf('-', '_').regularExpression

@@ -3,11 +3,11 @@ package khelp.utilities.extensions
 /**
  * Append a byte on its hexadecimal version
  */
-fun StringBuilder.appendHexadecimal(byte: Byte)
+fun StringBuilder.appendHexadecimal(byte: Byte): StringBuilder
 {
     val value = byte.toInt() and 0xFF
     this.append(Integer.toHexString((value shr 4) and 0xF))
-    this.append(Integer.toHexString(value and 0xF))
+    return this.append(Integer.toHexString(value and 0xF))
 }
 
 /**
@@ -17,7 +17,7 @@ fun StringBuilder.appendHexadecimal(byte: Byte)
  *
  * But if the number of digit of the integer is less the given number, some 0 are added to fit the size
  */
-fun StringBuilder.appendMinimumDigit(minimumDigit: Int, value: Int) =
+fun StringBuilder.appendMinimumDigit(minimumDigit: Int, value: Int): StringBuilder =
     if (value < 0)
     {
         this.append(String.format("%0${minimumDigit + 1}d", value))

@@ -2,6 +2,7 @@ package khelp.utilities.reflect
 
 import java.lang.reflect.Array
 import java.util.Calendar
+import khelp.utilities.extensions.calendar
 
 
 /**
@@ -133,7 +134,7 @@ fun <T> defaultValue(clazz: Class<T>, instanceProvider: (Class<*>) -> Any? = { n
 
     if (Calendar::class.java == clazz)
     {
-        return Calendar.getInstance() as T
+        return calendar(1970, 1, 1) as T
     }
 
     if (clazz.isEnum)

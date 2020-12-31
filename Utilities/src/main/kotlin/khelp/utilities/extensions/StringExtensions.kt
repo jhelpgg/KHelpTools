@@ -123,33 +123,63 @@ val String.anyNonWhiteSpaceExceptThis: RegularExpression
         return RegularExpression("\\S+(?<!\\s\\Q$this\\E)(?<!^\\Q$this\\E)(?!$format)")
     }
 
+/**
+ * Create regular expression that match to this string or given regular expression
+ */
 infix fun String.OR(regularExpression: RegularExpression) =
     this.regularExpression OR regularExpression
 
+/**
+ * Create regular expression that match to this string or given group
+ */
 infix fun String.OR(regularExpression: RegularExpressionGroup) =
     this.regularExpression OR regularExpression
 
+/**
+ * Crete regular expression that match zero, one or several times this string
+ */
 fun String.zeroOrMore(): RegularExpression =
     this.regularExpression.zeroOrMore()
 
+/**
+ * Crete regular expression that match at least one time this string
+ */
 fun String.oneOrMore(): RegularExpression =
     this.regularExpression.oneOrMore()
 
+/**
+ * Crete regular expression that match zero or one time this string
+ */
 fun String.zeroOrOne(): RegularExpression =
     this.regularExpression.zeroOrOne()
 
+/**
+ * Crete regular expression that match exactly a number of times this string
+ */
 fun String.exactTimes(times: Int): RegularExpression =
     this.regularExpression.exactTimes(times)
 
+/**
+ * Crete regular expression that match at least a number of times this string
+ */
 fun String.atLeast(times: Int): RegularExpression =
     this.regularExpression.atLeast(times)
 
+/**
+ * Crete regular expression that match at most a number of times this string
+ */
 fun String.atMost(times: Int): RegularExpression =
     this.regularExpression.atMost(times)
 
+/**
+ * Crete regular expression that match this string a number of times between a minimum and a maximum
+ */
 fun String.between(minimum: Int, maximum: Int): RegularExpression =
     this.regularExpression.between(minimum, maximum)
 
+/**
+ * Try to parse this string to a locale
+ */
 fun String.toLocale(): Locale
 {
     val split = LOCALE_SEPARATOR.split(this, 3)
@@ -162,6 +192,22 @@ fun String.toLocale(): Locale
     }
 }
 
+/**
+ * If the string size is less or equals to given number, it returns as is.
+ *
+ * Else, the result will be, first part of the string, follow by `...` and end part of the string. The result will have the exact requested size.
+ *
+ * For exemples
+ *
+ *      +-----------------------------------------------------+-----------------+
+ *      |                         Call                        |      Result     |
+ *      +-----------------------------------------------------+-----------------+
+ *      | "The end of the world!".ellipseIfMoreThan(9)        | "The...ld!"     |
+ *      | "The beginning of the start.".ellipseIfMoreThan(12) | "The b...art."  |
+ *      | "Touch to much".ellipseIfMoreThan(23)               | "Touch to much" |
+ *      +-----------------------------------------------------+-----------------+
+ *
+ */
 fun String.ellipseIfMoreThan(maximumNumberCharacters: Int): String
 {
     argumentCheck(maximumNumberCharacters >= 5) { "The maximum number if characters must be >=5, not $maximumNumberCharacters" }
@@ -177,6 +223,22 @@ fun String.ellipseIfMoreThan(maximumNumberCharacters: Int): String
     return "${this.substring(0, leftSize)}...${this.substring(size - rightSize)}"
 }
 
+/**
+ * If the string size is less or equals to given number, it returns as is.
+ *
+ * Else, the result will be, first part of the string, follow by `...`. The result will have the exact requested size.
+ *
+ * For exemples
+ *
+ *      +---------------------------------------------+-----------------+
+ *      |                     Call                    |      Result     |
+ *      +---------------------------------------------+-----------------+
+ *      | "The end of the world!".onlyFirst(9)        | "The en..."     |
+ *      | "The beginning of the start.".onlyFirst(12) | "The begin..."  |
+ *      | "Touch to much".onlyFirst(23)               | "Touch to much" |
+ *      +---------------------------------------------+-----------------+
+ *
+ */
 fun String.onlyFirst(maximumNumberCharacters: Int): String
 {
     argumentCheck(maximumNumberCharacters >= 5) { "The maximum number if characters must be >=5, not $maximumNumberCharacters" }
@@ -190,6 +252,22 @@ fun String.onlyFirst(maximumNumberCharacters: Int): String
     return "${this.substring(0, maximumNumberCharacters - 3)}..."
 }
 
+/**
+ * If the string size is less or equals to given number, it returns as is.
+ *
+ * Else, the result will be, `...` follow by last part of the string. The result will have the exact requested size.
+ *
+ * For exemples
+ *
+ *      +--------------------------------------------+-----------------+
+ *      |                    Call                    |      Result     |
+ *      +--------------------------------------------+-----------------+
+ *      | "The end of the world!".onlyLast(9)        | "...world!"     |
+ *      | "The beginning of the start.".onlyLast(12) | "...he start."  |
+ *      | "Touch to much".onlyLast(23)               | "Touch to much" |
+ *      +--------------------------------------------+-----------------+
+ *
+ */
 fun String.onlyLast(maximumNumberCharacters: Int): String
 {
     argumentCheck(maximumNumberCharacters >= 5) { "The maximum number if characters must be >=5, not $maximumNumberCharacters" }

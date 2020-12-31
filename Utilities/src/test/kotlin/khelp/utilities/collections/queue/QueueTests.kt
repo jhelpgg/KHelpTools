@@ -53,9 +53,9 @@ class QueueTests
         try
         {
             queue.outQueue()
-            Assertions.fail("Must throw IllegalStateException since queue is empty")
+            Assertions.fail("Must throw NoSuchElementException since queue is empty")
         }
-        catch (exception: IllegalStateException)
+        catch (exception: NoSuchElementException)
         {
             // That's what we expected
         }
@@ -79,9 +79,9 @@ class QueueTests
         try
         {
             queue.outQueue()
-            Assertions.fail("Must throw IllegalStateException since queue is empty")
+            Assertions.fail("Must throw NoSuchElementException since queue is empty")
         }
-        catch (exception: IllegalStateException)
+        catch (exception: NoSuchElementException)
         {
             // That's what we expected
         }

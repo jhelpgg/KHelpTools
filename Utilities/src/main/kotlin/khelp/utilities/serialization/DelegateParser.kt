@@ -1,9 +1,12 @@
-package khelp.utilities.serailzation
+package khelp.utilities.serialization
 
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
+/**
+ * Default parser helper for key management in delegation
+ */
 class DelegateParser(private val headerKey: String, private val parser: Parser) : Parser
 {
     override fun getBoolean(key: String): Boolean =

@@ -1,6 +1,6 @@
 package khelp.io.files.flat
 
-import khelp.utilities.serailzation.Serializer
+import khelp.utilities.serialization.Serializer
 
 internal class FlatKeyValueSerializer(private val flatKeyValueFile: FlatKeyValueFile) : Serializer
 {

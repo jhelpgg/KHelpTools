@@ -48,6 +48,26 @@ class Grammar(val automaticWhiteSpaces: Boolean = false, val stopAtFirstAlternat
         return grammarNode
     }
 
+    fun parseSpecificRule(text: String, ruleName: String): GrammarNode?
+    {
+        argumentCheck(this.rules.rules.containsKey(ruleName)) { "$ruleName not defined in grammar" }
+
+        val ruleMatcher = RuleMatcher(StringPositionReader(text),
+                                      ruleName,
+                                      this.rules,
+                                      stopAtFirstAlternativeMatch = this.stopAtFirstAlternativeMatch)
+        val grammarNode = ruleMatcher.find()
+
+        return if (ruleMatcher.finished)
+        {
+            grammarNode
+        }
+        else
+        {
+            null
+        }
+    }
+
     private fun checkIfAllReferenceHaveADefinition()
     {
         val missingDefinitions = TreeSet<String>()

@@ -1,7 +1,11 @@
 package khelp.utilities.regex
 
+import khelp.utilities.extensions.allCharactersExcludeThis
 import khelp.utilities.extensions.anyNonWhiteSpaceExceptThis
 import khelp.utilities.extensions.anyWordExceptThis
+import khelp.utilities.extensions.ellipseIfMoreThan
+import khelp.utilities.extensions.onlyFirst
+import khelp.utilities.extensions.onlyLast
 import khelp.utilities.extensions.plus
 import khelp.utilities.extensions.regularExpression
 import org.junit.jupiter.api.Assertions
@@ -173,5 +177,70 @@ class RegularExpressionTests
         Assertions.assertTrue(matcher.find())
         Assertions.assertEquals("removed", text.substring(matcher.start(), matcher.end()))
         Assertions.assertFalse(matcher.find())
+    }
+
+    @Test
+    fun exempleAppendInDocumentation()
+    {
+        val text = "I want remove braquets [45], [66], [something], [] and replace them by parenthesis. [73, the magic number]. The end!"
+        val group = ']'.allCharactersExcludeThis.zeroOrMore()
+            .group()
+        val regex = '['.regularExpression + group + ']'
+        val matcher = regex.matcher(text)
+        val stringBuilder = StringBuilder()
+
+        while (matcher.find())
+        {
+            matcher.appendReplacement(stringBuilder) {
+                +"("
+                +group
+                +")"
+            }
+        }
+
+        matcher.appendTail(stringBuilder)
+        Assertions.assertEquals("I want remove braquets (45), (66), (something), () and replace them by parenthesis. (73, the magic number). The end!",
+                                stringBuilder.toString())
+    }
+
+    @Test
+    fun exempleForEachMatchInDocumentation()
+    {
+        val text = "I want remove braquets [45], [66], [something], [] and replace them by parenthesis. [73, the magic number]. The end!"
+        val group = ']'.allCharactersExcludeThis.zeroOrMore()
+            .group()
+        val regex = '['.regularExpression + group + ']'
+        val matcher = regex.matcher(text)
+        val result = matcher.forEachMatch({ +header.onlyFirst(7) },
+                                          { +intermediate.ellipseIfMoreThan(9) },
+                                          { +tail.onlyLast(7) },
+                                          {
+                                              replace { matcher ->
+                                                  {
+                                                      +"("
+                                                      +group
+                                                      +")"
+                                                  }
+                                              }
+                                          })
+
+        Assertions.assertEquals("I wa...(45), (66), (something), () an...s. (73, the magic number)...end!",
+                                result)
+    }
+
+    @Test
+    fun replacementTest()
+    {
+        val group = ']'.allCharactersExcludeThis.zeroOrMore()
+            .group()
+        val regex = '['.regularExpression + group + ']'
+        val replacement = regex.replacement {
+            +"("
+            +group
+            +")"
+        }
+
+        Assertions.assertEquals("(85) | (73) - (42)", replacement.replaceAll("[85] | [73] - [42]"))
+        Assertions.assertEquals("(85) | [73] - [42]", replacement.replaceFirst("[85] | [73] - [42]"))
     }
 }

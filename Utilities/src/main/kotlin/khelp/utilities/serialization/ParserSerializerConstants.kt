@@ -1,4 +1,4 @@
-package khelp.utilities.serailzation
+package khelp.utilities.serialization
 
 const val KEY_LIST_ARRAY_MAP_SIZE = "<{(SIZE)}>"
 

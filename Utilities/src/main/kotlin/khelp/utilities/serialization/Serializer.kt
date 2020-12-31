@@ -1,9 +1,12 @@
-package khelp.utilities.serailzation
+package khelp.utilities.serialization
 
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
+/**
+ * Serializer used by [ParsableSerializable], to serialize data to a specific format
+ */
 interface Serializer
 {
     fun setBoolean(key: String, value: Boolean)

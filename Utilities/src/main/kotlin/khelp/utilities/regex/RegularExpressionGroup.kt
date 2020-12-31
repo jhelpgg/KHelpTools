@@ -4,6 +4,9 @@ import khelp.utilities.extensions.regularExpression
 import khelp.utilities.stateCheck
 import khelp.utilities.text.CharactersInterval
 
+/**
+ * Capturing group to capture things in regular expression
+ */
 class RegularExpressionGroup internal constructor(internal val regularExpression: RegularExpression) :
     RegularExpressionElement()
 {
@@ -164,7 +167,7 @@ class RegularExpressionGroup internal constructor(internal val regularExpression
     {
         if (this.parent != null)
         {
-            stateCheck(parent.insideHierarchy(this.parent!!)) {"The group have already an other parent"}
+            stateCheck(parent.insideHierarchy(this.parent!!)) { "The group have already an other parent" }
         }
         else
         {

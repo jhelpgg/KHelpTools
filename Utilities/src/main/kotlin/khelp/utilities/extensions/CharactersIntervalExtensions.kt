@@ -59,7 +59,7 @@ operator fun CharactersInterval.plus(charactersInterval: CharactersInterval): Ch
 
     if (size == 1)
     {
-        return charactersInterval
+        return currentInterval
     }
 
     val collectIntervals = sortedArray<SimpleCharactersInterval>(true)

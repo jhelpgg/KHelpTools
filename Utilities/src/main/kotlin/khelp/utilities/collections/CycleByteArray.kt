@@ -1,7 +1,7 @@
 package khelp.utilities.collections
 
+import khelp.utilities.elementExistsCheck
 import khelp.utilities.extensions.appendHexadecimal
-import khelp.utilities.stateCheck
 import kotlin.math.max
 import kotlin.math.min
 
@@ -69,7 +69,7 @@ class CycleByteArray(startSize: Int = 4096)
 
     fun read(): Byte
     {
-        stateCheck(this.size > 0) { "The array is empty" }
+        elementExistsCheck(this.size > 0) { "The array is empty" }
         val value = this.array[this.readIndex]
         this.readIndex = (this.readIndex + 1) % this.array.size
         return value

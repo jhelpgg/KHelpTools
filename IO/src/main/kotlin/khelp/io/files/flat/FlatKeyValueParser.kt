@@ -1,6 +1,6 @@
 package khelp.io.files.flat
 
-import khelp.utilities.serailzation.Parser
+import khelp.utilities.serialization.Parser
 
 internal class FlatKeyValueParser(private val flatKeyValueFile: FlatKeyValueFile) : Parser
 {

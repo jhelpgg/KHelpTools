@@ -12,8 +12,8 @@ import khelp.io.readLines
 import khelp.thread.parallel
 import khelp.utilities.extensions.copy
 import khelp.utilities.log.exception
-import khelp.utilities.serailzation.Parser
-import khelp.utilities.serailzation.Serializer
+import khelp.utilities.serialization.Parser
+import khelp.utilities.serialization.Serializer
 
 internal const val LINE_RETURN_REPLACER = "+-<n>-+"
 internal const val LINE_FEED_REPLACER = "+-<r>-+"

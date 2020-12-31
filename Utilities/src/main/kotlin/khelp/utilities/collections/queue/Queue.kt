@@ -1,6 +1,6 @@
 package khelp.utilities.collections.queue
 
-import khelp.utilities.stateCheck
+import khelp.utilities.elementExistsCheck
 
 /**
  * Queue of elements
@@ -58,7 +58,7 @@ class Queue<T> : Collection<T>
     @Throws
     fun outQueue(): T
     {
-        stateCheck(this.head != null) { "The queue is empty" }
+        elementExistsCheck(this.head != null) { "The queue is empty" }
 
         this.count--
         val element = this.head!!.element

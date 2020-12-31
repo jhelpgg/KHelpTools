@@ -3,6 +3,9 @@ package khelp.utilities.text
 import khelp.utilities.extensions.plus
 import khelp.utilities.extensions.toUnicode
 
+/**
+ * Generic interval of characters
+ */
 sealed class CharactersInterval
 {
     abstract operator fun contains(char: Char): Boolean
@@ -10,6 +13,9 @@ sealed class CharactersInterval
     abstract operator fun contains(charactersInterval: CharactersInterval): Boolean
 }
 
+/**
+ * Empty interval of characters
+ */
 object EmptyCharactersInterval : CharactersInterval()
 {
     override fun toString(): String = "[]"
@@ -20,6 +26,11 @@ object EmptyCharactersInterval : CharactersInterval()
         charactersInterval == EmptyCharactersInterval
 }
 
+/**
+ * Simple character interval.
+ *
+ * Characters are between a minimum and a maximum
+ */
 data class SimpleCharactersInterval internal constructor(val minimum: Char, val maximum: Char) : CharactersInterval(),
                                                                                                  Comparable<SimpleCharactersInterval>
 {
@@ -38,6 +49,22 @@ data class SimpleCharactersInterval internal constructor(val minimum: Char, val 
     override fun toString(): String =
         this.format()
 
+    /**
+     * Create a string representation of the interval.
+     *
+     * It is possible to customise header and footer different for case if only one character or several.
+     *
+     * Possible to customize the separator between minimum and maximum if more than one character.
+     *
+     * Possible to print characters in `\uHHHH` version
+     *
+     * @param uniqueOpenSymbol Header to use if only one character
+     * @param uniqueCloseSymbol Footer to use if only one character
+     * @param openSymbol Header to use if more than one character
+     * @param closeSymbol Footer to use if more than one character
+     * @param separatorSymbol Separator between minimum and maximum if more than one character
+     * @param unicode Indicates if show `\uHHHH` version or ordinary one
+     */
     fun format(uniqueOpenSymbol: String = "{",
                uniqueCloseSymbol: String = "}",
                openSymbol: String = "[",
@@ -81,12 +108,34 @@ data class SimpleCharactersInterval internal constructor(val minimum: Char, val 
         }
 }
 
+/**
+ * Characters interval made of union of several [SimpleCharactersInterval]
+ */
 data class UnionCharactersInterval internal constructor(val simpleIntervals: List<SimpleCharactersInterval>) :
     CharactersInterval()
 {
     override fun toString(): String =
         this.format()
 
+    /**
+     * Create a string representation of the interval.
+     *
+     * It is possible to customise header and footer different for case if only one character or several.
+     *
+     * Possible to customize the separator between minimum and maximum if more than one character.
+     *
+     * Possible to customize the union symbol
+     *
+     * Possible to print characters in `\uHHHH` version
+     *
+     * @param uniqueOpenSymbol Header to use if only one character
+     * @param uniqueCloseSymbol Footer to use if only one character
+     * @param openSymbol Header to use if more than one character
+     * @param closeSymbol Footer to use if more than one character
+     * @param separatorSymbol Separator between minimum and maximum if more than one character
+     * @param unionSymbol symbol used to represents the union
+     * @param unicode Indicates if show `\uHHHH` version or ordinary one
+     */
     fun format(uniqueOpenSymbol: String = "{",
                uniqueCloseSymbol: String = "}",
                openSymbol: String = "[",
@@ -136,25 +185,49 @@ data class UnionCharactersInterval internal constructor(val simpleIntervals: Lis
         }
 }
 
-fun interval(character1: Char, character2: Char): CharactersInterval =
-    if (character1 <= character2)
+/**
+ * Create an interval between two characters.
+ *
+ * If given `minimum` if greater than `maximum`, [EmptyCharactersInterval] is returned
+ *
+ * If `minimum` equals to `maximum`, the interval will have only one character
+ */
+fun interval(minimum: Char, maximum: Char): CharactersInterval =
+    if (minimum <= maximum)
     {
-        SimpleCharactersInterval(character1, character2)
+        SimpleCharactersInterval(minimum, maximum)
     }
     else
     {
         EmptyCharactersInterval
     }
 
+/**
+ * Interval made of lower case letters
+ */
 val lowerCaseInterval = interval('a', 'z')
 
+/**
+ * Interval made of upper case letters
+ */
 val upperCaseInterval = interval('A', 'Z')
 
+/**
+ * Interval made of lower or upper case letters
+ */
 val letterInterval = lowerCaseInterval + upperCaseInterval
 
+/**
+ * Interval of digits
+ */
 val digitInterval = interval('0', '9')
 
+/**
+ * Letter or digit interval
+ */
 val letterOrDigitInterval = letterInterval + digitInterval
 
+/**
+ * Letter, digit or underscore interval
+ */
 val letterOrDigitUnderscoreInterval = letterOrDigitInterval + '_'
-

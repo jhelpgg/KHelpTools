@@ -24,7 +24,7 @@ val EPSILON_FLOAT = maxOf(Float.MIN_VALUE,
  * @param value Value to test
  * @return `true` if given value can be considered as zero
  */
-fun isNul(value: Double) = Math.abs(value) <= EPSILON
+fun isNul(value: Double) = abs(value) <= EPSILON
 
 /**
  * Indicates if given value can be considered as zero
@@ -32,7 +32,7 @@ fun isNul(value: Double) = Math.abs(value) <= EPSILON
  * @param value Value to test
  * @return `true` if given value can be considered as zero
  */
-fun isNul(value: Float) = Math.abs(value) <= EPSILON_FLOAT
+fun isNul(value: Float) = abs(value) <= EPSILON_FLOAT
 
 
 /**

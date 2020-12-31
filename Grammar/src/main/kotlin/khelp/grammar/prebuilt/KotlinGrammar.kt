@@ -22,6 +22,7 @@ import khelp.utilities.extensions.zeroOrOne
 import khelp.utilities.regex.ANY
 import khelp.utilities.regex.WHITE_SPACE
 import khelp.utilities.text.interval
+import org.jetbrains.annotations.TestOnly
 
 // https://kotlinlang.org/docs/reference/grammar.html
 
@@ -380,6 +381,7 @@ object KotlinGrammar
             }
 
             // Statements
+
             statements IS { rule = (statement * (WHITE_SPACES * statement).zeroOrMore()).zeroOrOne() * WHITE_SPACES }
             statement IS { rule = (label I annotation).zeroOrMore() * (declaration I assignment I loopStatement I expression) }
             label IS { rule = simpleIdentifier * '@'.regularExpression }
@@ -402,7 +404,6 @@ object KotlinGrammar
             }
 
             // Expressions
-
 
             expression IS { rule = +disjunction }
             disjunction IS { rule = conjunction * ("||".regularExpression * conjunction).zeroOrMore() }
@@ -763,4 +764,8 @@ object KotlinGrammar
 
     fun parse(text: String): GrammarNode? =
         this.grammar.parse(text)
+
+    @TestOnly
+    internal fun parseSpecificRule(text: String, ruleName: String): GrammarNode? =
+        this.grammar.parseSpecificRule(text, ruleName)
 }
