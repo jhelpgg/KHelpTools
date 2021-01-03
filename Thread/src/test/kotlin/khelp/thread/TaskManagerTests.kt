@@ -74,7 +74,7 @@ class TaskManagerTests
     }
 
     @Test
-    fun delaySuccedTest()
+    fun delaySucceedTest()
     {
         val complete = AtomicBoolean(false)
         val resultReach = AtomicInteger(Int.MIN_VALUE)

@@ -1,6 +1,7 @@
 package khelp.grammar
 
 import java.util.Stack
+import khelp.utilities.argumentCheck
 import khelp.utilities.collections.queue.Queue
 import khelp.utilities.extensions.forEachReversed
 
@@ -337,6 +338,7 @@ class GrammarNode internal constructor(val rule: String, val text: String) : Ite
 
     internal fun addChild(child: GrammarNode)
     {
+        argumentCheck(child.parent == null) { "Child already have a parent" }
         this.children.add(child)
         child.parent = this
     }
@@ -347,6 +349,7 @@ class GrammarNode internal constructor(val rule: String, val text: String) : Ite
 
         for (child in children)
         {
+            argumentCheck(child.parent == null) { "Child already have a parent" }
             child.parent = this
         }
     }
