@@ -41,7 +41,7 @@ class RuleMatcher(private val stringPositionReader: StringPositionReader,
                                               stopAtFirstAlternativeMatch = stopAtFirstAlternativeMatch)
                 val grammarNode = ruleMatcher.find() ?: return GrammarNode(this.ruleName, "")
                 val node = GrammarNode(this.ruleName, grammarNode.text)
-                node.children.add(grammarNode)
+                node.addChild(grammarNode)
                 return node
             }
             is RuleDefinitionElementZeroOrOne    ->
@@ -53,7 +53,7 @@ class RuleMatcher(private val stringPositionReader: StringPositionReader,
                                               stopAtFirstAlternativeMatch = stopAtFirstAlternativeMatch)
                 val grammarNode = ruleMatcher.find() ?: return GrammarNode(this.ruleName, "")
                 val node = GrammarNode(this.ruleName, grammarNode.text)
-                node.children.add(grammarNode)
+                node.addChild(grammarNode)
                 return node
             }
             is RuleDefinitionReferenceZeroOrMore ->
@@ -75,7 +75,7 @@ class RuleMatcher(private val stringPositionReader: StringPositionReader,
                 while (grammarNode != null)
 
                 val node = GrammarNode(this.ruleName, text.toString())
-                node.children.addAll(children)
+                node.addChildren(children)
                 return node
             }
             is RuleDefinitionElementZeroOrMore   ->
@@ -98,7 +98,7 @@ class RuleMatcher(private val stringPositionReader: StringPositionReader,
                 while (grammarNode != null)
 
                 val node = GrammarNode(this.ruleName, text.toString())
-                node.children.addAll(children)
+                node.addChildren(children)
                 return node
             }
             is RuleDefinitionReferenceOneOrMore  ->
@@ -120,7 +120,7 @@ class RuleMatcher(private val stringPositionReader: StringPositionReader,
                 while (grammarNode != null)
 
                 val node = GrammarNode(this.ruleName, text.toString())
-                node.children.addAll(children)
+                node.addChildren(children)
                 return node
             }
             is RuleDefinitionElementOneOrMore    ->
@@ -143,7 +143,7 @@ class RuleMatcher(private val stringPositionReader: StringPositionReader,
                 while (grammarNode != null)
 
                 val node = GrammarNode(this.ruleName, text.toString())
-                node.children.addAll(children)
+                node.addChildren(children)
                 return node
             }
             is RuleDefinitionReferenceExactTimes ->
@@ -175,7 +175,7 @@ class RuleMatcher(private val stringPositionReader: StringPositionReader,
                 }
 
                 val node = GrammarNode(this.ruleName, text.toString())
-                node.children.addAll(children)
+                node.addChildren(children)
                 return node
             }
             is RuleDefinitionElementExactTimes   ->
@@ -208,7 +208,7 @@ class RuleMatcher(private val stringPositionReader: StringPositionReader,
                 }
 
                 val node = GrammarNode(this.ruleName, text.toString())
-                node.children.addAll(children)
+                node.addChildren(children)
                 return node
             }
             is RuleDefinitionReferenceAtMost     ->
@@ -233,7 +233,7 @@ class RuleMatcher(private val stringPositionReader: StringPositionReader,
                 while (grammarNode != null && currentCount < number)
 
                 val node = GrammarNode(this.ruleName, text.toString())
-                node.children.addAll(children)
+                node.addChildren(children)
                 return node
             }
             is RuleDefinitionElementAtMost       ->
@@ -259,7 +259,7 @@ class RuleMatcher(private val stringPositionReader: StringPositionReader,
                 while (grammarNode != null && currentCount < number)
 
                 val node = GrammarNode(this.ruleName, text.toString())
-                node.children.addAll(children)
+                node.addChildren(children)
                 return node
             }
             is RuleDefinitionReferenceAtLeast    ->
@@ -291,7 +291,7 @@ class RuleMatcher(private val stringPositionReader: StringPositionReader,
                 }
 
                 val node = GrammarNode(this.ruleName, text.toString())
-                node.children.addAll(children)
+                node.addChildren(children)
                 return node
             }
             is RuleDefinitionElementAtLeast      ->
@@ -324,7 +324,7 @@ class RuleMatcher(private val stringPositionReader: StringPositionReader,
                 }
 
                 val node = GrammarNode(this.ruleName, text.toString())
-                node.children.addAll(children)
+                node.addChildren(children)
                 return node
             }
             is RuleDefinitionReferenceBetween    ->
@@ -356,7 +356,7 @@ class RuleMatcher(private val stringPositionReader: StringPositionReader,
                 }
 
                 val node = GrammarNode(this.ruleName, text.toString())
-                node.children.addAll(children)
+                node.addChildren(children)
                 return node
             }
             is RuleDefinitionElementBetween      ->
@@ -389,7 +389,7 @@ class RuleMatcher(private val stringPositionReader: StringPositionReader,
                 }
 
                 val node = GrammarNode(this.ruleName, text.toString())
-                node.children.addAll(children)
+                node.addChildren(children)
                 return node
             }
             is RuleDefinitionElementConcatenate  ->
@@ -418,7 +418,7 @@ class RuleMatcher(private val stringPositionReader: StringPositionReader,
                 }
 
                 val node = GrammarNode(this.ruleName, text.toString())
-                node.children.addAll(children)
+                node.addChildren(children)
                 return node
             }
             is RuleDefinitionElementAlternative  ->
@@ -456,7 +456,7 @@ class RuleMatcher(private val stringPositionReader: StringPositionReader,
 
                 this.stringPositionReader.setPosition(lastFoundEndPosition)
                 val node = GrammarNode(this.ruleName, lastFoundNode.text)
-                node.children.add(lastFoundNode)
+                node.addChild(lastFoundNode)
                 return node
             }
         }

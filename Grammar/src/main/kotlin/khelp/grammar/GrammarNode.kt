@@ -6,7 +6,9 @@ import khelp.utilities.extensions.forEachReversed
 
 class GrammarNode internal constructor(val rule: String, val text: String) : Iterable<GrammarNode>
 {
-    internal val children = ArrayList<GrammarNode>()
+    var parent: GrammarNode? = null
+        internal set
+    private val children = ArrayList<GrammarNode>()
 
     val empty: Boolean get() = this.text.isEmpty() && this.children.isEmpty()
     val numberChildren: Int get() = this.children.size
@@ -76,7 +78,7 @@ class GrammarNode internal constructor(val rule: String, val text: String) : Ite
     }
 
     fun forEachDeep(criteria: (GrammarNode) -> Boolean = { true },
-                action: (GrammarNode) -> Unit)
+                    action: (GrammarNode) -> Unit)
     {
         val stack = Stack<GrammarNode>()
         stack.push(this)
@@ -269,6 +271,18 @@ class GrammarNode internal constructor(val rule: String, val text: String) : Ite
         return null
     }
 
+    fun followPath(vararg path: String): GrammarNode?
+    {
+        var current: GrammarNode = this
+
+        for (element in path)
+        {
+            current = current.children.firstOrNull { node -> node.rule == element } ?: return null
+        }
+
+        return current
+    }
+
     override fun toString(): String
     {
         val stringBuilder = StringBuilder()
@@ -318,6 +332,22 @@ class GrammarNode internal constructor(val rule: String, val text: String) : Ite
                     stack.push(child)
                 }
             }
+        }
+    }
+
+    internal fun addChild(child: GrammarNode)
+    {
+        this.children.add(child)
+        child.parent = this
+    }
+
+    internal fun addChildren(children: Iterable<GrammarNode>)
+    {
+        this.children.addAll(children)
+
+        for (child in children)
+        {
+            child.parent = this
         }
     }
 }

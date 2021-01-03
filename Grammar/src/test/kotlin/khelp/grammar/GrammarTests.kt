@@ -11,7 +11,7 @@ class GrammarTests
     {
         val grammar = Grammar()
         grammar.rules {
-            "A" IS { rule = 'a'.regularExpression I ('a'.regularExpression * "A") }
+            "A" IS { rule = ('a'.regularExpression * "A") I 'a'.regularExpression }
         }
 
         // EMPTY
@@ -24,11 +24,11 @@ class GrammarTests
         println(grammarNode)
         Assertions.assertEquals("A", grammarNode!!.rule)
         Assertions.assertEquals("a", grammarNode.text)
-        Assertions.assertEquals(1, grammarNode.children.size)
-        grammarNode = grammarNode.children[0]
-        Assertions.assertEquals("A*", grammarNode.rule)
+        Assertions.assertEquals(1, grammarNode.numberChildren)
+        grammarNode = grammarNode[0]
+        Assertions.assertEquals("A/1", grammarNode.rule)
         Assertions.assertEquals("a", grammarNode.text)
-        Assertions.assertEquals(0, grammarNode.children.size)
+        Assertions.assertEquals(0, grammarNode.numberChildren)
 
         // aa
         grammarNode = grammar.parse("aa")
@@ -36,23 +36,23 @@ class GrammarTests
         println(grammarNode)
         Assertions.assertEquals("A", grammarNode!!.rule)
         Assertions.assertEquals("aa", grammarNode.text)
-        Assertions.assertEquals(1, grammarNode.children.size)
-        grammarNode = grammarNode.children[0]
-        Assertions.assertEquals("A*", grammarNode.rule)
+        Assertions.assertEquals(1, grammarNode.numberChildren)
+        grammarNode = grammarNode[0]
+        Assertions.assertEquals("A/0", grammarNode.rule)
         Assertions.assertEquals("aa", grammarNode.text)
-        Assertions.assertEquals(2, grammarNode.children.size)
-        var grammarNodeSub = grammarNode.children[0]
-        Assertions.assertEquals("A*@0", grammarNodeSub.rule)
+        Assertions.assertEquals(2, grammarNode.numberChildren)
+        var grammarNodeSub = grammarNode[0]
+        Assertions.assertEquals("A/0@0", grammarNodeSub.rule)
         Assertions.assertEquals("a", grammarNodeSub.text)
-        Assertions.assertEquals(0, grammarNodeSub.children.size)
-        grammarNodeSub = grammarNode.children[1]
+        Assertions.assertEquals(0, grammarNodeSub.numberChildren)
+        grammarNodeSub = grammarNode[1]
         Assertions.assertEquals("A", grammarNodeSub.rule)
         Assertions.assertEquals("a", grammarNodeSub.text)
-        Assertions.assertEquals(1, grammarNodeSub.children.size)
-        val grammarNodeSubSub = grammarNodeSub.children[0]
-        Assertions.assertEquals("A*", grammarNodeSubSub.rule)
+        Assertions.assertEquals(1, grammarNodeSub.numberChildren)
+        val grammarNodeSubSub = grammarNodeSub[0]
+        Assertions.assertEquals("A/1", grammarNodeSubSub.rule)
         Assertions.assertEquals("a", grammarNodeSubSub.text)
-        Assertions.assertEquals(0, grammarNodeSubSub.children.size)
+        Assertions.assertEquals(0, grammarNodeSubSub.numberChildren)
 
         // aab
         grammarNode = grammar.parse("aab")
