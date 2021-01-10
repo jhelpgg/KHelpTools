@@ -487,7 +487,7 @@ object KotlinGrammar
                         ('{'.regularExpression * lambdaParameters.zeroOrOne() * "->".regularExpression * statements * '}'.regularExpression)
             }
             lambdaParameters IS { rule = lambdaParameter * (','.regularExpression * lambdaParameter).zeroOrMore() * ','.zeroOrOne() }
-            lambdaParameter IS { rule = variableDeclaration I multiVariableDeclaration * (':'.regularExpression * type).zeroOrOne() }
+            lambdaParameter IS { rule = (variableDeclaration I multiVariableDeclaration) * (':'.regularExpression * type).zeroOrOne() }
             anonymousFunction IS {
                 rule = "fun".regularExpression * (type * '.'.regularExpression).zeroOrMore() * parametersWithOptionalType *
                        (':'.regularExpression * type).zeroOrOne() * typeConstraints.zeroOrOne() *
