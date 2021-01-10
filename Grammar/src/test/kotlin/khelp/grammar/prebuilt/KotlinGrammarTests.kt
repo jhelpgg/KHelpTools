@@ -32,7 +32,7 @@ class KotlinGrammarTests
 
         // Check imports
         val collector = ArrayList<String>()
-        grammarNode.forEachDeep({ node -> node.rule == KotlinGrammar.importHeader }) { node ->
+        grammarNode.forEachDeep(KotlinGrammar.importHeader) { node ->
             node.searchByFirstDeep(KotlinGrammar.identifier)
                 ?.let { nodeIdentifier -> collector.add(nodeIdentifier.text) }
         }
@@ -49,7 +49,7 @@ class KotlinGrammarTests
 
         // Check properties
         collector.clear()
-        child.forEachDeep({ node -> node.rule == KotlinGrammar.propertyDeclaration }) { node ->
+        child.forEachDeep(KotlinGrammar.propertyDeclaration) { node ->
             node.searchByFirstHeap(KotlinGrammar.Identifier)
                 ?.let { nodeIdentifier -> collector.add(nodeIdentifier.text) }
         }
@@ -59,7 +59,7 @@ class KotlinGrammarTests
 
         // Check functions
         collector.clear()
-        child.forEachDeep({ node -> node.rule == KotlinGrammar.functionDeclaration }) { node ->
+        child.forEachDeep(KotlinGrammar.functionDeclaration) { node ->
             node.searchByFirstHeap(KotlinGrammar.Identifier)
                 ?.let { nodeIdentifier -> collector.add(nodeIdentifier.text) }
         }

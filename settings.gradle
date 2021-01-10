@@ -7,4 +7,5 @@ include ':Database'
 include ':Samples'
 include ':Math'
 include ':Grammar'
+include ':kotlinspector'
 

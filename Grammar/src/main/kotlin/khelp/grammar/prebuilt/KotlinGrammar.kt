@@ -109,7 +109,6 @@ object KotlinGrammar
     const val genericCallLikeComparison = "genericCallLikeComparison"
     const val infixOperation = "infixOperation"
     const val elvisExpression = "elvisExpression"
-    const val elvis = "elvis"
     const val infixFunctionCall = "infixFunctionCall"
     const val rangeExpression = "rangeExpression"
     const val additiveExpression = "additiveExpression"
@@ -172,9 +171,7 @@ object KotlinGrammar
     const val asOperator = "asOperator"
     const val prefixUnaryOperator = "prefixUnaryOperator"
     const val postfixUnaryOperator = "postfixUnaryOperator"
-    const val excl = "excl"
     const val memberAccessOperator = "memberAccessOperator"
-    const val safeNav = "safeNav"
     const val modifiers = "modifiers"
     const val modifier = "modifier"
     const val typeModifiers = "typeModifiers"
@@ -202,7 +199,6 @@ object KotlinGrammar
     const val WS = "WS"
     const val Hidden = "Hidden"
     const val RESERVED = "RESERVED"
-    const val EXCL_WS = "EXCL_WS"
     const val DOUBLE_ARROW = "DOUBLE_ARROW"
     const val DOUBLE_SEMICOLON = "DOUBLE_SEMICOLON"
     const val HASH = "HASH"
@@ -213,8 +209,6 @@ object KotlinGrammar
     const val THIS_AT = "THIS_AT"
     const val SUPER_AT = "SUPER_AT"
     const val TYPEOF = "TYPEOF"
-    const val NOT_IS = "NOT_IS"
-    const val NOT_IN = "NOT_IN"
     const val DecDigit = "DecDigit"
     const val DecDigitNoZero = "DecDigitNoZero"
     const val DecDigitOrSeparator = "DecDigitOrSeparator"
@@ -364,8 +358,7 @@ object KotlinGrammar
 
             type IS { rule = typeModifiers.zeroOrOne() * (parenthesizedType I nullableType I typeReference I functionType) }
             typeReference IS { rule = userType I "dynamic".regularExpression }
-            nullableType IS { rule = (typeReference I parenthesizedType) * quest.oneOrMore() }
-            quest IS { rule = +'?'.regularExpression }
+            nullableType IS { rule = (typeReference I parenthesizedType) * '?'.regularExpression }
             userType IS { rule = simpleUserType * ('.'.regularExpression * simpleUserType).zeroOrMore() }
             simpleUserType IS { rule = simpleIdentifier * typeArguments.zeroOrOne() }
             typeProjection IS { rule = (typeProjectionModifiers.zeroOrOne() * type) I '*'.regularExpression }
@@ -412,8 +405,7 @@ object KotlinGrammar
             comparison IS { rule = genericCallLikeComparison * (comparisonOperator * genericCallLikeComparison).zeroOrMore() }
             genericCallLikeComparison IS { rule = infixOperation * callSuffix.zeroOrMore() }
             infixOperation IS { rule = elvisExpression * ((inOperator * elvisExpression) I (isOperator * type)).zeroOrMore() }
-            elvisExpression IS { rule = infixFunctionCall * (elvis * infixFunctionCall).zeroOrMore() }
-            elvis IS { rule = +"?:".regularExpression }
+            elvisExpression IS { rule = infixFunctionCall * ("?:".regularExpression * infixFunctionCall).zeroOrMore() }
             infixFunctionCall IS { rule = rangeExpression * (simpleIdentifier * rangeExpression).zeroOrMore() }
             rangeExpression IS { rule = additiveExpression * ("..".regularExpression * additiveExpression).zeroOrMore() }
             additiveExpression IS { rule = multiplicativeExpression * (additiveOperator * multiplicativeExpression).zeroOrMore() }
@@ -451,8 +443,6 @@ object KotlinGrammar
             valueArgument IS { rule = annotation.zeroOrOne() * (simpleIdentifier * '='.regularExpression).zeroOrOne() * '*'.zeroOrOne() * expression }
             primaryExpression IS {
                 rule = parenthesizedExpression I
-                        identifier I
-                        literalConstant I
                         stringLiteral I
                         callableReference I
                         functionLiteral I
@@ -463,7 +453,9 @@ object KotlinGrammar
                         ifExpression I
                         whenExpression I
                         tryExpression I
-                        jumpExpression
+                        jumpExpression I
+                        literalConstant I
+                        identifier
             }
             parenthesizedExpression IS { rule = '('.regularExpression * expression * ')'.regularExpression }
             collectionLiteral IS {
@@ -540,22 +532,14 @@ object KotlinGrammar
             assignmentAndOperator IS { rule = +(charArrayOf('+', '-', '*', '/', '%').regularExpression + '=') }
             equalityOperator IS { rule = +(charArrayOf('!', '=').regularExpression + '=' + '='.zeroOrOne()) }
             comparisonOperator IS { rule = +(charArrayOf('<', '>').regularExpression + '='.zeroOrOne()) }
-            inOperator IS { rule = "in".regularExpression I NOT_IN }
-            isOperator IS { rule = "is".regularExpression I NOT_IS }
+            inOperator IS { rule = +('!'.zeroOrOne() + "in".regularExpression) }
+            isOperator IS { rule = +('!'.zeroOrOne() + "is".regularExpression) }
             additiveOperator IS { rule = +charArrayOf('+', '-').regularExpression }
             multiplicativeOperator IS { rule = +charArrayOf('*', '/', '%').regularExpression }
             asOperator IS { rule = +("as".regularExpression + '?'.zeroOrOne()) }
-            prefixUnaryOperator IS {
-                val sign = charArrayOf('+', '-').regularExpression.group()
-                rule = (sign + sign.zeroOrOne()) I excl
-            }
-            postfixUnaryOperator IS {
-                val sign = charArrayOf('+', '-').regularExpression.group()
-                rule = (sign + sign) I ('!'.regularExpression * excl)
-            }
-            excl IS { rule = '!'.regularExpression I EXCL_WS }
-            memberAccessOperator IS { rule = '.'.regularExpression I safeNav I "::".regularExpression }
-            safeNav IS { rule = +"?.".regularExpression }
+            prefixUnaryOperator IS { rule = +("++".regularExpression OR "--".regularExpression OR '!'.regularExpression) }
+            postfixUnaryOperator IS { rule = +("++".regularExpression OR "--".regularExpression OR "!!".regularExpression) }
+            memberAccessOperator IS { rule = +('.'.regularExpression OR "?.".regularExpression OR "::".regularExpression) }
 
             // Modifiers
 
@@ -575,6 +559,7 @@ object KotlinGrammar
             parameterModifier IS { rule = +("vararg".regularExpression OR "noinline" OR "crossinline") }
             reificationModifier IS { rule = +"reified".regularExpression }
             platformModifier IS { rule = +("expect".regularExpression OR "actual") }
+            visibilityModifier IS { rule = +("public".regularExpression OR "private" OR "internal" OR "protected") }
 
             // Annotations
 
@@ -617,7 +602,6 @@ object KotlinGrammar
             // Separators and operations
 
             RESERVED IS { rule = +"...".regularExpression }
-            EXCL_WS IS { rule = +'!'.regularExpression }
             DOUBLE_ARROW IS { rule = +"=>".regularExpression }
             DOUBLE_SEMICOLON IS { rule = +";;".regularExpression }
             HASH IS { rule = +'#'.regularExpression }
@@ -631,8 +615,6 @@ object KotlinGrammar
             THIS_AT IS { rule = "this@".regularExpression * Identifier }
             SUPER_AT IS { rule = "super@".regularExpression * Identifier }
             TYPEOF IS { rule = +"typeof".regularExpression }
-            NOT_IS IS { rule = "!is".regularExpression * Hidden }
-            NOT_IN IS { rule = "!in".regularExpression * Hidden }
 
             // Literals
 
@@ -670,9 +652,9 @@ object KotlinGrammar
             }
             UnsignedLiteral IS {
                 rule = (IntegerLiteral I HexLiteral I BinLiteral) * (charArrayOf('u',
-                                                                                 'U').regularExpression + charArrayOf(
-                    'l',
-                    'L').zeroOrOne())
+                                                                                 'U').regularExpression +
+                                                                     charArrayOf('l',
+                                                                                 'L').zeroOrOne())
             }
             LongLiteral IS {
                 rule = (IntegerLiteral I HexLiteral I BinLiteral) * charArrayOf('l',
@@ -739,9 +721,6 @@ object KotlinGrammar
             UNICODE_CLASS_LU IS { rule = +unicodeClassLU.regularExpression }
             UNICODE_CLASS_ND IS { rule = +unicodeClassND.regularExpression }
             UNICODE_CLASS_NL IS { rule = +unicodeClassNL.regularExpression }
-
-            visibilityModifier IS { rule = +("public".regularExpression OR "private" OR "internal" OR "protected") }
-
         }
     }
 

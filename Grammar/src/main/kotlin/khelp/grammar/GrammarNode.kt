@@ -78,7 +78,13 @@ class GrammarNode internal constructor(val rule: String, val text: String) : Ite
         return null
     }
 
-    fun forEachDeep(criteria: (GrammarNode) -> Boolean = { true },
+    fun forEachDeep(ruleName: String, visitChildrenIfFound: Boolean = false, action: (GrammarNode) -> Unit)
+    {
+        this.forEachDeep(visitChildrenIfFound, { node -> node.rule == ruleName }, action)
+    }
+
+    fun forEachDeep(visitChildrenIfFound: Boolean = false,
+                    criteria: (GrammarNode) -> Boolean = { true },
                     action: (GrammarNode) -> Unit)
     {
         val stack = Stack<GrammarNode>()
@@ -92,9 +98,16 @@ class GrammarNode internal constructor(val rule: String, val text: String) : Ite
             if (criteria(current))
             {
                 action(current)
-            }
 
-            current.children.forEachReversed(stack::push)
+                if (visitChildrenIfFound)
+                {
+                    current.children.forEachReversed(stack::push)
+                }
+            }
+            else
+            {
+                current.children.forEachReversed(stack::push)
+            }
         }
     }
 
