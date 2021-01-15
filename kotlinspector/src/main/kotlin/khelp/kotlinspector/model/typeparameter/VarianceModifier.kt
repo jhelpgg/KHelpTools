@@ -9,7 +9,7 @@ enum class VarianceModifier
     companion object
     {
         fun parse(serialized: String): VarianceModifier =
-            when (serialized)
+            when (serialized.trim())
             {
                 "in"  -> VarianceModifier.IN
                 "out" -> VarianceModifier.OUT

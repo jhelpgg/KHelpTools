@@ -9,7 +9,7 @@ enum class ThisOrSuper
     companion object
     {
         fun parse(serialized: String): ThisOrSuper =
-            when (serialized)
+            when (serialized.trim())
             {
                 "this"  -> ThisOrSuper.THIS
                 "super" -> ThisOrSuper.SUPER

@@ -9,6 +9,6 @@ class MultiLineStrRef
 
     internal fun parse(grammarNode: GrammarNode)
     {
-        this.reference = grammarNode[0][2].text
+        this.reference = grammarNode[2].text
     }
 }

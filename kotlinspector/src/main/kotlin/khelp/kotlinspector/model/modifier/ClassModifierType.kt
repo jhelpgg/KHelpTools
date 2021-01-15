@@ -13,9 +13,11 @@ enum class ClassModifierType(val modifier: String)
     {
         fun parse(modifier: String): ClassModifierType
         {
+            val trimmed = modifier.trim()
+
             for (classModifierType in ClassModifierType.values())
             {
-                if (modifier == classModifierType.modifier)
+                if (trimmed == classModifierType.modifier)
                 {
                     return classModifierType
                 }

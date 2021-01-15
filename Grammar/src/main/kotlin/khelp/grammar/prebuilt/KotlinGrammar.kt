@@ -376,7 +376,7 @@ object KotlinGrammar
             // Statements
 
             statements IS { rule = (statement * (WHITE_SPACES * statement).zeroOrMore()).zeroOrOne() * WHITE_SPACES }
-            statement IS { rule = (label I annotation).zeroOrMore() * (declaration I assignment I loopStatement I expression) }
+            statement IS { rule = (label I annotation).zeroOrMore() * (Hidden I declaration I assignment I loopStatement I expression) }
             label IS { rule = simpleIdentifier * '@'.regularExpression }
             controlStructureBody IS { rule = block I statement }
             block IS { rule = '{'.regularExpression * statements * '}'.regularExpression }
@@ -413,7 +413,7 @@ object KotlinGrammar
             asExpression IS { rule = prefixUnaryExpression * (asOperator * type).zeroOrMore() }
             prefixUnaryExpression IS { rule = unaryPrefix.zeroOrMore() * postfixUnaryExpression }
             unaryPrefix IS { rule = annotation I label I prefixUnaryOperator }
-            postfixUnaryExpression IS { rule = (primaryExpression) I (primaryExpression * postfixUnarySuffix.oneOrMore()) }
+            postfixUnaryExpression IS { rule = (primaryExpression * postfixUnarySuffix.oneOrMore()) I primaryExpression  }
             postfixUnarySuffix IS { rule = postfixUnaryOperator I typeArguments I callSuffix I indexingSuffix I navigationSuffix }
             directlyAssignableExpression IS {
                 rule = (postfixUnaryExpression * assignableSuffix) I
@@ -429,7 +429,7 @@ object KotlinGrammar
                         navigationSuffix
             }
             indexingSuffix IS { rule = '['.regularExpression * expression * (','.regularExpression * expression).zeroOrMore() * ','.zeroOrOne() * ']'.regularExpression }
-            navigationSuffix IS { rule = memberAccessOperator * (simpleIdentifier I parenthesizedExpression I "class".regularExpression) }
+            navigationSuffix IS { rule = memberAccessOperator * (expression I "class".regularExpression I simpleIdentifier) }
             callSuffix IS {
                 rule = (typeArguments.zeroOrOne() * valueArguments.zeroOrOne() * annotatedLambda) I
                         (typeArguments.zeroOrOne() * valueArguments)
@@ -455,7 +455,7 @@ object KotlinGrammar
                         tryExpression I
                         jumpExpression I
                         literalConstant I
-                        identifier
+                        simpleIdentifier
             }
             parenthesizedExpression IS { rule = '('.regularExpression * expression * ')'.regularExpression }
             collectionLiteral IS {
@@ -518,17 +518,17 @@ object KotlinGrammar
             rangeTest IS { rule = inOperator * expression }
             typeTest IS { rule = isOperator * type }
             tryExpression IS { rule = "try".regularExpression * block * ((catchBlock.oneOrMore() * finallyBlock.zeroOrOne()) I finallyBlock) }
-            catchBlock IS { rule = "catch".regularExpression * '('.regularExpression * annotation.zeroOrMore() * simpleIdentifier * ':'.regularExpression * type * ','.zeroOrOne() * ')'.regularExpression * block }
+            catchBlock IS { rule = "catch".regularExpression * '('.regularExpression * annotation.zeroOrMore() * simpleIdentifier * ':'.regularExpression * type * ','.zeroOrOne() * ')'.regularExpression * block * WHITE_SPACES }
             finallyBlock IS { rule = "finally".regularExpression * block }
             jumpExpression IS {
                 rule = ("throw".regularExpression * expression) I
-                        (("return".regularExpression I RETURN_AT) * expression.zeroOrOne()) I
-                        "continue".regularExpression I
+                        ((RETURN_AT I "return".regularExpression) * expression.zeroOrOne()) I
                         CONTINUE_AT I
-                        "break".regularExpression I
-                        BREAK_AT
+                        "continue".regularExpression I
+                        BREAK_AT I
+                        "break".regularExpression
             }
-            callableReference IS { rule = receiverType.zeroOrOne() * "::".regularExpression * (simpleIdentifier I "class".regularExpression) }
+            callableReference IS { rule = receiverType.zeroOrOne() * "::".regularExpression * ("class".regularExpression I simpleIdentifier) }
             assignmentAndOperator IS { rule = +(charArrayOf('+', '-', '*', '/', '%').regularExpression + '=') }
             equalityOperator IS { rule = +(charArrayOf('!', '=').regularExpression + '=' + '='.zeroOrOne()) }
             comparisonOperator IS { rule = +(charArrayOf('<', '>').regularExpression + '='.zeroOrOne()) }
@@ -547,19 +547,19 @@ object KotlinGrammar
             parameterModifiers IS { rule = annotation I parameterModifier.oneOrMore() }
             modifier IS { rule = classModifier I memberModifier I visibilityModifier I functionModifier I propertyModifier I inheritanceModifier I parameterModifier I platformModifier }
             typeModifiers IS { rule = typeModifier.oneOrMore() }
-            typeModifier IS { rule = annotation I "suspend".regularExpression }
-            classModifier IS { rule = +("enum".regularExpression OR "sealed" OR "annotation" OR "data" OR "inner") }
-            memberModifier IS { rule = +("override".regularExpression OR "lateinit") }
-            varianceModifier IS { rule = +("in".regularExpression OR "out") }
+            typeModifier IS { rule = annotation I ("suspend".regularExpression * WHITE_SPACES) }
+            classModifier IS { rule = +("enum".regularExpression OR "sealed" OR "annotation" OR "data" OR "inner") * WHITE_SPACES }
+            memberModifier IS { rule = +("override".regularExpression OR "lateinit") * WHITE_SPACES }
+            varianceModifier IS { rule = +("in".regularExpression OR "out") * WHITE_SPACES }
             typeParameterModifiers IS { rule = typeParameterModifier.oneOrMore() }
             typeParameterModifier IS { rule = reificationModifier I varianceModifier I annotation }
-            functionModifier IS { rule = +("tailrec".regularExpression OR "operator" OR "infix" OR "inline" OR "external" OR "suspend") }
-            propertyModifier IS { rule = +"const".regularExpression }
-            inheritanceModifier IS { rule = +("abstract".regularExpression OR "final" OR "open") }
-            parameterModifier IS { rule = +("vararg".regularExpression OR "noinline" OR "crossinline") }
-            reificationModifier IS { rule = +"reified".regularExpression }
-            platformModifier IS { rule = +("expect".regularExpression OR "actual") }
-            visibilityModifier IS { rule = +("public".regularExpression OR "private" OR "internal" OR "protected") }
+            functionModifier IS { rule = +("tailrec".regularExpression OR "operator" OR "infix" OR "inline" OR "external" OR "suspend") * WHITE_SPACES }
+            propertyModifier IS { rule = +"const".regularExpression * WHITE_SPACES }
+            inheritanceModifier IS { rule = +("abstract".regularExpression OR "final" OR "open") * WHITE_SPACES }
+            parameterModifier IS { rule = +("vararg".regularExpression OR "noinline" OR "crossinline") * WHITE_SPACES }
+            reificationModifier IS { rule = +"reified".regularExpression * WHITE_SPACES }
+            platformModifier IS { rule = +("expect".regularExpression OR "actual") * WHITE_SPACES }
+            visibilityModifier IS { rule = +("public".regularExpression OR "private" OR "internal" OR "protected") * WHITE_SPACES }
 
             // Annotations
 
@@ -701,11 +701,18 @@ object KotlinGrammar
 
             // See String templates
 
-            LineStrText IS { rule = +(charArrayOf('\\', '"', '$').allCharactersExcludeThose.oneOrMore() OR '\$') }
+            LineStrText IS {
+                rule = +("\\$".regularExpression OR charArrayOf('\\',
+                                                                '"',
+                                                                '$').allCharactersExcludeThose).oneOrMore()
+            }
             LineStrEscapedChar IS { rule = EscapedIdentifier I UniCharacterLiteral }
             TRIPLE_QUOTE_CLOSE IS { rule = +('"'.zeroOrOne() + "\"\"\"") }
             MultiLineStrRef IS { rule = +FieldIdentifier }
-            MultiLineStrText IS { rule = +(charArrayOf('"', '$').allCharactersExcludeThose.oneOrMore() OR '\$') }
+            MultiLineStrText IS {
+                rule = +("\\$".regularExpression OR charArrayOf('"',
+                                                                '$').allCharactersExcludeThose).oneOrMore()
+            }
             ErrorCharacter IS { rule = +ANY }
 
             /*
@@ -745,6 +752,6 @@ object KotlinGrammar
         this.grammar.parse(text)
 
     @TestOnly
-    internal fun parseSpecificRule(text: String, ruleName: String): GrammarNode? =
+    fun parseSpecificRule(text: String, ruleName: String): GrammarNode? =
         this.grammar.parseSpecificRule(text, ruleName)
 }

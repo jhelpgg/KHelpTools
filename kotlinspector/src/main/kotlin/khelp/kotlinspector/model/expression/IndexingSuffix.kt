@@ -13,7 +13,8 @@ class IndexingSuffix
     internal fun parse(grammarNode: GrammarNode)
     {
         this.expressions.clear()
-        grammarNode.forEachDeep(KotlinGrammar.expression) { expressionNode ->
+        grammarNode.forEachDeep(false,
+                                { node -> node.rule == KotlinGrammar.expression || node.rule == KotlinGrammar.disjunction }) { expressionNode ->
             val expression = Expression()
             expression.parse(expressionNode)
             this.expressions.add(expression)

@@ -125,8 +125,10 @@ internal fun parseModifierInformation(modifierNode: GrammarNode): Modifier
 
 internal fun parseDeclarationInformation(declarationNode: GrammarNode): Declaration
 {
+    val node =declarationNode[2][0]
+
     val declaration =
-        when (declarationNode.rule)
+        when (node.rule)
         {
             KotlinGrammar.classDeclaration    -> ClassDeclaration()
             KotlinGrammar.objectDeclaration   -> ObjectDeclaration()
@@ -137,7 +139,7 @@ internal fun parseDeclarationInformation(declarationNode: GrammarNode): Declarat
 
         }
 
-    declaration.parse(declarationNode)
+    declaration.parse(node)
     return declaration
 }
 

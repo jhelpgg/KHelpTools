@@ -8,7 +8,7 @@ enum class ValOrVar
 }
 
 fun parseValOrVar(serialized: String?): ValOrVar =
-    when (serialized)
+    when (serialized?.trim())
     {
         "val" -> ValOrVar.VAL
         "var" -> ValOrVar.VAR

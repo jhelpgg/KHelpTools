@@ -22,7 +22,12 @@ class TryExpression
         this.block.parse(grammarNode[2])
         var node = grammarNode[4]
 
-        if (node.numberChildren > 1)
+        if (node[0].rule == KotlinGrammar.finallyBlock)
+        {
+            this.finallyBlock = FinallyBlock()
+            this.finallyBlock?.parse(node[0])
+        }
+        else
         {
             node[0].forEachDeep(KotlinGrammar.catchBlock) { catchBlockNode ->
                 val catchBlock = CatchBlock()
@@ -30,18 +35,16 @@ class TryExpression
                 this.catchBlocks.add(catchBlock)
             }
 
-            node = node[2]
-
-            if (node.numberChildren > 0)
+            if (node[0].numberChildren > 1)
             {
-                this.finallyBlock = FinallyBlock()
-                this.finallyBlock?.parse(node[0])
+                node = node[0][2]
+
+                if (node.numberChildren > 0)
+                {
+                    this.finallyBlock = FinallyBlock()
+                    this.finallyBlock?.parse(node[0])
+                }
             }
-        }
-        else
-        {
-            this.finallyBlock = FinallyBlock()
-            this.finallyBlock?.parse(node)
         }
     }
 }

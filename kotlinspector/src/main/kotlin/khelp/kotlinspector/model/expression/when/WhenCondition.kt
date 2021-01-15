@@ -23,7 +23,7 @@ class WhenCondition
 
         when(node.rule)
         {
-            KotlinGrammar.expression->
+            KotlinGrammar.expression, KotlinGrammar.disjunction->
             {
                 this.expression = Expression()
                 this.expression?.parse(node)

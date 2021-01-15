@@ -28,7 +28,7 @@ class ParameterModifiers
             for(parameterModifierNode in contentNode)
             {
                 val parameterModifier = ParameterModifier()
-                parameterModifier.parse(contentNode)
+                parameterModifier.parse(parameterModifierNode)
                 this.parameterModifiers.add(parameterModifier)
             }
         }

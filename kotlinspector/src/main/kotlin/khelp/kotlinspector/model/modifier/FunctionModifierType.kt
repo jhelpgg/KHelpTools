@@ -14,9 +14,11 @@ enum class FunctionModifierType(val modifier: String)
     {
         fun parse(modifier: String): FunctionModifierType
         {
+            val trimmed = modifier.trim()
+
             for (functionModifierType in FunctionModifierType.values())
             {
-                if (functionModifierType.modifier == modifier)
+                if (functionModifierType.modifier == trimmed)
                 {
                     return functionModifierType
                 }

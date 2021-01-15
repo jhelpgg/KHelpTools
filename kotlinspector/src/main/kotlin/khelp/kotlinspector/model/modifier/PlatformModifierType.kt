@@ -1,6 +1,6 @@
 package khelp.kotlinspector.model.modifier
 
-enum class PlatformModifierType(val modifier:String)
+enum class PlatformModifierType(val modifier: String)
 {
     EXPECT("expect"),
     ACTUAL("actual"),
@@ -10,9 +10,11 @@ enum class PlatformModifierType(val modifier:String)
     {
         fun parse(modifier: String): PlatformModifierType
         {
+            val trimmed = modifier.trim()
+
             for (inheritanceModifierType in PlatformModifierType.values())
             {
-                if (inheritanceModifierType.modifier == modifier)
+                if (inheritanceModifierType.modifier == trimmed)
                 {
                     return inheritanceModifierType
                 }

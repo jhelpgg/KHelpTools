@@ -20,16 +20,16 @@ class JumpExpression
 
         when
         {
-            node.numberChildren > 1 && node[0].text == "throw" ->
+            node.numberChildren > 1 && node[0].text == "throw"                                          ->
             {
                 this.jumpExpressionType = JumpExpressionType.THROW
                 this.expression = Expression()
                 this.expression?.parse(node[2])
             }
-            node.numberChildren > 1                            ->
+            node.numberChildren > 1 && (node[0].text == "return" || node[0].text.startsWith("return@")) ->
             {
                 this.jumpExpressionType = JumpExpressionType.RETURN
-                var child = node[0]
+                var child = node[0][0]
 
                 if (child.rule == KotlinGrammar.RETURN_AT)
                 {
@@ -44,14 +44,14 @@ class JumpExpression
                     this.expression?.parse(child[0])
                 }
             }
-            node.text == "continue"                            -> this.jumpExpressionType = JumpExpressionType.CONTINUE
-            node.rule == KotlinGrammar.CONTINUE_AT             ->
+            node.text == "continue"                                                                     -> this.jumpExpressionType = JumpExpressionType.CONTINUE
+            node.rule == KotlinGrammar.CONTINUE_AT                                                      ->
             {
                 this.jumpExpressionType = JumpExpressionType.CONTINUE
                 this.atName = node[2].text
             }
-            node.text == "break"                               -> this.jumpExpressionType = JumpExpressionType.BREAK
-            node.rule == KotlinGrammar.BREAK_AT                ->
+            node.text == "break"                                                                        -> this.jumpExpressionType = JumpExpressionType.BREAK
+            node.rule == KotlinGrammar.BREAK_AT                                                         ->
             {
                 this.jumpExpressionType = JumpExpressionType.BREAK
                 this.atName = node[2].text

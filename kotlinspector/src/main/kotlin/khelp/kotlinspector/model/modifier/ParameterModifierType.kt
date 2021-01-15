@@ -11,9 +11,11 @@ enum class ParameterModifierType(val modifier:String)
     {
         fun parse(modifier: String): ParameterModifierType
         {
+            val trimmed = modifier.trim()
+
             for (inheritanceModifierType in ParameterModifierType.values())
             {
-                if (inheritanceModifierType.modifier == modifier)
+                if (inheritanceModifierType.modifier == trimmed)
                 {
                     return inheritanceModifierType
                 }

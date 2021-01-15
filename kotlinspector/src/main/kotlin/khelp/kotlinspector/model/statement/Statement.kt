@@ -20,11 +20,14 @@ class Statement
         private set
     var expression: Expression? = null
         private set
+    var comments = ""
+        private set
 
     internal fun parse(grammarNode: GrammarNode)
     {
         this.label = ""
         this.annotation = ""
+        this.comments = ""
         this.declaration = null
         this.assignment = null
         this.loopStatement = null
@@ -46,22 +49,23 @@ class Statement
 
         when (node.rule)
         {
-            KotlinGrammar.declaration   -> this.declaration = parseDeclarationInformation(node)
-            KotlinGrammar.assignment    ->
+            KotlinGrammar.declaration                           -> this.declaration = parseDeclarationInformation(node)
+            KotlinGrammar.assignment                            ->
             {
                 this.assignment = Assignment()
                 this.assignment?.parse(node)
             }
-            KotlinGrammar.loopStatement ->
+            KotlinGrammar.loopStatement                         ->
             {
                 this.loopStatement = LoopStatement()
                 this.loopStatement?.parse(node)
             }
-            KotlinGrammar.expression, KotlinGrammar.disjunction    ->
+            KotlinGrammar.expression, KotlinGrammar.disjunction ->
             {
                 this.expression = Expression()
                 this.expression?.parse(node)
             }
+            KotlinGrammar.Hidden                                -> this.comments = node.text
         }
     }
 }

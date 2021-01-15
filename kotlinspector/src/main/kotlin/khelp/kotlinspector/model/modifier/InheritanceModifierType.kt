@@ -11,9 +11,11 @@ enum class InheritanceModifierType(val modifier:String)
     {
         fun parse(modifier: String): InheritanceModifierType
         {
+            val trimmed = modifier.trim()
+
             for (inheritanceModifierType in InheritanceModifierType.values())
             {
-                if (inheritanceModifierType.modifier == modifier)
+                if (inheritanceModifierType.modifier == trimmed)
                 {
                     return inheritanceModifierType
                 }

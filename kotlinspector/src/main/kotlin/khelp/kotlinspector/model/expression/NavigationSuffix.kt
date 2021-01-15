@@ -10,7 +10,7 @@ class NavigationSuffix
         private set
     var name = ""
         private set
-    var parenthesizedExpression: ParenthesizedExpression? = null
+    var expression: Expression? = null
         private set
     var isClass = false
         private set
@@ -18,20 +18,20 @@ class NavigationSuffix
     internal fun parse(grammarNode: GrammarNode)
     {
         this.name = ""
-        this.parenthesizedExpression = null
+        this.expression = null
         this.isClass = false
         this.memberAccessOperator = MemberAccessOperator.parse(grammarNode[0].text)
-        val node = grammarNode[2]
+        val node = grammarNode[2][0]
 
         when (node.rule)
         {
-            KotlinGrammar.simpleIdentifier        -> this.name = node.text
-            KotlinGrammar.parenthesizedExpression ->
+            KotlinGrammar.simpleIdentifier                      -> this.name = node.text
+            KotlinGrammar.expression, KotlinGrammar.disjunction ->
             {
-                this.parenthesizedExpression = ParenthesizedExpression()
-                this.parenthesizedExpression?.parse(node)
+                this.expression = Expression()
+                this.expression?.parse(node)
             }
-            else                                  -> this.isClass = true
+            else                                                -> this.isClass = true
         }
     }
 }

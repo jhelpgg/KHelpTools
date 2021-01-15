@@ -10,9 +10,11 @@ enum class MemberModifierType(val modifier: String)
     {
         fun parse(modifier: String): MemberModifierType
         {
+            val trimmed = modifier.trim()
+
             for (classModifierType in MemberModifierType.values())
             {
-                if (modifier == classModifierType.modifier)
+                if (trimmed == classModifierType.modifier)
                 {
                     return classModifierType
                 }

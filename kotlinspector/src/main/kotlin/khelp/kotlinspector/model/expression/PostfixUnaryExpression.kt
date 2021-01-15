@@ -1,6 +1,7 @@
 package khelp.kotlinspector.model.expression
 
 import khelp.grammar.GrammarNode
+import khelp.grammar.prebuilt.KotlinGrammar
 
 class PostfixUnaryExpression
 {
@@ -14,7 +15,16 @@ class PostfixUnaryExpression
     internal fun parse(grammarNode: GrammarNode)
     {
         val node = grammarNode[0]
-        this.primaryExpression.parse(node[0])
+
+        if (node.rule == KotlinGrammar.primaryExpression)
+        {
+            this.primaryExpression.parse(node)
+        }
+        else
+        {
+            this.primaryExpression.parse(node[0])
+        }
+
         this.postfixUnarySuffixs.clear()
 
         if (node.numberChildren > 2)

@@ -56,74 +56,75 @@ class PrimaryExpression
         this.whenExpression = null
         this.tryExpression = null
         this.jumpExpression = null
+        val node = grammarNode[0]
 
-        when (grammarNode.rule)
+        when (node.rule)
         {
             KotlinGrammar.parenthesizedExpression ->
             {
                 this.parenthesizedExpression = ParenthesizedExpression()
-                this.parenthesizedExpression?.parse(grammarNode)
+                this.parenthesizedExpression?.parse(node)
             }
-            KotlinGrammar.identifier              -> this.identifier = grammarNode.text
+            KotlinGrammar.simpleIdentifier              -> this.identifier = node.text
             KotlinGrammar.literalConstant         ->
             {
                 this.literalConstant = LiteralConstant()
-                this.literalConstant?.parse(grammarNode)
+                this.literalConstant?.parse(node)
             }
             KotlinGrammar.stringLiteral           ->
             {
                 this.stringLiteral = StringLiteral()
-                this.stringLiteral?.parse(grammarNode)
+                this.stringLiteral?.parse(node)
             }
             KotlinGrammar.callableReference       ->
             {
                 this.callableReference = CallableReference()
-                this.callableReference?.parse(grammarNode)
+                this.callableReference?.parse(node)
             }
             KotlinGrammar.functionLiteral         ->
             {
                 this.functionLiteral = FunctionLiteral()
-                this.functionLiteral?.parse(grammarNode)
+                this.functionLiteral?.parse(node)
             }
             KotlinGrammar.objectLiteral           ->
             {
                 this.objectLiteral = ObjectLiteral()
-                this.objectLiteral?.parse(grammarNode)
+                this.objectLiteral?.parse(node)
             }
             KotlinGrammar.collectionLiteral       ->
             {
                 this.collectionLiteral = CollectionLiteral()
-                this.collectionLiteral?.parse(grammarNode)
+                this.collectionLiteral?.parse(node)
             }
             KotlinGrammar.thisExpression          ->
             {
                 this.thisExpression = ThisExpression()
-                this.thisExpression?.parse(grammarNode)
+                this.thisExpression?.parse(node)
             }
             KotlinGrammar.superExpression         ->
             {
                 this.superExpression = SuperExpression()
-                this.superExpression?.parse(grammarNode)
+                this.superExpression?.parse(node)
             }
             KotlinGrammar.ifExpression            ->
             {
                 this.ifExpression = IfExpression()
-                this.ifExpression?.parse(grammarNode)
+                this.ifExpression?.parse(node)
             }
             KotlinGrammar.whenExpression          ->
             {
                 this.whenExpression = WhenExpression()
-                this.whenExpression?.parse(grammarNode)
+                this.whenExpression?.parse(node)
             }
             KotlinGrammar.tryExpression           ->
             {
                 this.tryExpression = TryExpression()
-                this.tryExpression?.parse(grammarNode)
+                this.tryExpression?.parse(node)
             }
             KotlinGrammar.jumpExpression          ->
             {
                 this.jumpExpression = JumpExpression()
-                this.jumpExpression?.parse(grammarNode)
+                this.jumpExpression?.parse(node)
             }
         }
     }

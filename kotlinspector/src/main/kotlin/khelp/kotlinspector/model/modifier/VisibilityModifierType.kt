@@ -12,9 +12,11 @@ enum class VisibilityModifierType(val modifier:String)
     {
         fun parse(modifier: String): VisibilityModifierType
         {
+            val trimmed = modifier.trim()
+
             for (inheritanceModifierType in VisibilityModifierType.values())
             {
-                if (inheritanceModifierType.modifier == modifier)
+                if (inheritanceModifierType.modifier == trimmed)
                 {
                     return inheritanceModifierType
                 }
