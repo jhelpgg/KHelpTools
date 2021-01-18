@@ -20,6 +20,7 @@ import khelp.utilities.extensions.regularExpression
 import khelp.utilities.extensions.zeroOrMore
 import khelp.utilities.extensions.zeroOrOne
 import khelp.utilities.regex.ANY
+import khelp.utilities.regex.LETTER_OR_DIGIT
 import khelp.utilities.regex.WHITE_SPACE
 import khelp.utilities.text.interval
 import org.jetbrains.annotations.TestOnly
@@ -413,7 +414,7 @@ object KotlinGrammar
             asExpression IS { rule = prefixUnaryExpression * (asOperator * type).zeroOrMore() }
             prefixUnaryExpression IS { rule = unaryPrefix.zeroOrMore() * postfixUnaryExpression }
             unaryPrefix IS { rule = annotation I label I prefixUnaryOperator }
-            postfixUnaryExpression IS { rule = (primaryExpression * postfixUnarySuffix.oneOrMore()) I primaryExpression  }
+            postfixUnaryExpression IS { rule = (primaryExpression * postfixUnarySuffix.oneOrMore()) I primaryExpression }
             postfixUnarySuffix IS { rule = postfixUnaryOperator I typeArguments I callSuffix I indexingSuffix I navigationSuffix }
             directlyAssignableExpression IS {
                 rule = (postfixUnaryExpression * assignableSuffix) I
@@ -464,14 +465,14 @@ object KotlinGrammar
             }
             literalConstant IS {
                 rule = BooleanLiteral I
-                        IntegerLiteral I
+                        UnsignedLiteral I
+                        LongLiteral I
                         HexLiteral I
                         BinLiteral I
                         CharacterLiteral I
                         RealLiteral I
                         "null".regularExpression I
-                        LongLiteral I
-                        UnsignedLiteral
+                        IntegerLiteral
             }
             stringLiteral IS { rule = lineStringLiteral I multiLineStringLiteral }
             lineStringLiteral IS { rule = '"'.regularExpression * (lineStringContent I lineStringExpression).zeroOrMore() * '"'.regularExpression }
@@ -511,10 +512,10 @@ object KotlinGrammar
             whenSubject IS { rule = '('.regularExpression * (annotation.zeroOrMore() * "val".regularExpression * variableDeclaration * '='.regularExpression).zeroOrOne() * expression * ')'.regularExpression }
             whenExpression IS { rule = "when".regularExpression * whenSubject.zeroOrOne() * '{'.regularExpression * whenEntry.zeroOrMore() * '}'.regularExpression }
             whenEntry IS {
-                rule = (whenCondition * (','.regularExpression * whenCondition).zeroOrMore() * ','.zeroOrOne() * "->".regularExpression * controlStructureBody * WHITE_SPACES) I
-                        ("else".regularExpression * "->".regularExpression * controlStructureBody * WHITE_SPACES)
+                rule = ("else".regularExpression * "->".regularExpression * controlStructureBody * WHITE_SPACES) I
+                        (whenCondition * (','.regularExpression * whenCondition).zeroOrMore() * ','.zeroOrOne() * "->".regularExpression * controlStructureBody * WHITE_SPACES)
             }
-            whenCondition IS { rule = expression I rangeTest I typeTest }
+            whenCondition IS { rule = rangeTest I typeTest I expression }
             rangeTest IS { rule = inOperator * expression }
             typeTest IS { rule = isOperator * type }
             tryExpression IS { rule = "try".regularExpression * block * ((catchBlock.oneOrMore() * finallyBlock.zeroOrOne()) I finallyBlock) }
@@ -534,7 +535,7 @@ object KotlinGrammar
             comparisonOperator IS { rule = +(charArrayOf('<', '>').regularExpression + '='.zeroOrOne()) }
             inOperator IS { rule = +('!'.zeroOrOne() + "in".regularExpression) }
             isOperator IS { rule = +('!'.zeroOrOne() + "is".regularExpression) }
-            additiveOperator IS { rule = +charArrayOf('+', '-').regularExpression }
+            additiveOperator IS { rule = +charArrayOf('+', '-').regularExpression.notFollowBy('>'.regularExpression) }
             multiplicativeOperator IS { rule = +charArrayOf('*', '/', '%').regularExpression }
             asOperator IS { rule = +("as".regularExpression + '?'.zeroOrOne()) }
             prefixUnaryOperator IS { rule = +("++".regularExpression OR "--".regularExpression OR '!'.regularExpression) }
@@ -621,7 +622,7 @@ object KotlinGrammar
             DecDigit IS { rule = +interval('0', '9').regularExpression }
             DecDigitNoZero IS { rule = +interval('1', '9').regularExpression }
             DecDigitOrSeparator IS { rule = +(interval('0', '9') + '_').regularExpression }
-            DecDigits IS { rule = (DecDigit * DecDigitOrSeparator.zeroOrMore() * DecDigit) I DecDigit }
+            DecDigits IS { rule = (DecDigit * DecDigitOrSeparator.zeroOrMore()) I DecDigit }
             DoubleExponent IS {
                 rule = (charArrayOf('e', 'E').regularExpression +
                         charArrayOf('+', '-').zeroOrOne()) * DecDigits
@@ -635,30 +636,33 @@ object KotlinGrammar
                 rule = (DecDigits.zeroOrOne() * '.'.regularExpression * DecDigits * DoubleExponent.zeroOrOne()) I
                         (DecDigits * DoubleExponent)
             }
-            IntegerLiteral IS { rule = (DecDigitNoZero * DecDigitOrSeparator.zeroOrMore() * DecDigit) I DecDigit }
+            IntegerLiteral IS { rule = (DecDigitNoZero * DecDigitOrSeparator.zeroOrMore()) I DecDigit }
             HexDigit IS { rule = +(interval('0', '9') + interval('a', 'f') + interval('A', 'F')).regularExpression }
             HexDigitOrSeparator IS { rule = HexDigit I '_'.regularExpression }
             HexLiteral IS {
                 rule = (('0'.regularExpression + charArrayOf('x',
-                                                             'X')) * HexDigit * HexDigitOrSeparator.zeroOrMore() * HexDigit) I
+                                                             'X')) * HexDigit * HexDigitOrSeparator.zeroOrMore()) I
                         (('0'.regularExpression + charArrayOf('x', 'X')) * HexDigit)
             }
             BinDigit IS { rule = +charArrayOf('0', '1').regularExpression }
             BinDigitOrSeparator IS { rule = BinDigit I '_'.regularExpression }
             BinLiteral IS {
                 rule = (('0'.regularExpression + charArrayOf('b',
-                                                             'B')) * BinDigit * BinDigitOrSeparator.zeroOrMore() * BinDigit) I
+                                                             'B')) * BinDigit * BinDigitOrSeparator.zeroOrMore()) I
                         (('0'.regularExpression + charArrayOf('b', 'B')) * BinDigit)
             }
             UnsignedLiteral IS {
-                rule = (IntegerLiteral I HexLiteral I BinLiteral) * (charArrayOf('u',
-                                                                                 'U').regularExpression +
-                                                                     charArrayOf('l',
-                                                                                 'L').zeroOrOne())
+                rule = (HexLiteral I BinLiteral I IntegerLiteral) *
+                       (charArrayOf('u', 'U').regularExpression
+                            .followBy(charArrayOf('l', 'L', ' ', '\n', '\t').regularExpression) +
+                        charArrayOf('l',
+                                    'L').zeroOrOne()
+                            .notFollowBy(LETTER_OR_DIGIT))
             }
             LongLiteral IS {
-                rule = (IntegerLiteral I HexLiteral I BinLiteral) * charArrayOf('l',
-                                                                                'L').regularExpression
+                rule = (HexLiteral I BinLiteral I IntegerLiteral) *
+                       charArrayOf('l', 'L').regularExpression
+                           .notFollowBy(LETTER_OR_DIGIT)
             }
             BooleanLiteral IS { rule = +("true".regularExpression OR "false") }
             CharacterLiteral IS {

@@ -10,7 +10,7 @@ class WhenExpression
 
     private val whenEntries = ArrayList<WhenEntry>()
 
-    fun whenEnties(): Array<WhenEntry> =
+    fun whenEntries(): Array<WhenEntry> =
         this.whenEntries.toTypedArray()
 
     internal fun parse(grammarNode: GrammarNode)

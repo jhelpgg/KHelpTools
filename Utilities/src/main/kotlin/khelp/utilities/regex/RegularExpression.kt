@@ -338,6 +338,23 @@ class RegularExpression internal constructor(private val format: String,
         }
 
     /**
+     * Create regular expression that force this follow by given one.
+     *
+     * The difference with + is the given regular expression is not consumed
+     */
+    fun followBy(regularExpression: RegularExpression): RegularExpression =
+        RegularExpression("%s(?=%s)", this, regularExpression)
+
+    /**
+     * Create regular expression that force this not follow by given one.
+     *
+     * The given regular expression is not consumed
+     */
+    fun notFollowBy(regularExpression: RegularExpression): RegularExpression =
+        RegularExpression("%s(?!%s)", this, regularExpression)
+
+
+    /**
      * Indicates if a regular expression or a group is inside this regular expression
      */
     operator fun contains(regularExpressionElement: RegularExpressionElement): Boolean
