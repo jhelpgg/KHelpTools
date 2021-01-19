@@ -15,7 +15,7 @@ class ThisExpression
 
         if (node.rule == KotlinGrammar.THIS_AT)
         {
-            this.atIdentifier = node[0][2].text
+            this.atIdentifier = node[2].text
         }
     }
 }

@@ -1,45 +1,32 @@
 package khelp.kotlinspector.model.expression
 
 import khelp.grammar.GrammarNode
-import khelp.grammar.prebuilt.KotlinGrammar
 import khelp.kotlinspector.model.type.Type
 
 class SuperExpression
 {
-    var type:Type?= null
-    private set
-    var simpleIdentifier= ""
-    private set
-     var atIdentifier = ""
+    var type: Type? = null
+        private set
+    var simpleIdentifier = ""
         private set
 
     internal fun parse(grammarNode: GrammarNode)
     {
         this.type = null
         this.simpleIdentifier = ""
-        this.atIdentifier = ""
-        val parentNode = grammarNode[0]
+        var node = grammarNode[2]
 
-        if(parentNode.rule == KotlinGrammar.SUPER_AT)
+        if (node.numberChildren > 0)
         {
-            this.atIdentifier = parentNode[2].text
+            this.type = Type()
+            this.type?.parse(node[0][2])
         }
-        else
+
+        node = grammarNode[4]
+
+        if (node.numberChildren > 0)
         {
-            var node = parentNode[2]
-
-            if (node.numberChildren > 0)
-            {
-                this.type = Type()
-                this.type?.parse(node[2])
-            }
-
-            node = parentNode[4]
-
-            if (node.numberChildren > 0)
-            {
-                this.simpleIdentifier = node[2].text
-            }
+            this.simpleIdentifier = node[0][2].text
         }
     }
 }

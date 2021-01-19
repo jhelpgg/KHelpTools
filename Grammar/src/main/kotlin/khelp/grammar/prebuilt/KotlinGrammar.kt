@@ -499,9 +499,9 @@ object KotlinGrammar
                 rule = ("object".regularExpression * ':'.regularExpression * delegationSpecifiers * classBody) I
                         ("object".regularExpression * classBody)
             }
-            thisExpression IS { rule = "this".regularExpression I THIS_AT }
+            thisExpression IS { rule = THIS_AT I "this".regularExpression }
             superExpression IS {
-                rule = ("super".regularExpression * ('<'.regularExpression * type * '>'.regularExpression).zeroOrOne() * ('@'.regularExpression * simpleIdentifier).zeroOrOne()) I SUPER_AT
+                rule = "super".regularExpression * ('<'.regularExpression * type * '>'.regularExpression).zeroOrOne() * ('@'.regularExpression * simpleIdentifier).zeroOrOne()
             }
             ifExpression IS {
                 rule = ("if".regularExpression * '('.regularExpression * expression * ')'.regularExpression *
@@ -538,7 +538,7 @@ object KotlinGrammar
             additiveOperator IS { rule = +charArrayOf('+', '-').regularExpression.notFollowBy('>'.regularExpression) }
             multiplicativeOperator IS { rule = +charArrayOf('*', '/', '%').regularExpression }
             asOperator IS { rule = +("as".regularExpression + '?'.zeroOrOne()) }
-            prefixUnaryOperator IS { rule = +("++".regularExpression OR "--".regularExpression OR '!'.regularExpression OR "+".regularExpression OR "-".regularExpression ) }
+            prefixUnaryOperator IS { rule = +("++".regularExpression OR "--".regularExpression OR '!'.regularExpression OR "+".regularExpression OR "-".regularExpression) }
             postfixUnaryOperator IS { rule = +("++".regularExpression OR "--".regularExpression OR "!!".regularExpression) }
             memberAccessOperator IS { rule = +('.'.regularExpression OR "?.".regularExpression OR "::".regularExpression) }
 
