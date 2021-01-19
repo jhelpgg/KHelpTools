@@ -5,6 +5,8 @@ enum class PrefixUnaryOperator(val symbol: String)
     INCREMENT("++"),
     DECREMENT("--"),
     NOT("!"),
+    UNARY_PLUS("+"),
+    UNARY_MINUS("-"),
     NONE("");
 
     companion object

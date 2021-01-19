@@ -505,9 +505,9 @@ object KotlinGrammar
             }
             ifExpression IS {
                 rule = ("if".regularExpression * '('.regularExpression * expression * ')'.regularExpression *
-                        (controlStructureBody I ';'.regularExpression).zeroOrMore()) I
+                        controlStructureBody.zeroOrOne() * ';'.zeroOrOne() * "else".regularExpression * (controlStructureBody I ';'.regularExpression)) I
                         ("if".regularExpression * '('.regularExpression * expression * ')'.regularExpression *
-                         controlStructureBody.zeroOrOne() * ';'.zeroOrOne() * "else".regularExpression * (controlStructureBody I ';'.regularExpression))
+                         (controlStructureBody I ';'.regularExpression).zeroOrMore())
             }
             whenSubject IS { rule = '('.regularExpression * (annotation.zeroOrMore() * "val".regularExpression * variableDeclaration * '='.regularExpression).zeroOrOne() * expression * ')'.regularExpression }
             whenExpression IS { rule = "when".regularExpression * whenSubject.zeroOrOne() * '{'.regularExpression * whenEntry.zeroOrMore() * '}'.regularExpression }
@@ -538,7 +538,7 @@ object KotlinGrammar
             additiveOperator IS { rule = +charArrayOf('+', '-').regularExpression.notFollowBy('>'.regularExpression) }
             multiplicativeOperator IS { rule = +charArrayOf('*', '/', '%').regularExpression }
             asOperator IS { rule = +("as".regularExpression + '?'.zeroOrOne()) }
-            prefixUnaryOperator IS { rule = +("++".regularExpression OR "--".regularExpression OR '!'.regularExpression) }
+            prefixUnaryOperator IS { rule = +("++".regularExpression OR "--".regularExpression OR '!'.regularExpression OR "+".regularExpression OR "-".regularExpression ) }
             postfixUnaryOperator IS { rule = +("++".regularExpression OR "--".regularExpression OR "!!".regularExpression) }
             memberAccessOperator IS { rule = +('.'.regularExpression OR "?.".regularExpression OR "::".regularExpression) }
 
