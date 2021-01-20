@@ -125,7 +125,15 @@ internal fun parseModifierInformation(modifierNode: GrammarNode): Modifier
 
 internal fun parseDeclarationInformation(declarationNode: GrammarNode): Declaration
 {
-    val node =declarationNode[2][0]
+    val node =
+        if (declarationNode.rule == KotlinGrammar.declaration)
+        {
+            declarationNode[2][0]
+        }
+        else
+        {
+            declarationNode
+        }
 
     val declaration =
         when (node.rule)
