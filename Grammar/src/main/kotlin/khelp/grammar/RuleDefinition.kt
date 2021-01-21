@@ -1,6 +1,7 @@
 package khelp.grammar
 
 import khelp.utilities.argumentCheck
+import khelp.utilities.extensions.zeroOrMore
 import khelp.utilities.regex.NAME
 import khelp.utilities.regex.RegularExpression
 import khelp.utilities.regex.WHITE_SPACE
@@ -12,9 +13,10 @@ internal fun checkRuleName(ruleName: String): String
 }
 
 val WHITE_SPACES = RuleDefinitionRegularExpression(WHITE_SPACE.zeroOrMore())
+val ONLY_SPACES = RuleDefinitionRegularExpression(charArrayOf(' ', '\t').zeroOrMore())
 
 @GrammarRuleDefinitionDSL
-class RuleDefinition(val automaticWhiteSpace: Boolean)
+class RuleDefinition(var automaticWhiteSpace: Boolean)
 {
     var rule: RuleDefinitionElement? = null
 
@@ -25,24 +27,48 @@ class RuleDefinition(val automaticWhiteSpace: Boolean)
         +checkRuleName(this) * rule
 
     @GrammarRuleDefinitionDSL
+    infix fun String.SPACE(rule: RuleDefinitionElement) =
+        +checkRuleName(this) SPACE rule
+
+    @GrammarRuleDefinitionDSL
     operator fun String.times(string: String) =
         +checkRuleName(this) * +checkRuleName(string)
+
+    @GrammarRuleDefinitionDSL
+    infix fun String.SPACE(string: String) =
+        +checkRuleName(this) SPACE +checkRuleName(string)
 
     @GrammarRuleDefinitionDSL
     operator fun String.times(regularExpression: RegularExpression) =
         +checkRuleName(this) * +regularExpression
 
     @GrammarRuleDefinitionDSL
+    infix fun String.SPACE(regularExpression: RegularExpression) =
+        +checkRuleName(this) SPACE +regularExpression
+
+    @GrammarRuleDefinitionDSL
     operator fun RegularExpression.times(rule: RuleDefinitionElement) =
         +this * rule
+
+    @GrammarRuleDefinitionDSL
+    infix fun RegularExpression.SPACE(rule: RuleDefinitionElement) =
+        +this SPACE rule
 
     @GrammarRuleDefinitionDSL
     operator fun RegularExpression.times(string: String) =
         +this * +checkRuleName(string)
 
     @GrammarRuleDefinitionDSL
+    infix fun RegularExpression.SPACE(string: String) =
+        +this SPACE +checkRuleName(string)
+
+    @GrammarRuleDefinitionDSL
     operator fun RegularExpression.times(regularExpression: RegularExpression) =
         +this * +regularExpression
+
+    @GrammarRuleDefinitionDSL
+    infix fun RegularExpression.SPACE(regularExpression: RegularExpression) =
+        +this SPACE +regularExpression
 
     @GrammarRuleDefinitionDSL
     infix fun String.I(rule: RuleDefinitionElement) =
@@ -238,6 +264,44 @@ class RuleDefinition(val automaticWhiteSpace: Boolean)
                     ruleDefinitionElementConcatenate.ruleElements.add(WHITE_SPACES)
                 }
 
+                ruleDefinitionElementConcatenate.ruleElements.add(ruleDefinitionElement)
+                ruleDefinitionElementConcatenate
+            }
+        }
+
+    @GrammarRuleDefinitionDSL
+    infix fun RuleDefinitionElement.SPACE(ruleDefinitionElement: RuleDefinitionElement): RuleDefinitionElement =
+        when
+        {
+            this is RuleDefinitionElementConcatenate && ruleDefinitionElement is RuleDefinitionElementConcatenate ->
+            {
+                val ruleDefinitionElementConcatenate = RuleDefinitionElementConcatenate()
+                ruleDefinitionElementConcatenate.ruleElements.addAll(this.ruleElements)
+                ruleDefinitionElementConcatenate.ruleElements.add(ONLY_SPACES)
+                ruleDefinitionElementConcatenate.ruleElements.addAll(ruleDefinitionElement.ruleElements)
+                ruleDefinitionElementConcatenate
+            }
+            this is RuleDefinitionElementConcatenate                                                              ->
+            {
+                val ruleDefinitionElementConcatenate = RuleDefinitionElementConcatenate()
+                ruleDefinitionElementConcatenate.ruleElements.addAll(this.ruleElements)
+                ruleDefinitionElementConcatenate.ruleElements.add(ONLY_SPACES)
+                ruleDefinitionElementConcatenate.ruleElements.add(ruleDefinitionElement)
+                ruleDefinitionElementConcatenate
+            }
+            ruleDefinitionElement is RuleDefinitionElementConcatenate                                             ->
+            {
+                val ruleDefinitionElementConcatenate = RuleDefinitionElementConcatenate()
+                ruleDefinitionElementConcatenate.ruleElements.add(this)
+                ruleDefinitionElementConcatenate.ruleElements.add(ONLY_SPACES)
+                ruleDefinitionElementConcatenate.ruleElements.addAll(ruleDefinitionElement.ruleElements)
+                ruleDefinitionElementConcatenate
+            }
+            else                                                                                                  ->
+            {
+                val ruleDefinitionElementConcatenate = RuleDefinitionElementConcatenate()
+                ruleDefinitionElementConcatenate.ruleElements.add(this)
+                ruleDefinitionElementConcatenate.ruleElements.add(ONLY_SPACES)
                 ruleDefinitionElementConcatenate.ruleElements.add(ruleDefinitionElement)
                 ruleDefinitionElementConcatenate
             }

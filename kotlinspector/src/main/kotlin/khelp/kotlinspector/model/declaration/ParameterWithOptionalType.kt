@@ -31,7 +31,7 @@ class ParameterWithOptionalType
         if(typeNode.numberChildren>0)
         {
             this.type = Type()
-            this.type?.parse(typeNode[2])
+            this.type?.parse(typeNode[0][2])
         }
     }
 }

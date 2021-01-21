@@ -49,7 +49,7 @@ class AnonymousFunction
         if (returnTypeNode.numberChildren > 0)
         {
             this.returnType = Type()
-            this.returnType?.parse(returnTypeNode[2])
+            this.returnType?.parse(returnTypeNode[0][2])
         }
 
         fillTypeConstraints(grammarNode[8], this.typeConstraints)
@@ -58,7 +58,7 @@ class AnonymousFunction
         if (functionBodyNode.numberChildren > 0)
         {
             this.functionBody = FunctionBody()
-            this.functionBody?.parse(functionBodyNode)
+            this.functionBody?.parse(functionBodyNode[0])
         }
     }
 }

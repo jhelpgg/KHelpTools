@@ -21,6 +21,7 @@ import khelp.utilities.extensions.zeroOrMore
 import khelp.utilities.extensions.zeroOrOne
 import khelp.utilities.regex.ANY
 import khelp.utilities.regex.LETTER_OR_DIGIT
+import khelp.utilities.regex.RegularExpression
 import khelp.utilities.regex.WHITE_SPACE
 import khelp.utilities.text.interval
 import org.jetbrains.annotations.TestOnly
@@ -252,7 +253,7 @@ object KotlinGrammar
     const val UNICODE_CLASS_NL = "UNICODE_CLASS_NL"
 
     val Letter = unicodeClassLL + unicodeClassLM + unicodeClassLO + unicodeClassLT + unicodeClassLU + unicodeClassNL
-
+    val valOrVar: RegularExpression get() = "va".regularExpression + charArrayOf('l', 'r') + WHITE_SPACE
     private val grammar = Grammar(automaticWhiteSpaces = true)
 
     init
@@ -285,7 +286,7 @@ object KotlinGrammar
                        (classParameter * (','.regularExpression * classParameter).zeroOrMore() * ','.zeroOrOne()).zeroOrOne() *
                        ')'.regularExpression
             }
-            classParameter IS { rule = modifiers.zeroOrOne() * ("val".regularExpression OR "var").zeroOrOne() * simpleIdentifier * ':'.regularExpression * type * ('='.regularExpression * expression).zeroOrOne() }
+            classParameter IS { rule = modifiers.zeroOrOne() * valOrVar.zeroOrOne() * simpleIdentifier * ':'.regularExpression * type * ('='.regularExpression * expression).zeroOrOne() }
             delegationSpecifiers IS { rule = annotatedDelegationSpecifier * (','.regularExpression * annotatedDelegationSpecifier).zeroOrMore() }
             delegationSpecifier IS { rule = constructorInvocation I explicitDelegation I userType I functionType }
             constructorInvocation IS { rule = userType * valueArguments }
@@ -319,7 +320,7 @@ object KotlinGrammar
             variableDeclaration IS { rule = annotation.zeroOrMore() * simpleIdentifier * (':'.regularExpression * type).zeroOrOne() }
             multiVariableDeclaration IS { rule = '('.regularExpression * variableDeclaration * (','.regularExpression * variableDeclaration).zeroOrMore() * ','.zeroOrOne() * ')'.regularExpression }
             propertyDeclaration IS {
-                rule = modifiers.zeroOrOne() * ("val".regularExpression OR "var".regularExpression) * typeParameters.zeroOrOne() *
+                rule = modifiers.zeroOrOne() * valOrVar * typeParameters.zeroOrOne() *
                        (receiverType * '.'.regularExpression).zeroOrOne() *
                        (multiVariableDeclaration I variableDeclaration) *
                        typeConstraints.zeroOrOne() *
@@ -406,12 +407,12 @@ object KotlinGrammar
             comparison IS { rule = genericCallLikeComparison * (comparisonOperator * genericCallLikeComparison).zeroOrMore() }
             genericCallLikeComparison IS { rule = infixOperation * callSuffix.zeroOrMore() }
             infixOperation IS { rule = elvisExpression * ((inOperator * elvisExpression) I (isOperator * type)).zeroOrMore() }
-            elvisExpression IS { rule = infixFunctionCall * ("?:".regularExpression * infixFunctionCall).zeroOrMore() }
-            infixFunctionCall IS { rule = rangeExpression * (simpleIdentifier * rangeExpression).zeroOrMore() }
-            rangeExpression IS { rule = additiveExpression * ("..".regularExpression * additiveExpression).zeroOrMore() }
-            additiveExpression IS { rule = multiplicativeExpression * (additiveOperator * multiplicativeExpression).zeroOrMore() }
-            multiplicativeExpression IS { rule = asExpression * (multiplicativeOperator * asExpression).zeroOrMore() }
-            asExpression IS { rule = prefixUnaryExpression * (asOperator * type).zeroOrMore() }
+            elvisExpression IS { rule = infixFunctionCall SPACE (WHITE_SPACES * "?:".regularExpression * infixFunctionCall).zeroOrMore() }
+            infixFunctionCall IS { rule = rangeExpression SPACE (simpleIdentifier * rangeExpression).zeroOrMore() }
+            rangeExpression IS { rule = additiveExpression SPACE ("..".regularExpression * additiveExpression).zeroOrMore() }
+            additiveExpression IS { rule = multiplicativeExpression SPACE (additiveOperator * multiplicativeExpression).zeroOrMore() }
+            multiplicativeExpression IS { rule = asExpression SPACE (multiplicativeOperator * asExpression).zeroOrMore() }
+            asExpression IS { rule = prefixUnaryExpression SPACE (asOperator * type).zeroOrMore() }
             prefixUnaryExpression IS { rule = unaryPrefix.zeroOrMore() * postfixUnaryExpression }
             unaryPrefix IS { rule = annotation I label I prefixUnaryOperator }
             postfixUnaryExpression IS { rule = (primaryExpression * postfixUnarySuffix.oneOrMore()) I primaryExpression }
@@ -475,9 +476,16 @@ object KotlinGrammar
                         IntegerLiteral
             }
             stringLiteral IS { rule = lineStringLiteral I multiLineStringLiteral }
-            lineStringLiteral IS { rule = '"'.regularExpression * (lineStringContent I lineStringExpression).zeroOrMore() * '"'.regularExpression }
+            lineStringLiteral IS {
+                automaticWhiteSpace = false
+                rule = '"'.regularExpression * (lineStringContent I lineStringExpression).zeroOrMore() * '"'.regularExpression
+                automaticWhiteSpace = true
+            }
+
             multiLineStringLiteral IS {
+                automaticWhiteSpace = false
                 rule = "\"\"\"".regularExpression * (multiLineStringContent I multiLineStringExpression I '"'.regularExpression).zeroOrMore() * TRIPLE_QUOTE_CLOSE
+                automaticWhiteSpace = true
             }
             lineStringContent IS { rule = LineStrText I LineStrEscapedChar I LineStrRef }
             lineStringExpression IS { rule = "\${".regularExpression * expression * '}'.regularExpression }
@@ -509,7 +517,7 @@ object KotlinGrammar
                         ("if".regularExpression * '('.regularExpression * expression * ')'.regularExpression *
                          (controlStructureBody I ';'.regularExpression).zeroOrMore())
             }
-            whenSubject IS { rule = '('.regularExpression * (annotation.zeroOrMore() * "val".regularExpression * variableDeclaration * '='.regularExpression).zeroOrOne() * expression * ')'.regularExpression }
+            whenSubject IS { rule = '('.regularExpression * (annotation.zeroOrMore() * ("val".regularExpression + WHITE_SPACE) * variableDeclaration * '='.regularExpression).zeroOrOne() * expression * ')'.regularExpression }
             whenExpression IS { rule = "when".regularExpression * whenSubject.zeroOrOne() * '{'.regularExpression * whenEntry.zeroOrMore() * '}'.regularExpression }
             whenEntry IS {
                 rule = ("else".regularExpression * "->".regularExpression * controlStructureBody * WHITE_SPACES) I

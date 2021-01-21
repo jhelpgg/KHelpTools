@@ -14,7 +14,7 @@ class LineStringLiteral
     {
         this.lineStringContentOrExpressions.clear()
 
-        for (lineStringContentOrExpressionNode in grammarNode[2])
+        for (lineStringContentOrExpressionNode in grammarNode[1])
         {
             val node = lineStringContentOrExpressionNode[0]
             val lineStringContentOrExpression =

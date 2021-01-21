@@ -18,7 +18,7 @@ class LambdaLiteral
 
     internal fun parse(grammarNode: GrammarNode)
     {
-        val node = grammarNode[0][0]
+        val node = grammarNode[0]
         this.lambdaParameters.clear()
         this.statements.clear()
 
