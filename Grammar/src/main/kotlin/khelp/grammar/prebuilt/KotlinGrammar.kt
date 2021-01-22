@@ -15,11 +15,13 @@ import khelp.grammar.prebuilt.unicodes.unicodeClassND
 import khelp.grammar.prebuilt.unicodes.unicodeClassNL
 import khelp.utilities.extensions.allCharactersExcludeThis
 import khelp.utilities.extensions.allCharactersExcludeThose
+import khelp.utilities.extensions.exactTimes
 import khelp.utilities.extensions.plus
 import khelp.utilities.extensions.regularExpression
 import khelp.utilities.extensions.zeroOrMore
 import khelp.utilities.extensions.zeroOrOne
 import khelp.utilities.regex.ANY
+import khelp.utilities.regex.END_EXPRESSION
 import khelp.utilities.regex.LETTER_OR_DIGIT
 import khelp.utilities.regex.RegularExpression
 import khelp.utilities.regex.WHITE_SPACE
@@ -484,12 +486,12 @@ object KotlinGrammar
 
             multiLineStringLiteral IS {
                 automaticWhiteSpace = false
-                rule = "\"\"\"".regularExpression * (multiLineStringContent I multiLineStringExpression I '"'.regularExpression).zeroOrMore() * TRIPLE_QUOTE_CLOSE
+                rule = "\"\"\"".regularExpression * (multiLineStringContent I multiLineStringExpression).zeroOrMore() * TRIPLE_QUOTE_CLOSE
                 automaticWhiteSpace = true
             }
             lineStringContent IS { rule = LineStrText I LineStrEscapedChar I LineStrRef }
             lineStringExpression IS { rule = "\${".regularExpression * expression * '}'.regularExpression }
-            multiLineStringContent IS { rule = MultiLineStrText I '"'.regularExpression I MultiLineStrRef }
+            multiLineStringContent IS { rule = MultiLineStrText I '"'.regularExpression.notFollowBy("\"\"".regularExpression + ('"'.allCharactersExcludeThis OR END_EXPRESSION)) I MultiLineStrRef }
             multiLineStringExpression IS { rule = "\${".regularExpression * expression * '}'.regularExpression }
             lambdaLiteral IS {
                 rule = ('{'.regularExpression * statements * '}'.regularExpression) I
@@ -699,8 +701,17 @@ object KotlinGrammar
                         "field" OR "property" OR "receiver" OR "param" OR "setparam" OR "delegate" OR "file" OR
                         "expect" OR "actual" OR "const" OR "suspend")
             }
-            FieldIdentifier IS { rule = '$'.regularExpression * IdentifierOrSoftKey }
-            UniCharacterLiteral IS { rule = "\\u".regularExpression * HexDigit * HexDigit * HexDigit * HexDigit }
+            FieldIdentifier IS {
+                automaticWhiteSpace = false
+                rule = '$'.regularExpression * IdentifierOrSoftKey
+                automaticWhiteSpace = true
+            }
+            UniCharacterLiteral IS {
+                rule = +("\\u".regularExpression +
+                         (interval('0', '9') +
+                          interval('a', 'f') +
+                          interval('A', 'F')).exactTimes(4))
+            }
             EscapedIdentifier IS {
                 rule = +('\\'.regularExpression +
                          charArrayOf('t', 'b', 'r', 'n', '\'', '"', '\\', '$'))
@@ -714,9 +725,8 @@ object KotlinGrammar
             // See String templates
 
             LineStrText IS {
-                rule = +("\\$".regularExpression OR charArrayOf('\\',
-                                                                '"',
-                                                                '$').allCharactersExcludeThose).oneOrMore()
+                rule = +("\\$".regularExpression OR
+                        charArrayOf('\\', '"', '$').allCharactersExcludeThose).oneOrMore()
             }
             LineStrEscapedChar IS { rule = EscapedIdentifier I UniCharacterLiteral }
             TRIPLE_QUOTE_CLOSE IS { rule = +('"'.zeroOrOne() + "\"\"\"") }

@@ -19,6 +19,16 @@ import khelp.utilities.text.upperCaseInterval
 val ANY: RegularExpression get() = RegularExpression(".")
 
 /**
+ * Indicate we are at the start of the text
+ */
+val START_EXPRESSION: RegularExpression get() = RegularExpression("^")
+
+/**
+ * Indicate we are at the end of the text
+ */
+val END_EXPRESSION: RegularExpression get() = RegularExpression("$")
+
+/**
  * Any white space (space, tabulation, line feed, line return)
  */
 val WHITE_SPACE: RegularExpression get() = RegularExpression("\\s")

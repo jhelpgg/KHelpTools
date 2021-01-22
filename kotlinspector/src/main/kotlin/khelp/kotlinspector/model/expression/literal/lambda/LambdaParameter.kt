@@ -23,7 +23,7 @@ class LambdaParameter
         if (node.numberChildren > 0)
         {
             this.type = Type()
-            this.type?.parse(node[2])
+            this.type?.parse(node[0][2])
         }
     }
 }

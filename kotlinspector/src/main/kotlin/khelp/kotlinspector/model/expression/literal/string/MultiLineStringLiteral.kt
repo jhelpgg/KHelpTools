@@ -14,7 +14,7 @@ class MultiLineStringLiteral
     {
         this.multilineStringContentOrExpressions.clear()
 
-        for (multilineStringContentOrExpressionNode in grammarNode[2])
+        for (multilineStringContentOrExpressionNode in grammarNode[1])
         {
             val node = multilineStringContentOrExpressionNode[0]
             val multilineStringContentOrExpression =
@@ -32,7 +32,7 @@ class MultiLineStringLiteral
                         multilineStringExpression.parse(node)
                         MultilineStringContentOrExpression(multilineStringExpression)
                     }
-                    else                                    -> MultilineStringContentOrExpression()
+                    else                                    -> throw IllegalArgumentException("Un expected rule : ${node.rule}")
                 }
             this.multilineStringContentOrExpressions.add(multilineStringContentOrExpression)
         }

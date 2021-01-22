@@ -21,17 +21,17 @@ class LineStringContent
 
         when (node.rule)
         {
-            KotlinGrammar.LineStrText        ->
+            KotlinGrammar.LineStrText                               ->
             {
                 this.lineStrText = LineStrText()
                 this.lineStrText?.parse(node)
             }
-            KotlinGrammar.LineStrEscapedChar ->
+            KotlinGrammar.LineStrEscapedChar                        ->
             {
                 this.lineStrEscapedChar = LineStrEscapedChar()
                 this.lineStrEscapedChar?.parse(node)
             }
-            KotlinGrammar.LineStrRef         ->
+            KotlinGrammar.LineStrRef, KotlinGrammar.FieldIdentifier ->
             {
                 this.lineStrRef = LineStrRef()
                 this.lineStrRef?.parse(node)

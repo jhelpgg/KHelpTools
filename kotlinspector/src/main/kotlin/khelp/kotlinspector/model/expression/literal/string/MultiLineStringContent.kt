@@ -26,7 +26,7 @@ class MultiLineStringContent
                 this.multiLineStrText = MultiLineStrText()
                 this.multiLineStrText?.parse(node)
             }
-            KotlinGrammar.MultiLineStrRef  ->
+            KotlinGrammar.MultiLineStrRef, KotlinGrammar.FieldIdentifier  ->
             {
                 this.multiLineStrRef = MultiLineStrRef()
                 this.multiLineStrRef?.parse(node)
