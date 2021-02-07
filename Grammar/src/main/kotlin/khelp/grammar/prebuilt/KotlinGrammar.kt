@@ -477,7 +477,7 @@ object KotlinGrammar
                         "null".regularExpression I
                         IntegerLiteral
             }
-            stringLiteral IS { rule = lineStringLiteral I multiLineStringLiteral }
+            stringLiteral IS { rule = multiLineStringLiteral I lineStringLiteral  }
             lineStringLiteral IS {
                 automaticWhiteSpace = false
                 rule = '"'.regularExpression * (lineStringContent I lineStringExpression).zeroOrMore() * '"'.regularExpression
