@@ -477,7 +477,7 @@ object KotlinGrammar
                         "null".regularExpression I
                         IntegerLiteral
             }
-            stringLiteral IS { rule = multiLineStringLiteral I lineStringLiteral  }
+            stringLiteral IS { rule = multiLineStringLiteral I lineStringLiteral }
             lineStringLiteral IS {
                 automaticWhiteSpace = false
                 rule = '"'.regularExpression * (lineStringContent I lineStringExpression).zeroOrMore() * '"'.regularExpression
@@ -643,10 +643,10 @@ object KotlinGrammar
                         (DecDigits * charArrayOf('f', 'F').regularExpression)
             }
             DoubleLiteral IS {
-                rule = (DecDigits.zeroOrOne() * '.'.regularExpression * DecDigits * DoubleExponent.zeroOrOne()) I
-                        (DecDigits * DoubleExponent)
+                rule = ('-'.zeroOrOne() * DecDigits.zeroOrOne() * '.'.regularExpression * DecDigits * DoubleExponent.zeroOrOne()) I
+                        ('-'.zeroOrOne() * DecDigits * DoubleExponent)
             }
-            IntegerLiteral IS { rule = (DecDigitNoZero * DecDigitOrSeparator.zeroOrMore()) I DecDigit }
+            IntegerLiteral IS { rule = ('-'.zeroOrOne() * DecDigitNoZero * DecDigitOrSeparator.zeroOrMore()) I ('-'.zeroOrOne() * DecDigit) }
             HexDigit IS { rule = +(interval('0', '9') + interval('a', 'f') + interval('A', 'F')).regularExpression }
             HexDigitOrSeparator IS { rule = HexDigit I '_'.regularExpression }
             HexLiteral IS {
@@ -664,9 +664,8 @@ object KotlinGrammar
             UnsignedLiteral IS {
                 rule = (HexLiteral I BinLiteral I IntegerLiteral) *
                        (charArrayOf('u', 'U').regularExpression
-                            .followBy(charArrayOf('l', 'L', ' ', '\n', '\t').regularExpression) +
-                        charArrayOf('l',
-                                    'L').zeroOrOne()
+                            .followBy(charArrayOf('l', 'L', ' ', '\n', '\t').regularExpression OR END_EXPRESSION) +
+                        charArrayOf('l', 'L').zeroOrOne()
                             .notFollowBy(LETTER_OR_DIGIT))
             }
             LongLiteral IS {
