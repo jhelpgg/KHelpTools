@@ -15,12 +15,12 @@ class ValueArgument
     internal fun parse(grammarNode: GrammarNode)
     {
         this.name = ""
-        this.annotation = grammarNode[0].text
+        this.annotation = grammarNode[0].text.trim()
         val nameNode = grammarNode[2]
 
         if (nameNode.numberChildren > 0)
         {
-            this.name = nameNode[0].text
+            this.name = nameNode[0][0].text
         }
 
         this.asStar = grammarNode[4].text == "*"
