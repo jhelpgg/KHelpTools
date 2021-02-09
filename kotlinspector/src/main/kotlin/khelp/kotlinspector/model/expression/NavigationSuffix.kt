@@ -8,8 +8,6 @@ class NavigationSuffix
 {
     var memberAccessOperator = MemberAccessOperator.NONE
         private set
-    var name = ""
-        private set
     var expression: Expression? = null
         private set
     var isClass = false
@@ -17,7 +15,6 @@ class NavigationSuffix
 
     internal fun parse(grammarNode: GrammarNode)
     {
-        this.name = ""
         this.expression = null
         this.isClass = false
         this.memberAccessOperator = MemberAccessOperator.parse(grammarNode[0].text)
@@ -25,7 +22,6 @@ class NavigationSuffix
 
         when (node.rule)
         {
-            KotlinGrammar.simpleIdentifier                      -> this.name = node.text
             KotlinGrammar.expression, KotlinGrammar.disjunction ->
             {
                 this.expression = Expression()

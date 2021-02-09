@@ -433,7 +433,7 @@ object KotlinGrammar
                         navigationSuffix
             }
             indexingSuffix IS { rule = '['.regularExpression * expression * (','.regularExpression * expression).zeroOrMore() * ','.zeroOrOne() * ']'.regularExpression }
-            navigationSuffix IS { rule = memberAccessOperator * (expression I "class".regularExpression I simpleIdentifier) }
+            navigationSuffix IS { rule = memberAccessOperator * ("class".regularExpression I expression) }
             callSuffix IS {
                 rule = (typeArguments.zeroOrOne() * valueArguments.zeroOrOne() * annotatedLambda) I
                         (typeArguments.zeroOrOne() * valueArguments)
