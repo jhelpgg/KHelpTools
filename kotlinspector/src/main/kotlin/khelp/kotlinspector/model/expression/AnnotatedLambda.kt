@@ -13,8 +13,8 @@ class AnnotatedLambda
 
     internal fun parse(grammarNode: GrammarNode)
     {
-        this.annotation = grammarNode[0].text
-        this.label = grammarNode[2].text
+        this.annotation = grammarNode[0].text.trim()
+        this.label = grammarNode[2].text.trim()
         this.lambdaLiteral.parse(grammarNode[4])
     }
 }
