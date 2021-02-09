@@ -15,12 +15,12 @@ class TypeProjectionModifier
     {
         this.varianceModifier = VarianceModifier.NONE
         this.annotation = ""
-        val node = grammarNode[0][0]
+        val node = grammarNode[0]
 
         when (node.rule)
         {
-            KotlinGrammar.varianceModifier -> this.varianceModifier = VarianceModifier.parse(node.text)
-            KotlinGrammar.annotation       -> this.annotation = node.text
+            KotlinGrammar.varianceModifier -> this.varianceModifier = VarianceModifier.parse(node[0].text)
+            KotlinGrammar.annotation       -> this.annotation = node[0].text
         }
     }
 }
