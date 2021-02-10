@@ -425,7 +425,7 @@ object KotlinGrammar
                         parenthesizedDirectlyAssignableExpression
             }
             parenthesizedDirectlyAssignableExpression IS { rule = '('.regularExpression * directlyAssignableExpression * ')'.regularExpression }
-            assignableExpression IS { rule = prefixUnaryExpression I parenthesizedAssignableExpression }
+            assignableExpression IS { rule =  parenthesizedAssignableExpression I prefixUnaryExpression }
             parenthesizedAssignableExpression IS { rule = '('.regularExpression * assignableExpression * ')'.regularExpression }
             assignableSuffix IS {
                 rule = typeArguments I

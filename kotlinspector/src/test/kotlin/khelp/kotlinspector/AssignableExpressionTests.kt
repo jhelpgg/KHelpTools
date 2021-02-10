@@ -1,20 +1,34 @@
 package khelp.kotlinspector
 
 import khelp.grammar.prebuilt.KotlinGrammar
-import khelp.kotlinspector.model.expression.ParenthesizedAssignableExpression
+import khelp.kotlinspector.model.expression.AssignableExpression
 import khelp.kotlinspector.model.expression.literal.LiteralConstantType
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
-class ParenthesizedAssignableExpressionTests
+class AssignableExpressionTests
 {
     @Test
-    fun simplePrefixUnaryExpression()
+    fun prefixUnaryExpression()
+    {
+        val grammarNode = assumeNotNull(KotlinGrammar.parseSpecificRule("true",
+                                                                        KotlinGrammar.assignableExpression))
+        val assignableExpression = AssignableExpression()
+        assignableExpression.parse(grammarNode)
+        val prefixUnaryExpression = assumeNotNull(assignableExpression.prefixUnaryExpression)
+        val literalConstant = assumeNotNull(prefixUnaryExpression.postfixUnaryExpression.primaryExpression.literalConstant)
+        Assertions.assertEquals(LiteralConstantType.BOOLEAN, literalConstant.literalConstantType)
+        Assertions.assertEquals("true", literalConstant.value)
+    }
+
+    @Test
+    fun simpleParenthesisPrefixUnaryExpression()
     {
         val grammarNode = assumeNotNull(KotlinGrammar.parseSpecificRule("(42)",
-                                                                        KotlinGrammar.parenthesizedAssignableExpression))
-        val parenthesizedAssignableExpression = ParenthesizedAssignableExpression()
-        parenthesizedAssignableExpression.parse(grammarNode)
+                                                                        KotlinGrammar.assignableExpression))
+        val assignableExpression = AssignableExpression()
+        assignableExpression.parse(grammarNode)
+        val parenthesizedAssignableExpression = assumeNotNull(assignableExpression.parenthesizedAssignableExpression)
         val prefixUnaryExpression = assumeNotNull(parenthesizedAssignableExpression.assignableExpression.prefixUnaryExpression)
         val literalConstant = assumeNotNull(prefixUnaryExpression.postfixUnaryExpression.primaryExpression.literalConstant)
         Assertions.assertEquals(LiteralConstantType.INTEGER, literalConstant.literalConstantType)
@@ -25,9 +39,10 @@ class ParenthesizedAssignableExpressionTests
     fun embedParenthesis()
     {
         val grammarNode = assumeNotNull(KotlinGrammar.parseSpecificRule("((indexOf(\"Test\")))",
-                                                                        KotlinGrammar.parenthesizedAssignableExpression))
-        var parenthesizedAssignableExpression = ParenthesizedAssignableExpression()
-        parenthesizedAssignableExpression.parse(grammarNode)
+                                                                        KotlinGrammar.assignableExpression))
+        val assignableExpression = AssignableExpression()
+        assignableExpression.parse(grammarNode)
+        var parenthesizedAssignableExpression = assumeNotNull(assignableExpression.parenthesizedAssignableExpression)
         parenthesizedAssignableExpression = assumeNotNull(parenthesizedAssignableExpression.assignableExpression.parenthesizedAssignableExpression)
         val prefixUnaryExpression = assumeNotNull(parenthesizedAssignableExpression.assignableExpression.prefixUnaryExpression)
         val postfixUnaryExpression = prefixUnaryExpression.postfixUnaryExpression
