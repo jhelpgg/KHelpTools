@@ -419,13 +419,9 @@ object KotlinGrammar
             unaryPrefix IS { rule = annotation I label I prefixUnaryOperator }
             postfixUnaryExpression IS { rule = (primaryExpression * postfixUnarySuffix.oneOrMore()) I primaryExpression }
             postfixUnarySuffix IS { rule = postfixUnaryOperator I typeArguments I callSuffix I indexingSuffix I navigationSuffix }
-            directlyAssignableExpression IS {
-                rule = (postfixUnaryExpression * assignableSuffix) I
-                        simpleIdentifier I
-                        parenthesizedDirectlyAssignableExpression
-            }
+            directlyAssignableExpression IS { rule = parenthesizedDirectlyAssignableExpression I postfixUnaryExpression }
             parenthesizedDirectlyAssignableExpression IS { rule = '('.regularExpression * directlyAssignableExpression * ')'.regularExpression }
-            assignableExpression IS { rule =  parenthesizedAssignableExpression I prefixUnaryExpression }
+            assignableExpression IS { rule = parenthesizedAssignableExpression I prefixUnaryExpression }
             parenthesizedAssignableExpression IS { rule = '('.regularExpression * assignableExpression * ')'.regularExpression }
             assignableSuffix IS {
                 rule = typeArguments I

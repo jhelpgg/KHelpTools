@@ -7,39 +7,24 @@ class DirectlyAssignableExpression
 {
     var postfixUnaryExpression: PostfixUnaryExpression? = null
         private set
-    var assignableSuffix: AssignableSuffix? = null
-        private set
-    var name = ""
-        private set
     var parenthesizedDirectlyAssignableExpression: ParenthesizedDirectlyAssignableExpression? = null
         private set
 
     internal fun parse(grammarNode: GrammarNode)
     {
         this.postfixUnaryExpression = null
-        this.assignableSuffix = null
-        this.name = ""
         this.parenthesizedDirectlyAssignableExpression = null
         val node = grammarNode[0]
 
-        when
+        if (node.rule ==    KotlinGrammar.    postfixUnaryExpression)
         {
-            node.numberChildren > 1                     ->
-            {
-                this.postfixUnaryExpression = PostfixUnaryExpression()
-                this.postfixUnaryExpression?.parse(node[0])
-                this.assignableSuffix = AssignableSuffix()
-                this.assignableSuffix?.parse(node[2])
-            }
-            node.rule == KotlinGrammar.simpleIdentifier ->
-            {
-                this.name = node.text
-            }
-            else                                        ->
-            {
-                this.parenthesizedDirectlyAssignableExpression = ParenthesizedDirectlyAssignableExpression()
-                this.parenthesizedDirectlyAssignableExpression?.parse(node)
-            }
+            this.postfixUnaryExpression = PostfixUnaryExpression()
+            this.postfixUnaryExpression?.parse(node)
+        }
+        else
+        {
+            this.parenthesizedDirectlyAssignableExpression = ParenthesizedDirectlyAssignableExpression()
+            this.parenthesizedDirectlyAssignableExpression?.parse(node)
         }
     }
 }
