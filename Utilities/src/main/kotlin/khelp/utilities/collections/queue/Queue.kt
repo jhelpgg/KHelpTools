@@ -16,7 +16,7 @@ class Queue<T> : Collection<T>
     val notEmpty get() = this.head != null
 
     /**
-     * Add element at the the end of the queue
+     * Add element at the end of the queue
      */
     fun inQueue(element: T)
     {

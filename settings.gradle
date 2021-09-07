@@ -8,4 +8,5 @@ include ':Samples'
 include ':Math'
 include ':Grammar'
 include ':kotlinspector'
-
+include ':UI'
+include ':Resources'

@@ -1,5 +1,12 @@
 package khelp.utilities.log
 
+import khelp.utilities.extensions.day
+import khelp.utilities.extensions.hour
+import khelp.utilities.extensions.millisecond
+import khelp.utilities.extensions.minute
+import khelp.utilities.extensions.month
+import khelp.utilities.extensions.second
+import khelp.utilities.extensions.year
 import khelp.utilities.thread.Mutex
 import java.io.PrintStream
 import java.text.DecimalFormat
@@ -8,7 +15,7 @@ import java.util.GregorianCalendar
 /**
  * Function to print debug message
  */
-private val printFunction: (LogInformation?) -> Unit =
+private val printFunction : (LogInformation?) -> Unit =
     { logInformation ->
 
         if (logInformation != null)
@@ -38,7 +45,7 @@ private val printFunction: (LogInformation?) -> Unit =
 /**
  * Header used for mark
  */
-private val MARK_HEADER = "*=> MARK\n"
+private const val MARK_HEADER = "*=> MARK\n"
 
 /**
  * Format integer to show at least 2 digits
@@ -68,7 +75,7 @@ private val mutex = Mutex()
  * @param throwable   Throwable to print trace
  * @param printStream Stream where print
  */
-private fun print(logLevel: LogLevel, message: Array<out Any?>?, throwable: Throwable?, printStream: PrintStream)
+private fun print(logLevel : LogLevel, message : Array<out Any?>?, throwable : Throwable?, printStream : PrintStream)
 {
     if (logLevel.order > LOG_LEVEL.order)
     {
@@ -87,27 +94,22 @@ private fun print(logLevel: LogLevel, message: Array<out Any?>?, throwable: Thro
  *
  * @param printStream Stream where print
  */
-internal fun printDate(printStream: PrintStream)
+internal fun printDate(printStream : PrintStream)
 {
     val gregorianCalendar = GregorianCalendar()
-    printStream.print(gregorianCalendar.get(GregorianCalendar.YEAR))
+    printStream.print(gregorianCalendar.year)
     printStream.print("-")
-    printStream.print(NUMBER2.format((gregorianCalendar.get(GregorianCalendar.MONTH) + 1).toLong()))
+    printStream.print(NUMBER2.format(gregorianCalendar.month.toLong()))
     printStream.print("-")
-    printStream.print(NUMBER2.format(gregorianCalendar.get(GregorianCalendar.DAY_OF_MONTH)
-                                         .toLong()))
+    printStream.print(NUMBER2.format(gregorianCalendar.day.toLong()))
     printStream.print(" ")
-    printStream.print(NUMBER2.format(gregorianCalendar.get(GregorianCalendar.HOUR_OF_DAY)
-                                         .toLong()))
+    printStream.print(NUMBER2.format(gregorianCalendar.hour.toLong()))
     printStream.print(":")
-    printStream.print(NUMBER2.format(gregorianCalendar.get(GregorianCalendar.MINUTE)
-                                         .toLong()))
+    printStream.print(NUMBER2.format(gregorianCalendar.minute.toLong()))
     printStream.print(":")
-    printStream.print(NUMBER2.format(gregorianCalendar.get(GregorianCalendar.SECOND)
-                                         .toLong()))
+    printStream.print(NUMBER2.format(gregorianCalendar.second.toLong()))
     printStream.print(":")
-    printStream.print(NUMBER3.format(gregorianCalendar.get(GregorianCalendar.MILLISECOND)
-                                         .toLong()))
+    printStream.print(NUMBER3.format(gregorianCalendar.millisecond.toLong()))
     printStream.print(" ")
 }
 
@@ -117,7 +119,7 @@ internal fun printDate(printStream: PrintStream)
  * @param objectToPrint      Object to print
  * @param printStream Stream where print
  */
-internal fun printObject(objectToPrint: Any?, printStream: PrintStream)
+internal fun printObject(objectToPrint : Any?, printStream : PrintStream)
 {
     if (objectToPrint == null)
     {
@@ -127,16 +129,16 @@ internal fun printObject(objectToPrint: Any?, printStream: PrintStream)
 
     val clazz = objectToPrint.javaClass
 
-    if (!clazz.isArray)
+    if (! clazz.isArray)
     {
         if (objectToPrint is Iterable<*>)
         {
             printStream.print("{")
             var first = true
 
-            for (element in (objectToPrint as Iterable<*>?)!!)
+            for (element in (objectToPrint as Iterable<*>?) !!)
             {
-                if (!first)
+                if (! first)
                 {
                     printStream.print("; ")
                 }
@@ -156,7 +158,7 @@ internal fun printObject(objectToPrint: Any?, printStream: PrintStream)
 
             for ((key, value) in objectToPrint)
             {
-                if (!first)
+                if (! first)
                 {
                     printStream.print(" | ")
                 }
@@ -183,7 +185,7 @@ internal fun printObject(objectToPrint: Any?, printStream: PrintStream)
         if (Boolean::class.javaPrimitiveType == componentType)
         {
             val array = objectToPrint as BooleanArray?
-            val length = array!!.size
+            val length = array !!.size
 
             if (length > 0)
             {
@@ -199,7 +201,7 @@ internal fun printObject(objectToPrint: Any?, printStream: PrintStream)
         else if (Char::class.javaPrimitiveType == componentType)
         {
             val array = objectToPrint as CharArray?
-            val length = array!!.size
+            val length = array !!.size
 
             if (length > 0)
             {
@@ -215,7 +217,7 @@ internal fun printObject(objectToPrint: Any?, printStream: PrintStream)
         else if (Byte::class.javaPrimitiveType == componentType)
         {
             val array = objectToPrint as ByteArray?
-            val length = array!!.size
+            val length = array !!.size
 
             if (length > 0)
             {
@@ -231,7 +233,7 @@ internal fun printObject(objectToPrint: Any?, printStream: PrintStream)
         else if (Short::class.javaPrimitiveType == componentType)
         {
             val array = objectToPrint as ShortArray?
-            val length = array!!.size
+            val length = array !!.size
 
             if (length > 0)
             {
@@ -247,7 +249,7 @@ internal fun printObject(objectToPrint: Any?, printStream: PrintStream)
         else if (Int::class.javaPrimitiveType == componentType)
         {
             val array = objectToPrint as IntArray?
-            val length = array!!.size
+            val length = array !!.size
 
             if (length > 0)
             {
@@ -263,7 +265,7 @@ internal fun printObject(objectToPrint: Any?, printStream: PrintStream)
         else if (Long::class.javaPrimitiveType == componentType)
         {
             val array = objectToPrint as LongArray?
-            val length = array!!.size
+            val length = array !!.size
 
             if (length > 0)
             {
@@ -279,7 +281,7 @@ internal fun printObject(objectToPrint: Any?, printStream: PrintStream)
         else if (Float::class.javaPrimitiveType == componentType)
         {
             val array = objectToPrint as FloatArray?
-            val length = array!!.size
+            val length = array !!.size
 
             if (length > 0)
             {
@@ -295,7 +297,7 @@ internal fun printObject(objectToPrint: Any?, printStream: PrintStream)
         else if (Double::class.javaPrimitiveType == componentType)
         {
             val array = objectToPrint as DoubleArray?
-            val length = array!!.size
+            val length = array !!.size
 
             if (length > 0)
             {
@@ -313,7 +315,7 @@ internal fun printObject(objectToPrint: Any?, printStream: PrintStream)
     {
         @Suppress("UNCHECKED_CAST")
         val array = objectToPrint as Array<Any>?
-        val length = array!!.size
+        val length = array !!.size
 
         if (length > 0)
         {
@@ -337,7 +339,7 @@ internal fun printObject(objectToPrint: Any?, printStream: PrintStream)
  * @param printStream       Stream where print
  * @param somethingFollow   Indicates if something will be print in same line or not
  */
-internal fun printTrace(stackTraceElement: StackTraceElement, printStream: PrintStream, somethingFollow: Boolean)
+internal fun printTrace(stackTraceElement : StackTraceElement, printStream : PrintStream, somethingFollow : Boolean)
 {
     printStream.print(stackTraceElement.className)
     printStream.print(".")
@@ -361,7 +363,7 @@ internal fun printTrace(stackTraceElement: StackTraceElement, printStream: Print
  * @param throwable   Throwable to print its trace
  * @param printStream Stream where print
  */
-internal fun printTrace(throwable: Throwable?, printStream: PrintStream)
+internal fun printTrace(throwable : Throwable?, printStream : PrintStream)
 {
     var throwableLocal = throwable
 
@@ -389,7 +391,7 @@ internal fun printTrace(throwable: Throwable?, printStream: PrintStream)
  *
  * @param logLevel New debug level
  */
-fun setLevel(logLevel: LogLevel)
+fun setLevel(logLevel : LogLevel)
 {
     LOG_LEVEL = logLevel
 }
@@ -399,14 +401,14 @@ fun setLevel(logLevel: LogLevel)
  *
  * @return Current debug level
  */
-fun getLevel(): LogLevel = LOG_LEVEL
+fun getLevel() : LogLevel = LOG_LEVEL
 
 /**
  * Print to do message
  *
  * @param todoMessage Message to print
  */
-fun todo(vararg todoMessage: Any?)
+fun todo(vararg todoMessage : Any?)
 {
     val message = arrayOfNulls<Any>(todoMessage.size + 2)
     message[0] = "-TODO- "
@@ -420,7 +422,7 @@ fun todo(vararg todoMessage: Any?)
  *
  * @param message Message to print
  */
-fun trace(vararg message: Any?)
+fun trace(vararg message : Any?)
 {
     print(LogLevel.DEBUG, message, Throwable(), System.out)
 }
@@ -430,7 +432,7 @@ fun trace(vararg message: Any?)
  *
  * @param message Message to print
  */
-fun verbose(vararg message: Any?)
+fun verbose(vararg message : Any?)
 {
     print(LogLevel.VERBOSE, message, null, System.out)
 }
@@ -440,7 +442,7 @@ fun verbose(vararg message: Any?)
  *
  * @param message Message to print
  */
-fun warning(vararg message: Any?)
+fun warning(vararg message : Any?)
 {
     print(LogLevel.WARNING, message, null, System.err)
 }
@@ -450,7 +452,7 @@ fun warning(vararg message: Any?)
  *
  * @param message Message to print
  */
-fun debug(vararg message: Any?)
+fun debug(vararg message : Any?)
 {
     print(LogLevel.DEBUG, message, null, System.out)
 }
@@ -460,7 +462,7 @@ fun debug(vararg message: Any?)
  *
  * @param message Message to print
  */
-fun error(vararg message: Any?)
+fun error(vararg message : Any?)
 {
     print(LogLevel.ERROR, message, null, System.err)
 }
@@ -471,7 +473,7 @@ fun error(vararg message: Any?)
  * @param throwable Error/exception trace
  * @param message   Message to print
  */
-fun exception(throwable: Throwable, vararg message: Any?)
+fun exception(throwable : Throwable, vararg message : Any?)
 {
     print(LogLevel.ERROR, message, throwable, System.err)
 }
@@ -481,7 +483,7 @@ fun exception(throwable: Throwable, vararg message: Any?)
  *
  * @param message Message to print
  */
-fun information(vararg message: Any?)
+fun information(vararg message : Any?)
 {
     print(LogLevel.INFORMATION, message, null, System.out)
 }
@@ -491,7 +493,7 @@ fun information(vararg message: Any?)
  *
  * @param mark Mark to print
  */
-fun mark(mark: String)
+fun mark(mark : String)
 {
     val size = mark.length + 12
     val message = StringBuilder(MARK_HEADER.length + 3 * size + 2)

@@ -1,0 +1,19 @@
+plugins {
+    id 'org.jetbrains.kotlin.jvm'
+}
+
+group 'khelp.ui'
+version '1.0-SNAPSHOT'
+
+dependencies {
+    implementation project(":Utilities")
+    implementation project(":Thread")
+    implementation project(":Resources")
+    implementation project(":IO")
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.2'
+}
+
+tasks.test {
+    useJUnitPlatform()
+}

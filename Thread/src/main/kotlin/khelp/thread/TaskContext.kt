@@ -16,7 +16,7 @@ enum class TaskContext(internal val scope: CoroutineScope, internal val dispatch
      *
      * Make heavy operation in it will slow down application and make bad user experience.
      */
-    MAIN(MainScope(), Dispatchers.Main),
+    MAIN(CoroutineScope(SupervisorJob() + Dispatchers.Default), SwingCoroutineDispatcher),
 
     /**
      * Context reserved to IO operations.

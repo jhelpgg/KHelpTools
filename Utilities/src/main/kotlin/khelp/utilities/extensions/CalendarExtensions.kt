@@ -2,7 +2,7 @@ package khelp.utilities.extensions
 
 import java.util.Calendar
 
-fun Calendar.fullString(): String
+fun Calendar.fullString() : String
 {
     val stringBuilder = StringBuilder()
     stringBuilder.appendMinimumDigit(4, this[Calendar.YEAR])
@@ -21,16 +21,66 @@ fun Calendar.fullString(): String
     return stringBuilder.toString()
 }
 
-fun calendar(year: Int, month: Int, day: Int): Calendar =
+fun calendar(year : Int, month : Int, day : Int) : Calendar =
     calendar(year, month, day, 0, 0, 0, 0)
 
-fun calendar(year: Int, month: Int, day: Int, hour: Int, minute: Int, second: Int): Calendar =
+fun calendar(year : Int, month : Int, day : Int, hour : Int, minute : Int, second : Int) : Calendar =
     calendar(year, month, day, hour, minute, second, 0)
 
-fun calendar(year: Int, month: Int, day: Int, hour: Int, minute: Int, second: Int, milliseconds: Int): Calendar
+fun calendar(year : Int, month : Int, day : Int, hour : Int, minute : Int, second : Int, milliseconds : Int) : Calendar
 {
     val calendar = Calendar.getInstance()
     calendar.set(year, month - 1, day, hour, minute, second)
     calendar[Calendar.MILLISECOND] = milliseconds
     return calendar
 }
+
+var Calendar.year : Int
+    get() = this[Calendar.YEAR]
+    set(value)
+    {
+        this[Calendar.YEAR] = value
+    }
+
+var Calendar.month : Int
+    get() = this[Calendar.MONTH] + 1
+    set(value)
+    {
+        this[Calendar.MONTH] = value - 1
+    }
+
+var Calendar.day : Int
+    get() = this[Calendar.DAY_OF_MONTH]
+    set(value)
+    {
+        this[Calendar.DAY_OF_MONTH] = value
+    }
+
+var Calendar.hour : Int
+    get() = this[Calendar.HOUR_OF_DAY]
+    set(value)
+    {
+        this[Calendar.HOUR_OF_DAY] = value
+    }
+
+var Calendar.minute : Int
+    get() = this[Calendar.MINUTE]
+    set(value)
+    {
+        this[Calendar.MINUTE] = value
+    }
+
+var Calendar.second : Int
+    get() = this[Calendar.SECOND]
+    set(value)
+    {
+        this[Calendar.SECOND] = value
+    }
+
+var Calendar.millisecond : Int
+    get() = this[Calendar.MILLISECOND]
+    set(value)
+    {
+        this[Calendar.MILLISECOND] = value
+    }
+

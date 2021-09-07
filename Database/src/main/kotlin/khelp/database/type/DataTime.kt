@@ -2,6 +2,10 @@ package khelp.database.type
 
 import java.util.Calendar
 import khelp.utilities.extensions.bounds
+import khelp.utilities.extensions.hour
+import khelp.utilities.extensions.millisecond
+import khelp.utilities.extensions.minute
+import khelp.utilities.extensions.second
 
 private const val MILLISECONDS_MASK = 0b0000_0000_0000_0000_0000_0011_1111_1111
 private const val SECONDS_MASK = 0b0000_0000_0000_0000_1111_1100_0000_0000
@@ -71,10 +75,10 @@ class DataTime() : Comparable<DataTime>
     {
         this.days = 0
         val calendar = Calendar.getInstance()
-        this.hours = calendar.get(Calendar.HOUR_OF_DAY)
-        this.minutes = calendar.get(Calendar.MINUTE)
-        this.seconds = calendar.get(Calendar.SECOND)
-        this.milliseconds = calendar.get(Calendar.MILLISECOND)
+        this.hours = calendar.hour
+        this.minutes = calendar.minute
+        this.seconds = calendar.second
+        this.milliseconds = calendar.millisecond
         this.update()
     }
 

@@ -1,7 +1,5 @@
 package khelp.utilities.extensions
 
-import java.util.Base64
-import java.util.Locale
 import khelp.utilities.argumentCheck
 import khelp.utilities.regex.LOCALE_SEPARATOR
 import khelp.utilities.regex.RegularExpression
@@ -11,6 +9,8 @@ import khelp.utilities.regex.WORD_EXTEND
 import khelp.utilities.text.EmptyCharactersInterval
 import khelp.utilities.text.SimpleCharactersInterval
 import khelp.utilities.text.UnionCharactersInterval
+import java.util.Base64
+import java.util.Locale
 
 val String.utf8 get() = this.toByteArray(Charsets.UTF_8)
 
@@ -18,9 +18,9 @@ val String.base64
     get() = Base64.getDecoder()
         .decode(this)
 
-val String.regularExpression: RegularExpression get() = RegularExpression.text(this)
+val String.regularExpression : RegularExpression get() = RegularExpression.text(this)
 
-val String.ignoreCaseRegularExpression: RegularExpression
+val String.ignoreCaseRegularExpression : RegularExpression
     get()
     {
         if (this.isEmpty())
@@ -46,10 +46,11 @@ val String.ignoreCaseRegularExpression: RegularExpression
  *
  * @throws IllegalArgumentException If String contains at least one non word extended character or empty
  */
-val String.anyWordExceptThis: RegularExpression
+val String.anyWordExceptThis : RegularExpression
     get()
     {
-        argumentCheck(WORD_EXTEND.matches(this)) { "The given String '$this' contains some illegal characters not consider as 'word' character" }
+        argumentCheck(WORD_EXTEND.matches(
+            this)) { "The given String '$this' contains some illegal characters not consider as 'word' character" }
         val interval = this.toCharArray().interval
         val format =
             when (interval)
@@ -88,10 +89,10 @@ val String.anyWordExceptThis: RegularExpression
  *
  * @throws IllegalArgumentException If String contains at least one white space character or empty
  */
-val String.anyNonWhiteSpaceExceptThis: RegularExpression
+val String.anyNonWhiteSpaceExceptThis : RegularExpression
     get()
     {
-        argumentCheck(!WHITE_SPACE.matcher(this)
+        argumentCheck(! WHITE_SPACE.matcher(this)
             .find()) { "The given String '$this' contains at least on white space" }
         val interval = this.toCharArray().interval
         val format =
@@ -126,61 +127,61 @@ val String.anyNonWhiteSpaceExceptThis: RegularExpression
 /**
  * Create regular expression that match to this string or given regular expression
  */
-infix fun String.OR(regularExpression: RegularExpression) =
+infix fun String.OR(regularExpression : RegularExpression) =
     this.regularExpression OR regularExpression
 
 /**
  * Create regular expression that match to this string or given group
  */
-infix fun String.OR(regularExpression: RegularExpressionGroup) =
+infix fun String.OR(regularExpression : RegularExpressionGroup) =
     this.regularExpression OR regularExpression
 
 /**
  * Crete regular expression that match zero, one or several times this string
  */
-fun String.zeroOrMore(): RegularExpression =
+fun String.zeroOrMore() : RegularExpression =
     this.regularExpression.zeroOrMore()
 
 /**
  * Crete regular expression that match at least one time this string
  */
-fun String.oneOrMore(): RegularExpression =
+fun String.oneOrMore() : RegularExpression =
     this.regularExpression.oneOrMore()
 
 /**
  * Crete regular expression that match zero or one time this string
  */
-fun String.zeroOrOne(): RegularExpression =
+fun String.zeroOrOne() : RegularExpression =
     this.regularExpression.zeroOrOne()
 
 /**
  * Crete regular expression that match exactly a number of times this string
  */
-fun String.exactTimes(times: Int): RegularExpression =
+fun String.exactTimes(times : Int) : RegularExpression =
     this.regularExpression.exactTimes(times)
 
 /**
  * Crete regular expression that match at least a number of times this string
  */
-fun String.atLeast(times: Int): RegularExpression =
+fun String.atLeast(times : Int) : RegularExpression =
     this.regularExpression.atLeast(times)
 
 /**
  * Crete regular expression that match at most a number of times this string
  */
-fun String.atMost(times: Int): RegularExpression =
+fun String.atMost(times : Int) : RegularExpression =
     this.regularExpression.atMost(times)
 
 /**
  * Crete regular expression that match this string a number of times between a minimum and a maximum
  */
-fun String.between(minimum: Int, maximum: Int): RegularExpression =
+fun String.between(minimum : Int, maximum : Int) : RegularExpression =
     this.regularExpression.between(minimum, maximum)
 
 /**
  * Try to parse this string to a locale
  */
-fun String.toLocale(): Locale
+fun String.toLocale() : Locale
 {
     val split = LOCALE_SEPARATOR.split(this, 3)
 
@@ -208,9 +209,10 @@ fun String.toLocale(): Locale
  *      +-----------------------------------------------------+-----------------+
  *
  */
-fun String.ellipseIfMoreThan(maximumNumberCharacters: Int): String
+fun String.ellipseIfMoreThan(maximumNumberCharacters : Int) : String
 {
-    argumentCheck(maximumNumberCharacters >= 5) { "The maximum number if characters must be >=5, not $maximumNumberCharacters" }
+    argumentCheck(
+        maximumNumberCharacters >= 5) { "The maximum number if characters must be >=5, not $maximumNumberCharacters" }
     val size = this.length
 
     if (size <= maximumNumberCharacters)
@@ -239,9 +241,10 @@ fun String.ellipseIfMoreThan(maximumNumberCharacters: Int): String
  *      +---------------------------------------------+-----------------+
  *
  */
-fun String.onlyFirst(maximumNumberCharacters: Int): String
+fun String.onlyFirst(maximumNumberCharacters : Int) : String
 {
-    argumentCheck(maximumNumberCharacters >= 5) { "The maximum number if characters must be >=5, not $maximumNumberCharacters" }
+    argumentCheck(
+        maximumNumberCharacters >= 5) { "The maximum number if characters must be >=5, not $maximumNumberCharacters" }
     val size = this.length
 
     if (size <= maximumNumberCharacters)
@@ -268,9 +271,10 @@ fun String.onlyFirst(maximumNumberCharacters: Int): String
  *      +--------------------------------------------+-----------------+
  *
  */
-fun String.onlyLast(maximumNumberCharacters: Int): String
+fun String.onlyLast(maximumNumberCharacters : Int) : String
 {
-    argumentCheck(maximumNumberCharacters >= 5) { "The maximum number if characters must be >=5, not $maximumNumberCharacters" }
+    argumentCheck(
+        maximumNumberCharacters >= 5) { "The maximum number if characters must be >=5, not $maximumNumberCharacters" }
     val size = this.length
 
     if (size <= maximumNumberCharacters)
@@ -280,3 +284,48 @@ fun String.onlyLast(maximumNumberCharacters: Int): String
 
     return "...${this.substring(size - (maximumNumberCharacters - 3))}"
 }
+
+fun String.int(defaultValue : Int = 0) =
+    try
+    {
+        this.trim()
+            .toInt()
+    }
+    catch (_ : Exception)
+    {
+        defaultValue
+    }
+
+
+fun String.long(defaultValue : Long = 0L) =
+    try
+    {
+        this.trim()
+            .toLong()
+    }
+    catch (_ : Exception)
+    {
+        defaultValue
+    }
+
+fun String.float(defaultValue : Float = 0f) =
+    try
+    {
+        this.trim()
+            .toFloat()
+    }
+    catch (_ : Exception)
+    {
+        defaultValue
+    }
+
+fun String.double(defaultValue : Double = 0.0) =
+    try
+    {
+        this.trim()
+            .toDouble()
+    }
+    catch (_ : Exception)
+    {
+        defaultValue
+    }

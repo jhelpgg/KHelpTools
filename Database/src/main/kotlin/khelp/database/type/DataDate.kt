@@ -1,5 +1,8 @@
 package khelp.database.type
 
+import khelp.utilities.extensions.day
+import khelp.utilities.extensions.month
+import khelp.utilities.extensions.year
 import java.util.Calendar
 
 private const val DAY_MASK = 0b0000_0000_0000_0000_0000_0000_0001_1111
@@ -11,39 +14,36 @@ private const val YEAR_SHIFT = MONTH_SHIFT + 4
 /**
  * A day date : year/month/day
  */
-class DataDate(year: Int, month: Int, day: Int) : Comparable<DataDate>
+class DataDate(year : Int, month : Int, day : Int) : Comparable<DataDate>
 {
-    val year: Int
-    val month: Int
-    val day: Int
-    internal val serialized: Int
+    val year : Int
+    val month : Int
+    val day : Int
+    internal val serialized : Int
 
     init
     {
         val calendar = Calendar.getInstance()
         calendar.set(year, month - 1, day)
-        this.year = calendar.get(Calendar.YEAR)
-        this.month = calendar.get(Calendar.MONTH) + 1
-        this.day = calendar.get(Calendar.DAY_OF_MONTH)
+        this.year = calendar.year
+        this.month = calendar.month
+        this.day = calendar.day
         this.serialized = (this.year shl YEAR_SHIFT) or
                 (this.month shl MONTH_SHIFT) or
                 this.day
     }
 
-    constructor(calendar: Calendar = Calendar.getInstance()) :
-            this(calendar.get(Calendar.YEAR),
-                 calendar.get(Calendar.MONTH) + 1,
-                 calendar.get(Calendar.DAY_OF_MONTH))
+    constructor(calendar : Calendar = Calendar.getInstance()) : this(calendar.year, calendar.month, calendar.day)
 
-    internal constructor(serialized: Int) :
+    internal constructor(serialized : Int) :
             this((serialized and YEAR_MASK) shr YEAR_SHIFT,
                  (serialized and MONTH_MASK) shr MONTH_SHIFT,
                  serialized and DAY_MASK)
 
-    override operator fun compareTo(other: DataDate): Int =
+    override operator fun compareTo(other : DataDate) : Int =
         this.serialized - other.serialized
 
-    override fun equals(other: Any?): Boolean
+    override fun equals(other : Any?) : Boolean
     {
         if (this === other)
         {
@@ -58,9 +58,9 @@ class DataDate(year: Int, month: Int, day: Int) : Comparable<DataDate>
         return this.serialized == other.serialized
     }
 
-    override fun hashCode(): Int =
+    override fun hashCode() : Int =
         this.serialized
 
-    override fun toString(): String =
+    override fun toString() : String =
         String.format("%04d/%02d/%02d", this.year, this.month, this.day)
 }
