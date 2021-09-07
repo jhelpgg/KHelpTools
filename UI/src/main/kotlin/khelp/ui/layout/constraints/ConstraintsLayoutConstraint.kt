@@ -25,14 +25,3 @@ class ConstraintsLayoutConstraint
             && (this.constraintsTop?.computed ?: true)
             && (this.constraintsBottom?.computed ?: true)
 }
-/*
-Treat in queue
-
-
-  Parent/Nothing/anchor
-        +------+
- P/N/A  |      | P/N/A
-        |      |
-        +------+
-          P/N/A
- */

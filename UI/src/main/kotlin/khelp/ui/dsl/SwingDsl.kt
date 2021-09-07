@@ -34,6 +34,13 @@ fun Container.tableLayout(tableAspect : Boolean = false, creator : TableLayoutCr
     creator(tableLayoutCreator)
 }
 
+fun Container.constraintLayout(creator : ConstraintsLayoutCreator.() -> Unit)
+{
+    val constraintsLayoutCreator = ConstraintsLayoutCreator(this)
+    creator(constraintsLayoutCreator)
+    constraintsLayoutCreator.create()
+}
+
 fun button(text : String, buttonCreator : JButtonCreator.() -> Unit) : JButton
 {
     val jButtonCreator = JButtonCreator(text)

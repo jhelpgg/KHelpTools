@@ -4,29 +4,15 @@ import khelp.io.ClassSource
 import khelp.resources.Resources
 import khelp.thread.TaskContext
 import khelp.ui.components.ColorComponent
-import khelp.ui.components.JHelpFrame
 import khelp.ui.components.JLabel
 import khelp.ui.dsl.borderLayout
+import khelp.ui.dsl.constraintLayout
 import khelp.ui.dsl.frame
 import khelp.ui.dsl.tableLayout
 import khelp.ui.extensions.addSubTitle
 import khelp.ui.extensions.addTitle
 import khelp.ui.game.GameImage
-import khelp.ui.layout.constraints.BottomAtParent
-import khelp.ui.layout.constraints.BottomFree
-import khelp.ui.layout.constraints.BottomToTopOf
-import khelp.ui.layout.constraints.ConstraintsLayout
-import khelp.ui.layout.constraints.ConstraintsLayoutConstraint
 import khelp.ui.layout.constraints.ConstraintsSize
-import khelp.ui.layout.constraints.LeftAtParent
-import khelp.ui.layout.constraints.LeftFree
-import khelp.ui.layout.constraints.LeftToRightOf
-import khelp.ui.layout.constraints.RightAtParent
-import khelp.ui.layout.constraints.RightFree
-import khelp.ui.layout.constraints.RightToLeftOf
-import khelp.ui.layout.constraints.TopAtParent
-import khelp.ui.layout.constraints.TopFree
-import khelp.ui.layout.constraints.TopToBottomOf
 import khelp.ui.utilities.CHARACTER_ESCAPE
 import khelp.ui.utilities.createKeyStroke
 import khelp.ui.utilities.initializeGUI
@@ -118,58 +104,55 @@ fun main()
     val black = ColorComponent(Color.BLACK)
     val red = ColorComponent(Color.RED)
     val green = ColorComponent(Color.GREEN)
-    val yellow = ColorComponent(Color.YELLOW)
-    val blue = ColorComponent(Color.BLUE)
-    val frame2 = JHelpFrame()
-    frame2.layout = ConstraintsLayout()
 
-    var constraintsLayoutConstraint = ConstraintsLayoutConstraint()
-    constraintsLayoutConstraint.horizontalSize = ConstraintsSize.EXPANDED
-    constraintsLayoutConstraint.verticalSize = ConstraintsSize.WRAPPED
-    constraintsLayoutConstraint.leftConstraint = LeftAtParent
-    constraintsLayoutConstraint.rightConstraint = RightToLeftOf(green)
-    constraintsLayoutConstraint.topConstraint = TopAtParent
-    constraintsLayoutConstraint.bottomConstraint = BottomFree
-    frame2.add(blue, constraintsLayoutConstraint)
+    frame {
+        constraintLayout {
+            ColorComponent(Color.BLUE)("blue") {
+                horizontalSize = ConstraintsSize.EXPANDED
+                verticalSize = ConstraintsSize.WRAPPED
+                leftAtParent
+                rightAtLeft = "green"
+                topAtParent
+                bottomFree
+            }
 
-    constraintsLayoutConstraint = ConstraintsLayoutConstraint()
-    constraintsLayoutConstraint.horizontalSize = ConstraintsSize.WRAPPED
-    constraintsLayoutConstraint.verticalSize = ConstraintsSize.EXPANDED
-    constraintsLayoutConstraint.leftConstraint = LeftFree
-    constraintsLayoutConstraint.rightConstraint = RightAtParent
-    constraintsLayoutConstraint.topConstraint = TopAtParent
-    constraintsLayoutConstraint.bottomConstraint = BottomToTopOf(yellow)
-    frame2.add(green, constraintsLayoutConstraint)
+            green("green") {
+                horizontalSize = ConstraintsSize.WRAPPED
+                verticalSize = ConstraintsSize.EXPANDED
+                leftFree
+                rightAtParent
+                topAtParent
+                bottomAtTop = "yellow"
+            }
 
-    constraintsLayoutConstraint = ConstraintsLayoutConstraint()
-    constraintsLayoutConstraint.horizontalSize = ConstraintsSize.EXPANDED
-    constraintsLayoutConstraint.verticalSize = ConstraintsSize.WRAPPED
-    constraintsLayoutConstraint.leftConstraint = LeftAtParent
-    constraintsLayoutConstraint.rightConstraint = RightAtParent
-    constraintsLayoutConstraint.topConstraint = TopFree
-    constraintsLayoutConstraint.bottomConstraint = BottomAtParent
-    frame2.add(yellow, constraintsLayoutConstraint)
+            ColorComponent(Color.YELLOW)("yellow") {
+                horizontalSize = ConstraintsSize.EXPANDED
+                verticalSize = ConstraintsSize.WRAPPED
+                leftAtParent
+                rightAtParent
+                topFree
+                bottomAtParent
+            }
 
-    constraintsLayoutConstraint = ConstraintsLayoutConstraint()
-    constraintsLayoutConstraint.horizontalSize = ConstraintsSize.WRAPPED
-    constraintsLayoutConstraint.verticalSize = ConstraintsSize.EXPANDED
-    constraintsLayoutConstraint.leftConstraint = LeftAtParent
-    constraintsLayoutConstraint.rightConstraint = RightFree
-    constraintsLayoutConstraint.topConstraint = TopToBottomOf(blue)
-    constraintsLayoutConstraint.bottomConstraint = BottomToTopOf(yellow)
-    frame2.add(red, constraintsLayoutConstraint)
+            red("red") {
+                horizontalSize = ConstraintsSize.WRAPPED
+                verticalSize = ConstraintsSize.EXPANDED
+                leftAtParent
+                rightFree
+                topAtBottom = "blue"
+                bottomAtTop = "yellow"
+            }
 
-    constraintsLayoutConstraint = ConstraintsLayoutConstraint()
-    constraintsLayoutConstraint.horizontalSize = ConstraintsSize.EXPANDED
-    constraintsLayoutConstraint.verticalSize = ConstraintsSize.EXPANDED
-    constraintsLayoutConstraint.topConstraint = TopToBottomOf(blue)
-    constraintsLayoutConstraint.bottomConstraint = BottomToTopOf(yellow)
-    constraintsLayoutConstraint.leftConstraint = LeftToRightOf(red)
-    constraintsLayoutConstraint.rightConstraint = RightToLeftOf(green)
-    frame2.add(black, constraintsLayoutConstraint)
-
-    frame2.showFrame()
-
+            black("black") {
+                horizontalSize = ConstraintsSize.EXPANDED
+                verticalSize = ConstraintsSize.EXPANDED
+                topAtBottom = "blue"
+                bottomAtTop = "yellow"
+                leftAtRight = "red"
+                rightAtLeft = "green"
+            }
+        }
+    }
 
 /*
 val frame = GameFrame.fullScreenFrame()
