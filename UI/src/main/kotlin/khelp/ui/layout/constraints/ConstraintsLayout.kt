@@ -255,18 +255,76 @@ class ConstraintsLayout : LayoutManager2
         var maxX = Int.MIN_VALUE
         var minY = Int.MAX_VALUE
         var maxY = Int.MIN_VALUE
+        var additionalWidth = 0
+        var additionalHeight = 0
 
         for (constraint in collectedConstraints)
         {
+            constraint.computed = false
+        }
+
+        for (index in 0 until collectedConstraints.size)
+        {
+            val constraint = collectedConstraints[index]
+
+            if (constraint.computed)
+            {
+                continue
+            }
+
             minX = min(minX, constraint.x)
             maxX = max(maxX, constraint.xMax)
             minY = min(minY, constraint.y)
             maxY = max(maxY, constraint.yMax)
+
+            for (index2 in index + 1 until collectedConstraints.size)
+            {
+                val constraint2 = collectedConstraints[index2]
+
+                if (constraint2.computed)
+                {
+                    continue
+                }
+
+                if (constraint.x <= constraint2.x)
+                {
+                    if (constraint.xMax >= constraint2.x)
+                    {
+                        additionalWidth += constraint.xMax - constraint2.x
+                        constraint2.computed = true
+                    }
+                }
+                else
+                {
+                    if (constraint2.xMax >= constraint.x)
+                    {
+                        additionalWidth += constraint2.xMax - constraint.x
+                        constraint2.computed = true
+                    }
+                }
+
+                if (constraint.y <= constraint2.y)
+                {
+                    if (constraint.yMax >= constraint2.y)
+                    {
+                        additionalHeight += constraint.yMax - constraint2.y
+                        constraint2.computed = true
+                    }
+                }
+                else
+                {
+                    if (constraint2.yMax >= constraint.y)
+                    {
+                        additionalHeight += constraint2.yMax - constraint.y
+                        constraint2.computed = true
+                    }
+                }
+            }
         }
 
         if (minX <= maxX && minY <= maxY)
         {
-            return Dimension(maxX - minX, maxY - minY)
+            return Dimension(maxX - minX + additionalWidth, maxY - minY + additionalHeight)
         }
 
         return Dimension(16, 16)
