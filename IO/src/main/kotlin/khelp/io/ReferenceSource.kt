@@ -15,6 +15,7 @@ sealed class ReferenceSource
     abstract fun inputStream(path : String) : InputStream
     abstract fun outputStream(path : String) : OutputStream
     abstract fun url(path : String) : URL
+    abstract fun exists(path : String) : Boolean
 }
 
 class ExternalSource(directoryRelativePath : String = "") : ReferenceSource()
@@ -45,6 +46,8 @@ class ExternalSource(directoryRelativePath : String = "") : ReferenceSource()
 
     override fun url(path : String) : URL = obtainFile(this.baseDirectory, path).toURI()
         .toURL()
+
+    override fun exists(path : String) : Boolean = obtainFile(this.baseDirectory, path).exists()
 }
 
 class DirectorySource(private val directory : File) : ReferenceSource()
@@ -73,6 +76,8 @@ class DirectorySource(private val directory : File) : ReferenceSource()
 
     override fun url(path : String) : URL = obtainFile(this.directory, path).toURI()
         .toURL()
+
+    override fun exists(path : String) : Boolean = obtainFile(this.directory, path).exists()
 }
 
 class ClassSource(private val classReference : Class<*> = ReferenceSource::class.java) : ReferenceSource()
@@ -87,6 +92,8 @@ class ClassSource(private val classReference : Class<*> = ReferenceSource::class
     override fun url(path : String) : URL =
         this.classReference.getResource(path)
         ?: throw IllegalArgumentException("Can't retrieve path '$path' from class ${this.classReference.name}")
+
+    override fun exists(path : String) : Boolean = this.classReference.getResource(path) != null
 }
 
 class UrlSource(private val urlBase : String) : ReferenceSource()
@@ -118,6 +125,19 @@ class UrlSource(private val urlBase : String) : ReferenceSource()
             }
         return URL(urlPath)
     }
+
+    override fun exists(path : String) : Boolean =
+        try
+        {
+            val stream = this.inputStream(path)
+            stream.read()
+            stream.close()
+            true
+        }
+        catch (_ : Exception)
+        {
+            false
+        }
 
     private fun createConnection(path : String) : URLConnection
     {

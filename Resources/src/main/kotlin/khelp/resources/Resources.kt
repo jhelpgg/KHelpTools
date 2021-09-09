@@ -26,6 +26,8 @@ class Resources(private val source : ReferenceSource)
 
     fun url(path : String) : URL = this.source.url(path)
 
+    fun exists(path : String) : Boolean = this.source.exists(path)
+
     fun replaceResourcesLinkIn(string : String) : String
     {
         val stringBuilder = StringBuilder()

@@ -64,6 +64,10 @@ class ConstraintsLayoutCreator internal constructor(private val container : Cont
 
             constraintsLayoutConstraint.horizontalSize = constraintCreator.horizontalSize
             constraintsLayoutConstraint.verticalSize = constraintCreator.verticalSize
+            constraintsLayoutConstraint.marginTop = constraintCreator.marginTop
+            constraintsLayoutConstraint.marginLeft = constraintCreator.marginLeft
+            constraintsLayoutConstraint.marginBottom = constraintCreator.marginBottom
+            constraintsLayoutConstraint.marginRight = constraintCreator.marginRight
 
             constraintsLayoutConstraint.topConstraint =
                 when (constraintCreator.top.reference)

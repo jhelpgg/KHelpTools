@@ -56,93 +56,59 @@ class ConstraintsLayout : LayoutManager2
 
         for (component in parent.iterator())
         {
-            if (component.isVisible)
-            {
-                val dimension = computePreferredDimension(component)
+            val dimension = computePreferredDimension(component)
 
-                this.componentsConstraints[component]?.let { constraint ->
-                    constraint.x = 0
-                    constraint.y = 0
-                    constraint.xMax =
-                        if (constraint.horizontalSize == ConstraintsSize.WRAPPED) dimension.width else parentWidth
-                    constraint.yMax =
-                        if (constraint.verticalSize == ConstraintsSize.WRAPPED) dimension.height else parentHeight
-                    constraint.computed = false
-                    constraint.constraintsLeft =
-                        if (constraint.leftConstraint == LeftAtParent)
-                        {
-                            parentConstraint
-                        }
-                        else
-                        {
-                            constraint.leftConstraint.attached?.let { component ->
-                                if (component.isVisible)
-                                {
-                                    this.componentsConstraints[component]
-                                }
-                                else
-                                {
-                                    null
-                                }
-                            }
-                        }
-                    constraint.constraintsRight =
-                        if (constraint.rightConstraint == RightAtParent)
-                        {
-                            parentConstraint
-                        }
-                        else
-                        {
-                            constraint.rightConstraint.attached?.let { component ->
-                                if (component.isVisible)
-                                {
-                                    this.componentsConstraints[component]
-                                }
-                                else
-                                {
-                                    null
-                                }
-                            }
-                        }
-                    constraint.constraintsTop =
-                        if (constraint.topConstraint == TopAtParent)
-                        {
-                            parentConstraint
-                        }
-                        else
-                        {
-                            constraint.topConstraint.attached?.let { component ->
-                                if (component.isVisible)
-                                {
-                                    this.componentsConstraints[component]
-                                }
-                                else
-                                {
-                                    null
-                                }
-                            }
-                        }
-                    constraint.constraintsBottom =
-                        if (constraint.bottomConstraint == BottomAtParent)
-                        {
-                            parentConstraint
-                        }
-                        else
-                        {
-                            constraint.bottomConstraint.attached?.let { component ->
-                                if (component.isVisible)
-                                {
-                                    this.componentsConstraints[component]
-                                }
-                                else
-                                {
-                                    null
-                                }
-                            }
-                        }
-                    queue.inQueue(constraint)
-                    collectedConstraints.add(Pair(component, constraint))
-                }
+            this.componentsConstraints[component]?.let { constraint ->
+                constraint.x = 0
+                constraint.y = 0
+                constraint.xMax = constraint.marginLeft + constraint.marginRight +
+                    if (constraint.horizontalSize == ConstraintsSize.WRAPPED) dimension.width else parentWidth
+                constraint.yMax = constraint.marginTop + constraint.marginBottom +
+                    if (constraint.verticalSize == ConstraintsSize.WRAPPED) dimension.height else parentHeight
+                constraint.computed = false
+
+                constraint.constraintsLeft =
+                    if (constraint.leftConstraint == LeftAtParent)
+                    {
+                        parentConstraint
+                    }
+                    else
+                    {
+                        constraint.leftConstraint.attached?.let { component -> this.componentsConstraints[component] }
+                    }
+
+                constraint.constraintsRight =
+                    if (constraint.rightConstraint == RightAtParent)
+                    {
+                        parentConstraint
+                    }
+                    else
+                    {
+                        constraint.rightConstraint.attached?.let { component -> this.componentsConstraints[component] }
+                    }
+
+                constraint.constraintsTop =
+                    if (constraint.topConstraint == TopAtParent)
+                    {
+                        parentConstraint
+                    }
+                    else
+                    {
+                        constraint.topConstraint.attached?.let { component -> this.componentsConstraints[component] }
+                    }
+
+                constraint.constraintsBottom =
+                    if (constraint.bottomConstraint == BottomAtParent)
+                    {
+                        parentConstraint
+                    }
+                    else
+                    {
+                        constraint.bottomConstraint.attached?.let { component -> this.componentsConstraints[component] }
+                    }
+
+                queue.inQueue(constraint)
+                collectedConstraints.add(Pair(component, constraint))
             }
         }
 
@@ -180,8 +146,9 @@ class ConstraintsLayout : LayoutManager2
         {
             for ((component, constraint) in collectedConstraints)
             {
-                component.setLocation(constraint.x, constraint.y)
-                component.setSize(constraint.xMax - constraint.x, constraint.yMax - constraint.y)
+                component.setLocation(constraint.x + constraint.marginLeft, constraint.y + constraint.marginTop)
+                component.setSize(constraint.xMax - constraint.x - constraint.marginLeft - constraint.marginRight,
+                                  constraint.yMax - constraint.y - constraint.marginTop - constraint.marginBottom)
             }
         }
     }
@@ -199,27 +166,24 @@ class ConstraintsLayout : LayoutManager2
 
         for (component in parent.iterator())
         {
-            if (component.isVisible)
-            {
-                val dimension = componentSize(component)
+            val dimension = componentSize(component)
 
-                this.componentsConstraints[component]?.let { constraint ->
-                    constraint.x = 0
-                    constraint.y = 0
-                    constraint.xMax = dimension.width
-                    constraint.yMax = dimension.height
-                    constraint.computed = false
-                    constraint.constraintsLeft =
-                        constraint.leftConstraint.attached?.let { component -> if (component.isVisible) this.componentsConstraints[component] else null }
-                    constraint.constraintsRight =
-                        constraint.rightConstraint.attached?.let { component -> if (component.isVisible) this.componentsConstraints[component] else null }
-                    constraint.constraintsTop =
-                        constraint.topConstraint.attached?.let { component -> if (component.isVisible) this.componentsConstraints[component] else null }
-                    constraint.constraintsBottom =
-                        constraint.bottomConstraint.attached?.let { component -> if (component.isVisible) this.componentsConstraints[component] else null }
-                    queue.inQueue(constraint)
-                    collectedConstraints.add(constraint)
-                }
+            this.componentsConstraints[component]?.let { constraint ->
+                constraint.x = 0
+                constraint.y = 0
+                constraint.xMax = dimension.width + constraint.marginLeft + constraint.marginRight
+                constraint.yMax = dimension.height + constraint.marginTop + constraint.marginBottom
+                constraint.computed = false
+                constraint.constraintsLeft =
+                    constraint.leftConstraint.attached?.let { component -> this.componentsConstraints[component] }
+                constraint.constraintsRight =
+                    constraint.rightConstraint.attached?.let { component -> this.componentsConstraints[component] }
+                constraint.constraintsTop =
+                    constraint.topConstraint.attached?.let { component -> this.componentsConstraints[component] }
+                constraint.constraintsBottom =
+                    constraint.bottomConstraint.attached?.let { component -> this.componentsConstraints[component] }
+                queue.inQueue(constraint)
+                collectedConstraints.add(constraint)
             }
         }
 

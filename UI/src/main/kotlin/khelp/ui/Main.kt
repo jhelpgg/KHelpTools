@@ -5,6 +5,8 @@ import khelp.resources.Resources
 import khelp.thread.TaskContext
 import khelp.ui.components.ColorComponent
 import khelp.ui.components.JLabel
+import khelp.ui.components.message.MessageButtons
+import khelp.ui.components.message.MessageType
 import khelp.ui.dsl.borderLayout
 import khelp.ui.dsl.constraintLayout
 import khelp.ui.dsl.frame
@@ -14,10 +16,14 @@ import khelp.ui.extensions.addTitle
 import khelp.ui.game.GameImage
 import khelp.ui.layout.constraints.ConstraintsSize
 import khelp.ui.utilities.CHARACTER_ESCAPE
+import khelp.ui.utilities.WARNING_IMAGE_16
 import khelp.ui.utilities.createKeyStroke
 import khelp.ui.utilities.initializeGUI
+import khelp.utilities.log.debug
 import java.awt.Color
+import java.awt.Dialog
 import java.util.Locale
+import javax.swing.JButton
 import javax.swing.JLabel
 
 class Main
@@ -28,6 +34,7 @@ fun main()
 
     val resources = Resources(ClassSource(Main::class.java))
     val resourcesText = resources.resourcesText("exampleTexts")
+
     val exitImage = GameImage(32, 32)
     exitImage.clear(Color.RED)
     exitImage.drawPercent { percentGraphics ->
@@ -37,12 +44,43 @@ fun main()
     }
 
     val frame = frame {
+        message("alert", resourcesText) {
+            keyTitle = "titleExample"
+            keyText = "textExample"
+            messageType = MessageType.WARNING
+            messageButtons = MessageButtons.OK
+            clickOn = { action -> debug("Click on : ", action) }
+        }
+
+        message("information", resourcesText) {
+            keyTitle = "titleExample"
+            keyText = "textExample"
+            messageType = MessageType.INFORMATION
+            messageButtons = MessageButtons.YES_NO
+            clickOn = { action -> debug("Click on : ", action) }
+        }
+
+        message("save", resourcesText) {
+            keyTitle = "titleExample"
+            keyText = "textExample"
+            messageType = MessageType.QUESTION
+            messageButtons = MessageButtons.SAVE_SAVE_AS_CANCEL
+            clickOn = { action -> debug("Click on : ", action) }
+        }
+
+        action("closeDialog", "ok", resourcesText) {
+            image = WARNING_IMAGE_16
+            onClick(TaskContext.INDEPENDENT) { hideDialog("DialogTest") }
+        }
+
         dialog("DialogTest") {
+            isUndecorated = true
+            modalityType = Dialog.ModalityType.APPLICATION_MODAL
             title = "Dialog"
             borderLayout {
                 center(JLabel("Dialog Center", JLabel.CENTER))
                 pageStart(JLabel("Dialog Page Start", JLabel.CENTER))
-                pageEnd(JLabel("Dialog Page End", JLabel.CENTER))
+                pageEnd(JButton(action("closeDialog")))
                 lineStart(JLabel("Dialog Line Start", JLabel.CENTER))
                 lineEnd(JLabel("Dialog Line End", JLabel.CENTER))
             }
@@ -70,6 +108,10 @@ fun main()
                 separator
                 + action("ENGLISH")
                 + action("FRENCH")
+                separator
+                "Alert" { showMessage("alert") }
+                "Information" { showMessage("information") }
+                "Save" { showMessage("save") }
                 separator
                 + action("EXIT")
             }

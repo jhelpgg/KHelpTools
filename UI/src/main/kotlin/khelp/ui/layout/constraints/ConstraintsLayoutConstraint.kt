@@ -8,6 +8,10 @@ class ConstraintsLayoutConstraint
     var rightConstraint : RightConstraint = RightAtParent
     var topConstraint : TopConstraint = TopAtParent
     var bottomConstraint : BottomConstraint = BottomAtParent
+    var marginTop : Int = 0
+    var marginLeft : Int = 0
+    var marginRight : Int = 0
+    var marginBottom : Int = 0
 
     internal var x = 0
     internal var y = 0

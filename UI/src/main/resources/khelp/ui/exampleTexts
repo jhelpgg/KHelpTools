@@ -22,9 +22,13 @@ yellow
 Yellow submarine
 -<=-=>-
 
+titleExample
+This is a title
+-<=-=>-
+
 textExample
 This is a text example
-Multiline in label work?<br>
+Multiline in label work?
 Well we will see
 -<=-=>-
 

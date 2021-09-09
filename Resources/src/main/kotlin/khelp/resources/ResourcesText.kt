@@ -25,7 +25,9 @@ class ResourcesText internal constructor(private var basePath : String, private 
     }
 
     operator fun get(key : String) : String =
-        synchronized(this.texts) { this.texts[key] ?: "/!\\ No key defined for $key /!\\" }
+        synchronized(this.texts) {
+            this.texts[key] ?: if (this != defaultTexts) defaultTexts[key] else "/!\\ No key defined for $key /!\\"
+        }
 
     private fun loadTexts(locale : Locale)
     {
@@ -83,7 +85,7 @@ class ResourcesText internal constructor(private var basePath : String, private 
                                   keyRead = false
                                   key = ""
                               }
-                          else                         ->
+                          else ->
                               if (! comment)
                               {
                                   if (! keyRead && lineTrim.isNotEmpty())

@@ -1,5 +1,7 @@
 package khelp.ui.utilities
 
+import khelp.resources.defaultResources
+import khelp.ui.game.GameImage
 import khelp.utilities.math.computeIntersectedArea
 import java.awt.Component
 import java.awt.Container
@@ -51,6 +53,11 @@ val GRAPHICS_ENVIRONMENT : GraphicsEnvironment = GraphicsEnvironment.getLocalGra
  * Current screen resolution
  */
 val SCREEN_RESOLUTION : Resolution = Resolution(TOOLKIT.getScreenResolution(), ResolutionUnit.PIXEL_PER_INCH)
+
+/**
+ * Font use for button text
+ */
+val BUTTON_FONT = Font("Arial", Font.BOLD, 14)
 
 /**
  * Font use for sub title
@@ -107,6 +114,42 @@ val INVISIBLE_CURSOR : Cursor by lazy {
                                 "Invisible")
     }
 }
+
+val WARNING_IMAGE_16 : GameImage by lazy { GameImage.loadThumbnail("warning.png", defaultResources, 16, 16) }
+
+val WARNING_IMAGE_32 : GameImage by lazy { GameImage.loadThumbnail("warning.png", defaultResources, 32, 32) }
+
+val WARNING_IMAGE_64 : GameImage by lazy { GameImage.loadThumbnail("warning.png", defaultResources, 64, 64) }
+
+val ERROR_IMAGE_16 : GameImage by lazy { GameImage.loadThumbnail("error.png", defaultResources, 16, 16) }
+
+val ERROR_IMAGE_32 : GameImage by lazy { GameImage.loadThumbnail("error.png", defaultResources, 32, 32) }
+
+val ERROR_IMAGE_64 : GameImage by lazy { GameImage.loadThumbnail("error.png", defaultResources, 64, 64) }
+
+val IDEA_IMAGE_16 : GameImage by lazy { GameImage.loadThumbnail("idea.png", defaultResources, 16, 16) }
+
+val IDEA_IMAGE_32 : GameImage by lazy { GameImage.loadThumbnail("idea.png", defaultResources, 32, 32) }
+
+val IDEA_IMAGE_64 : GameImage by lazy { GameImage.loadThumbnail("idea.png", defaultResources, 64, 64) }
+
+val INFORMATION_IMAGE_16 : GameImage by lazy { GameImage.loadThumbnail("information.png", defaultResources, 16, 16) }
+
+val INFORMATION_IMAGE_32 : GameImage by lazy { GameImage.loadThumbnail("information.png", defaultResources, 32, 32) }
+
+val INFORMATION_IMAGE_64 : GameImage by lazy { GameImage.loadThumbnail("information.png", defaultResources, 64, 64) }
+
+val MESSAGE_IMAGE_16 : GameImage by lazy { GameImage.loadThumbnail("message.png", defaultResources, 16, 16) }
+
+val MESSAGE_IMAGE_32 : GameImage by lazy { GameImage.loadThumbnail("message.png", defaultResources, 32, 32) }
+
+val MESSAGE_IMAGE_64 : GameImage by lazy { GameImage.loadThumbnail("message.png", defaultResources, 64, 64) }
+
+val QUESTION_IMAGE_16 : GameImage by lazy { GameImage.loadThumbnail("question.png", defaultResources, 16, 16) }
+
+val QUESTION_IMAGE_32 : GameImage by lazy { GameImage.loadThumbnail("question.png", defaultResources, 32, 32) }
+
+val QUESTION_IMAGE_64 : GameImage by lazy { GameImage.loadThumbnail("question.png", defaultResources, 64, 64) }
 
 
 /**

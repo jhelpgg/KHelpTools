@@ -12,6 +12,11 @@ class ConstraintsLayoutConstraintCreator
 
     var horizontalSize = ConstraintsSize.EXPANDED
     var verticalSize = ConstraintsSize.EXPANDED
+    var marginTop : Int = 0
+    var marginLeft : Int = 0
+    var marginRight : Int = 0
+    var marginBottom : Int = 0
+
     internal var top =
         ConstraintsLayoutConstraintCreatorReference(ConstraintsLayoutConstraintCreator.PARENT,
                                                     ConstraintsLayoutConstraintCreatorAnchor.TOP_TOP)

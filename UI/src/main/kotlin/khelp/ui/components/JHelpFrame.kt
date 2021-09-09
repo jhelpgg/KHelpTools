@@ -2,6 +2,8 @@ package khelp.ui.components
 
 import khelp.resources.ResourcesText
 import khelp.ui.GenericAction
+import khelp.ui.components.message.Message
+import khelp.ui.components.message.MessageDialog
 import khelp.ui.dsl.ActionCreator
 import khelp.ui.dsl.MenuBarCreator
 import khelp.ui.utilities.centerOnScreen
@@ -19,6 +21,8 @@ class JHelpFrame internal constructor(title : String = "JHelpFrame",
 {
     private val dialogs = HashMap<String, JDialog>()
     private val actions = HashMap<String, GenericAction>()
+    private val messages = HashMap<String, Message>()
+
     var canCloseNow : () -> Boolean = { true }
 
     init
@@ -52,6 +56,13 @@ class JHelpFrame internal constructor(title : String = "JHelpFrame",
     fun action(actionId : String) : GenericAction =
         this.actions[actionId] !!
 
+    fun message(messageId : String, resourcesText : ResourcesText, creator : Message.() -> Unit)
+    {
+        val message = Message(resourcesText)
+        creator(message)
+        this.messages[messageId] = message
+    }
+
     fun showDialog(dialogId : String)
     {
         this.dialogs[dialogId]?.let { dialog ->
@@ -67,6 +78,16 @@ class JHelpFrame internal constructor(title : String = "JHelpFrame",
     fun hideDialog(dialogId : String)
     {
         this.dialogs[dialogId]?.isVisible = false
+    }
+
+    fun showMessage(messageId : String)
+    {
+        this.messages[messageId]?.let { message -> this.showMessage(message) }
+    }
+
+    fun showMessage(message : Message)
+    {
+        MessageDialog.showMessage(message)
     }
 
     override fun processWindowEvent(windowEvent : WindowEvent)

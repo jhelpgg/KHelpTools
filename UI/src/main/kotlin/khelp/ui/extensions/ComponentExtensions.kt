@@ -46,12 +46,12 @@ fun JComponent.addBorder() : JComponent
     return this
 }
 
-fun JComponent.addLineBorder() : JComponent
+fun JComponent.addLineBorder(margin : Int = 3, color : Color = Color.BLACK) : JComponent
 {
     this.border =
         BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(Color.BLACK, 1),
-            BorderFactory.createEmptyBorder(3, 3, 3, 3)
+            BorderFactory.createLineBorder(color, 1),
+            BorderFactory.createEmptyBorder(margin, margin, margin, margin)
         )
 
     return this

@@ -1,5 +1,7 @@
 package khelp.ui.dsl
 
+import khelp.resources.ResourcesText
+import khelp.thread.TaskContext
 import khelp.ui.components.JHelpFrame
 import java.awt.Color
 import java.awt.Component
@@ -46,6 +48,15 @@ fun button(text : String, buttonCreator : JButtonCreator.() -> Unit) : JButton
     val jButtonCreator = JButtonCreator(text)
     buttonCreator(jButtonCreator)
     return jButtonCreator.button
+}
+
+fun button(textKey : String, resourcesText : ResourcesText, buttonCreator : JButtonCreator.() -> Unit) : JButton
+{
+    val jButtonCreator = JButtonCreator(textKey)
+    buttonCreator(jButtonCreator)
+    val button = jButtonCreator.button
+    resourcesText.observableChange.observedBy(TaskContext.INDEPENDENT) { texts -> button.text = texts[textKey] }
+    return button
 }
 
 fun JDialog.menuBar(creator : MenuBarCreator.() -> Unit)

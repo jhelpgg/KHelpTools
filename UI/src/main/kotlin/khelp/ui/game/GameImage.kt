@@ -1,12 +1,17 @@
 package khelp.ui.game
 
+import khelp.resources.Resources
+import khelp.resources.defaultResources
 import khelp.ui.utilities.PercentGraphics
+import khelp.ui.utilities.TRANSPARENT
 import java.awt.Color
 import java.awt.Component
 import java.awt.Graphics
 import java.awt.Graphics2D
 import java.awt.RenderingHints
 import java.awt.image.BufferedImage
+import java.io.InputStream
+import javax.imageio.ImageIO
 import javax.swing.Icon
 
 
@@ -15,6 +20,72 @@ class GameImage(val width : Int, val height : Int) : Icon
     companion object
     {
         val DUMMY = GameImage(1, 1)
+
+        fun load(inputStream : InputStream) =
+            this.load(inputStream, - 1, - 1)
+
+        fun loadThumbnail(inputStream : InputStream, imageWidth : Int, imageHeight : Int) =
+            this.load(inputStream, imageWidth, imageHeight)
+
+        fun load(path : String, resources : Resources) =
+            this.load(path, resources, - 1, - 1)
+
+        fun loadThumbnail(path : String, resources : Resources, imageWidth : Int, imageHeight : Int) =
+            this.load(path, resources, imageWidth, imageHeight)
+
+        private fun load(inputStream : InputStream, imageWidth : Int, imageHeight : Int) : GameImage =
+            try
+            {
+                val image = ImageIO.read(inputStream)
+                val width = image.width
+                val height = image.height
+                val targetWidth = if (imageWidth > 0) imageWidth else width
+                val targetHeight = if (imageHeight > 0) imageHeight else height
+
+                if (width <= 0 || height <= 0)
+                {
+                    GameImage.DUMMY
+                }
+                else
+                {
+                    val gameImage = GameImage(targetWidth, targetHeight)
+                    gameImage.clear(TRANSPARENT)
+                    gameImage.draw { graphics2D ->
+                        graphics2D.drawImage(image,
+                                             0, 0, targetWidth, targetHeight,
+                                             0, 0, width, height,
+                                             null)
+                    }
+                    gameImage
+                }
+            }
+            catch (_ : Exception)
+            {
+                GameImage.DUMMY
+            }
+
+        private fun load(path : String, resources : Resources, imageWidth : Int, imageHeight : Int) : GameImage
+        {
+            val inputStream =
+                when
+                {
+                    resources.exists(path)        -> resources.inputStream(path)
+                    defaultResources.exists(path) -> defaultResources.inputStream(path)
+                    else                          -> return GameImage.DUMMY
+                }
+
+            val image = GameImage.load(inputStream, imageWidth, imageHeight)
+
+            try
+            {
+                inputStream.close()
+            }
+            catch (_ : Exception)
+            {
+            }
+
+            return image
+        }
     }
 
     /**
