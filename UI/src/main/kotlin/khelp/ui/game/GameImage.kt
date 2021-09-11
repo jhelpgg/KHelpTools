@@ -2,6 +2,7 @@ package khelp.ui.game
 
 import khelp.resources.Resources
 import khelp.resources.defaultResources
+import khelp.ui.utilities.FONT_RENDER_CONTEXT
 import khelp.ui.utilities.PercentGraphics
 import khelp.ui.utilities.TRANSPARENT
 import java.awt.Color
@@ -107,13 +108,33 @@ class GameImage(val width : Int, val height : Int) : Icon
     {
         val graphics = this.image.createGraphics()
         graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
-        graphics.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_QUALITY)
-        graphics.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY)
-        graphics.setRenderingHint(RenderingHints.KEY_DITHERING, RenderingHints.VALUE_DITHER_ENABLE)
-        graphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC)
         graphics.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION,
-                                  RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY)
-        graphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON)
+                                    RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY)
+
+        if (FONT_RENDER_CONTEXT.isAntiAliased)
+        {
+            graphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON)
+        }
+        else
+        {
+            graphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_OFF)
+        }
+
+        graphics.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_QUALITY)
+        graphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC)
+        graphics.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY)
+
+        if (FONT_RENDER_CONTEXT.usesFractionalMetrics())
+        {
+            graphics.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,
+                                        RenderingHints.VALUE_FRACTIONALMETRICS_ON)
+        }
+        else
+        {
+            graphics.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,
+                                        RenderingHints.VALUE_FRACTIONALMETRICS_OFF)
+        }
+
         drawer(graphics)
         graphics.dispose()
         this.refresh()
@@ -122,6 +143,16 @@ class GameImage(val width : Int, val height : Int) : Icon
     fun drawPercent(drawer : (PercentGraphics) -> Unit)
     {
         this.draw { graphics -> drawer(PercentGraphics(graphics, this.width, this.height)) }
+    }
+
+    fun drawOn(graphics : Graphics, x : Int, y : Int)
+    {
+        graphics.drawImage(this.image, x, y, null)
+    }
+
+    fun drawOn(graphics : Graphics, x : Int, y : Int, width : Int, height : Int)
+    {
+        graphics.drawImage(this.image, x, y, width, height, null)
     }
 
     override fun paintIcon(ignored : Component?, graphics : Graphics, x : Int, y : Int)

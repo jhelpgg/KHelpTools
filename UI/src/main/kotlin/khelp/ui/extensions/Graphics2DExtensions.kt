@@ -1,6 +1,7 @@
 package khelp.ui.extensions
 
 import khelp.ui.TextAlignment
+import khelp.ui.game.GameImage
 import java.awt.Graphics2D
 
 fun Graphics2D.drawText(x : Int, y : Int, text : String, textAlignment : TextAlignment = TextAlignment.LEFT)
@@ -28,4 +29,14 @@ fun Graphics2D.drawText(x : Int, y : Int, text : String, textAlignment : TextAli
         this.drawString(line, xx, yy)
         yy += height
     }
+}
+
+fun Graphics2D.drawImage(x : Int, y : Int, image : GameImage)
+{
+    image.drawOn(this, x, y)
+}
+
+fun Graphics2D.drawImage(x : Int, y : Int, width : Int, height : Int, image : GameImage)
+{
+    image.drawOn(this, x, y, width, height)
 }

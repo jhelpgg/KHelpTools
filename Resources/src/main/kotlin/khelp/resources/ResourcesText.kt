@@ -85,7 +85,7 @@ class ResourcesText internal constructor(private var basePath : String, private 
                                   keyRead = false
                                   key = ""
                               }
-                          else ->
+                          else                         ->
                               if (! comment)
                               {
                                   if (! keyRead && lineTrim.isNotEmpty())

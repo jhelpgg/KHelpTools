@@ -4,6 +4,7 @@ import khelp.thread.TaskContext
 import khelp.ui.border.RoundedBorder
 import khelp.ui.dsl.constraintLayout
 import khelp.ui.extensions.addLineBorder
+import khelp.ui.extensions.drawImage
 import khelp.ui.game.GameComponent
 import khelp.ui.layout.constraints.ConstraintsSize
 import khelp.ui.utilities.BUTTON_FONT
@@ -13,7 +14,6 @@ import khelp.ui.utilities.TRANSPARENT
 import khelp.ui.utilities.centerOnScreen
 import khelp.ui.utilities.packedSize
 import java.awt.Color
-import javax.swing.BorderFactory
 import javax.swing.JButton
 import javax.swing.JDialog
 import javax.swing.JLabel
@@ -44,20 +44,20 @@ internal object MessageDialog : JDialog()
         this.isUndecorated = true
         this.modalityType = ModalityType.APPLICATION_MODAL
 
-        this.title.font = TITLE_FONT
+        this.title.font = TITLE_FONT.font
 
-        this.text.font = SUB_TITLE_FONT
+        this.text.font = SUB_TITLE_FONT.font
         this.text.isEditable = false
 
-        this.buttonLeft.font = BUTTON_FONT
+        this.buttonLeft.font = BUTTON_FONT.font
         this.buttonLeft.border = RoundedBorder(Color.BLACK, 1)
         this.buttonLeft.addActionListener { this.clickOnButton(0) }
 
-        this.buttonMiddle.font = BUTTON_FONT
+        this.buttonMiddle.font = BUTTON_FONT.font
         this.buttonMiddle.border = RoundedBorder(Color.BLACK, 1)
         this.buttonMiddle.addActionListener { this.clickOnButton(1) }
 
-        this.buttonRight.font = BUTTON_FONT
+        this.buttonRight.font = BUTTON_FONT.font
         this.buttonRight.border = RoundedBorder(Color.BLACK, 1)
         this.buttonRight.addActionListener { this.clickOnButton(2) }
 
@@ -209,10 +209,7 @@ internal object MessageDialog : JDialog()
         }
 
         this.image.gameImage.clear(TRANSPARENT)
-        this.image.gameImage.draw { graphics2D ->
-            message.messageType.icon()
-                .paintIcon(null, graphics2D, 0, 0)
-        }
+        this.image.gameImage.draw { graphics2D -> graphics2D.drawImage(0, 0, message.messageType.icon()) }
 
         centerOnScreen(this)
         this.isVisible = true

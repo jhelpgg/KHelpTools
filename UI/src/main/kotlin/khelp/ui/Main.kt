@@ -3,10 +3,14 @@ package khelp.ui
 import khelp.io.ClassSource
 import khelp.resources.Resources
 import khelp.thread.TaskContext
+import khelp.thread.delay
 import khelp.ui.components.ColorComponent
+import khelp.ui.components.EmptyComponent
 import khelp.ui.components.JLabel
 import khelp.ui.components.message.MessageButtons
 import khelp.ui.components.message.MessageType
+import khelp.ui.components.style.StyledButton
+import khelp.ui.components.style.StyledLabel
 import khelp.ui.dsl.borderLayout
 import khelp.ui.dsl.constraintLayout
 import khelp.ui.dsl.frame
@@ -15,11 +19,18 @@ import khelp.ui.extensions.addSubTitle
 import khelp.ui.extensions.addTitle
 import khelp.ui.game.GameImage
 import khelp.ui.layout.constraints.ConstraintsSize
+import khelp.ui.style.ComponentHighLevel
+import khelp.ui.style.ImageTextRelativePosition
+import khelp.ui.style.StyleImageWithText
+import khelp.ui.style.StyleImageWithTextClickable
+import khelp.ui.style.shape.StyleShapeRoundRectangle
+import khelp.ui.style.shape.StyleShapeSausage
 import khelp.ui.utilities.CHARACTER_ESCAPE
 import khelp.ui.utilities.WARNING_IMAGE_16
 import khelp.ui.utilities.createKeyStroke
 import khelp.ui.utilities.initializeGUI
 import khelp.utilities.log.debug
+import khelp.utilities.log.mark
 import java.awt.Color
 import java.awt.Dialog
 import java.util.Locale
@@ -43,7 +54,20 @@ fun main()
         percentGraphics.fillRectangle(0.5, 0.5, 0.5, 0.5)
     }
 
-    val frame = frame {
+    val styleImageWithText = StyleImageWithText()
+    val styledLabel = StyledLabel("textExample", resourcesText, styleImageWithText)
+    styledLabel.image = exitImage
+    styleImageWithText.shape = StyleShapeSausage
+    styleImageWithText.textAlignment = TextAlignment.LEFT
+    styleImageWithText.imageTextRelativePosition = ImageTextRelativePosition.IMAGE_LEFT_OF_TEXT
+
+    val styleImageWithTextClickable = StyleImageWithTextClickable()
+    val styledButton = StyledButton("titleExample", resourcesText, styleImageWithTextClickable)
+    styledButton.onClick(TaskContext.INDEPENDENT) { mark("CLICK") }
+    styleImageWithTextClickable.shape = StyleShapeRoundRectangle
+    styleImageWithTextClickable.textAlignment = TextAlignment.CENTER
+
+    frame {
         message("alert", resourcesText) {
             keyTitle = "titleExample"
             keyText = "textExample"
@@ -129,14 +153,14 @@ fun main()
                             lineStart(ColorComponent(Color.GREEN))
                             center(ColorComponent(Color.YELLOW).addSubTitle("yellow", resourcesText))
                             lineEnd(ColorComponent(Color.GREEN))
-                            pageEnd(ColorComponent(Color.ORANGE))
+                            pageEnd(styledLabel)
                         }
                     }
                 }
             }
 
             pageStart(JLabel("- Page Start -", JLabel.CENTER))
-            pageEnd(JLabel("- Page End -", JLabel.CENTER))
+            pageEnd(styledButton)
             lineStart(JLabel("textExample", resourcesText))
             lineEnd(JLabel("htmlExample", resourcesText))
         }
@@ -149,10 +173,28 @@ fun main()
 
     frame {
         constraintLayout {
+            EmptyComponent()("middle") {
+                horizontalSize = ConstraintsSize.WRAPPED
+                verticalSize = ConstraintsSize.WRAPPED
+                leftAtParent
+                rightAtParent
+                topAtParent
+                bottomAtParent
+            }
+
+            EmptyComponent()("quart") {
+                horizontalSize = ConstraintsSize.WRAPPED
+                verticalSize = ConstraintsSize.WRAPPED
+                leftAtParent
+                rightAtLeft = "middle"
+                topAtParent
+                bottomAtTop = "middle"
+            }
+
             ColorComponent(Color.BLUE)("blue") {
                 horizontalSize = ConstraintsSize.EXPANDED
                 verticalSize = ConstraintsSize.WRAPPED
-                leftAtParent
+                leftAtRight = "quart"
                 rightAtLeft = "green"
                 topAtParent
                 bottomFree

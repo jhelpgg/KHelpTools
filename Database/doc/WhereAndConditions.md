@@ -79,7 +79,7 @@ where { <Colmn or column name ><Condtion><Value> }
 | `LOWER_EQUALS` | Choose row with specified column have value lower or equals to given one |
 | `UPPER` | Choose row with specified column have value strictly upper to given one |
 | `UPPER_EQUALS` | Choose row with specified column have value upper or equals to given one |
-| `REGEX` Choose row with specified column of String type have value match given regular expression |
+| `REGEX` | Choose row with specified column of String type have value match given regular expression |
 
 To select row where columns are one of elements inside an array of possibilities, there `ONE_OF_ID`(for ID), `ONE_OF` (
 for others)

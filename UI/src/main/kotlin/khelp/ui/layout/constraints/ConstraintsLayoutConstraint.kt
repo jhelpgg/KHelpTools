@@ -1,6 +1,6 @@
 package khelp.ui.layout.constraints
 
-class ConstraintsLayoutConstraint
+class ConstraintsLayoutConstraint()
 {
     var horizontalSize : ConstraintsSize = ConstraintsSize.EXPANDED
     var verticalSize : ConstraintsSize = ConstraintsSize.EXPANDED
@@ -12,6 +12,15 @@ class ConstraintsLayoutConstraint
     var marginLeft : Int = 0
     var marginRight : Int = 0
     var marginBottom : Int = 0
+
+    internal constructor(x : Int, y : Int, xMax : Int, yMax : Int) : this()
+    {
+        this.x = x
+        this.y = y
+        this.xMax = xMax
+        this.yMax = yMax
+        this.computed = true
+    }
 
     internal var x = 0
     internal var y = 0

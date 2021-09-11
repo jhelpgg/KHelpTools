@@ -1,13 +1,13 @@
 package khelp.ui.utilities
 
 import khelp.resources.defaultResources
+import khelp.ui.font.JHelpFont
 import khelp.ui.game.GameImage
 import khelp.utilities.math.computeIntersectedArea
 import java.awt.Component
 import java.awt.Container
 import java.awt.Cursor
 import java.awt.Dimension
-import java.awt.Font
 import java.awt.GraphicsConfiguration
 import java.awt.GraphicsDevice
 import java.awt.GraphicsEnvironment
@@ -18,6 +18,8 @@ import java.awt.Toolkit
 import java.awt.Window
 import java.awt.event.InputEvent
 import java.awt.event.KeyEvent
+import java.awt.font.FontRenderContext
+import java.awt.geom.AffineTransform
 import java.awt.image.BufferedImage
 import java.util.concurrent.atomic.AtomicBoolean
 import javax.swing.BorderFactory
@@ -55,19 +57,39 @@ val GRAPHICS_ENVIRONMENT : GraphicsEnvironment = GraphicsEnvironment.getLocalGra
 val SCREEN_RESOLUTION : Resolution = Resolution(TOOLKIT.getScreenResolution(), ResolutionUnit.PIXEL_PER_INCH)
 
 /**
+ * Identity transform
+ */
+val AFFINE_TRANSFORM = AffineTransform()
+
+/**
+ * Flatness to use
+ */
+val FLATNESS = 0.01
+
+/**
+ * Font render context
+ */
+val FONT_RENDER_CONTEXT = FontRenderContext(AFFINE_TRANSFORM, true, true)
+
+/**
+ * Font use for text
+ */
+val TEXT_FONT = JHelpFont("Arial", 14)
+
+/**
  * Font use for button text
  */
-val BUTTON_FONT = Font("Arial", Font.BOLD, 14)
+val BUTTON_FONT = JHelpFont("Arial", 14, bold = true)
 
 /**
  * Font use for sub title
  */
-val SUB_TITLE_FONT = Font("Arial", Font.PLAIN, 16)
+val SUB_TITLE_FONT = JHelpFont("Arial", 16)
 
 /**
  * Font use for title
  */
-val TITLE_FONT = Font("Arial", Font.BOLD, 20)
+val TITLE_FONT = JHelpFont("Arial", 20, bold = true)
 
 /**
  * List of graphics devices
@@ -165,7 +187,7 @@ fun addSubTitle(component : JComponent, title : String)
         BorderFactory.createTitledBorder(
             BorderFactory.createEtchedBorder(),
             title, TitledBorder.CENTER, TitledBorder.TOP,
-            SUB_TITLE_FONT)
+            SUB_TITLE_FONT.font)
 }
 
 /**
@@ -180,7 +202,7 @@ fun addTitle(component : JComponent, title : String)
         BorderFactory.createTitledBorder(
             BorderFactory.createEtchedBorder(),
             title, TitledBorder.CENTER, TitledBorder.TOP,
-            TITLE_FONT)
+            TITLE_FONT.font)
 }
 
 /**

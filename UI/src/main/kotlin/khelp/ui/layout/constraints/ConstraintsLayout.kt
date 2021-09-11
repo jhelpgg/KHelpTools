@@ -47,12 +47,7 @@ class ConstraintsLayout : LayoutManager2
         val parentHeight = parentSize.height
         val queue = Queue<ConstraintsLayoutConstraint>()
         val collectedConstraints = ArrayList<Pair<Component, ConstraintsLayoutConstraint>>()
-        val parentConstraint = ConstraintsLayoutConstraint()
-        parentConstraint.x = 0
-        parentConstraint.y = 0
-        parentConstraint.xMax = parentWidth
-        parentConstraint.yMax = parentHeight
-        parentConstraint.computed = true
+        val parentConstraint = ConstraintsLayoutConstraint(0, 0, parentWidth, parentHeight)
 
         for (component in parent.iterator())
         {
@@ -62,9 +57,9 @@ class ConstraintsLayout : LayoutManager2
                 constraint.x = 0
                 constraint.y = 0
                 constraint.xMax = constraint.marginLeft + constraint.marginRight +
-                    if (constraint.horizontalSize == ConstraintsSize.WRAPPED) dimension.width else parentWidth
+                                  if (constraint.horizontalSize == ConstraintsSize.WRAPPED) dimension.width else parentWidth
                 constraint.yMax = constraint.marginTop + constraint.marginBottom +
-                    if (constraint.verticalSize == ConstraintsSize.WRAPPED) dimension.height else parentHeight
+                                  if (constraint.verticalSize == ConstraintsSize.WRAPPED) dimension.height else parentHeight
                 constraint.computed = false
 
                 constraint.constraintsLeft =
@@ -139,8 +134,6 @@ class ConstraintsLayout : LayoutManager2
                 queue.inQueue(constraint)
             }
         }
-
-
 
         synchronized(parent.treeLock)
         {

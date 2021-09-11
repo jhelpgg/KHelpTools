@@ -13,7 +13,9 @@ class Resources(private val source : ReferenceSource)
     companion object
     {
         val languageObservableData = ObservableData<Locale>(Locale.getDefault())
+        @JvmStatic // Necessary to force be static because Kotlin companion object not well initialized at launch ...
         private val resourcePathGroup = '"'.allCharactersExcludeThis.oneOrMore().group()
+        @JvmStatic // Necessary to force be static because Kotlin companion object not well initialized at launch ...
         private val resourcesReferenceRegex = "\"resources:/".regularExpression + Resources.resourcePathGroup + '"'
     }
 
