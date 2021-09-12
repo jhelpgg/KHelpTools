@@ -1,7 +1,6 @@
 package khelp.ui.game
 
 import khelp.resources.Resources
-import khelp.resources.defaultResources
 import khelp.ui.utilities.FONT_RENDER_CONTEXT
 import khelp.ui.utilities.PercentGraphics
 import khelp.ui.utilities.TRANSPARENT
@@ -65,28 +64,8 @@ class GameImage(val width : Int, val height : Int) : Icon
                 GameImage.DUMMY
             }
 
-        private fun load(path : String, resources : Resources, imageWidth : Int, imageHeight : Int) : GameImage
-        {
-            val inputStream =
-                when
-                {
-                    resources.exists(path)        -> resources.inputStream(path)
-                    defaultResources.exists(path) -> defaultResources.inputStream(path)
-                    else                          -> return GameImage.DUMMY
-                }
-
-            val image = GameImage.load(inputStream, imageWidth, imageHeight)
-
-            try
-            {
-                inputStream.close()
-            }
-            catch (_ : Exception)
-            {
-            }
-
-            return image
-        }
+        private fun load(path : String, resources : Resources, imageWidth : Int, imageHeight : Int) : GameImage =
+            GameImageCache.image(path, imageWidth, imageHeight, resources)
     }
 
     /**
@@ -109,7 +88,7 @@ class GameImage(val width : Int, val height : Int) : Icon
         val graphics = this.image.createGraphics()
         graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
         graphics.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION,
-                                    RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY)
+                                  RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY)
 
         if (FONT_RENDER_CONTEXT.isAntiAliased)
         {
@@ -127,12 +106,12 @@ class GameImage(val width : Int, val height : Int) : Icon
         if (FONT_RENDER_CONTEXT.usesFractionalMetrics())
         {
             graphics.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,
-                                        RenderingHints.VALUE_FRACTIONALMETRICS_ON)
+                                      RenderingHints.VALUE_FRACTIONALMETRICS_ON)
         }
         else
         {
             graphics.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,
-                                        RenderingHints.VALUE_FRACTIONALMETRICS_OFF)
+                                      RenderingHints.VALUE_FRACTIONALMETRICS_OFF)
         }
 
         drawer(graphics)

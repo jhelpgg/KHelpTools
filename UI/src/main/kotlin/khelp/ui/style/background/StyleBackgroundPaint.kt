@@ -10,6 +10,7 @@ class StyleBackgroundPaint(private val paint : Paint) : StyleBackground
     override fun applyOnShape(graphics2D : Graphics2D, shape : Shape)
     {
         val paint = graphics2D.paint
+        graphics2D.paint = this.paint
         graphics2D.fill(shape)
         graphics2D.paint = paint
     }

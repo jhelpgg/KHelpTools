@@ -1,23 +1,26 @@
 package khelp.ui.style.background
 
+import khelp.resources.Resources
 import khelp.ui.extensions.drawImage
 import khelp.ui.game.GameImage
 import java.awt.Graphics2D
 import java.awt.Shape
 import java.util.Objects
 
-class StyleBackgroundImage(private val image : GameImage, private val repeat : Boolean = false) : StyleBackground
+class StyleBackgroundImage(private val keyImage : String, private val resources : Resources,
+                           private val repeat : Boolean = false) : StyleBackground
 {
     override fun applyOnShape(graphics2D : Graphics2D, shape : Shape)
     {
         val clip = graphics2D.clip
         graphics2D.clip(shape)
         val bounds = shape.bounds
+        val image = GameImage.load(this.keyImage, this.resources)
 
         if (this.repeat)
         {
-            val imageWidth = this.image.width
-            val imageHeight = this.image.height
+            val imageWidth = image.width
+            val imageHeight = image.height
             val xMax = bounds.x + bounds.width
             val yMax = bounds.y + bounds.height
 
@@ -25,19 +28,19 @@ class StyleBackgroundImage(private val image : GameImage, private val repeat : B
             {
                 for (xx in bounds.x .. xMax step imageWidth)
                 {
-                    graphics2D.drawImage(xx, yy, this.image)
+                    graphics2D.drawImage(xx, yy, image)
                 }
             }
         }
         else
         {
-            graphics2D.drawImage(bounds.x, bounds.y, bounds.width, bounds.height, this.image)
+            graphics2D.drawImage(bounds.x, bounds.y, bounds.width, bounds.height, image)
         }
 
         graphics2D.clip = clip
     }
 
-    override fun hashCode() : Int = Objects.hash(this.image, this.repeat)
+    override fun hashCode() : Int = Objects.hash(this.keyImage, this.repeat)
 
     override fun equals(other : Any?) : Boolean
     {
@@ -51,6 +54,6 @@ class StyleBackgroundImage(private val image : GameImage, private val repeat : B
             return false
         }
 
-        return this.image == other.image && this.repeat == other.repeat
+        return this.keyImage == other.keyImage && this.repeat == other.repeat
     }
 }

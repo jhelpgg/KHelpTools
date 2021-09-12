@@ -3,7 +3,6 @@ package khelp.ui
 import khelp.io.ClassSource
 import khelp.resources.Resources
 import khelp.thread.TaskContext
-import khelp.thread.delay
 import khelp.ui.components.ColorComponent
 import khelp.ui.components.EmptyComponent
 import khelp.ui.components.JLabel
@@ -19,10 +18,11 @@ import khelp.ui.extensions.addSubTitle
 import khelp.ui.extensions.addTitle
 import khelp.ui.game.GameImage
 import khelp.ui.layout.constraints.ConstraintsSize
-import khelp.ui.style.ComponentHighLevel
+import khelp.ui.paint.CornerGradientPaint
 import khelp.ui.style.ImageTextRelativePosition
 import khelp.ui.style.StyleImageWithText
 import khelp.ui.style.StyleImageWithTextClickable
+import khelp.ui.style.background.StyleBackgroundPaint
 import khelp.ui.style.shape.StyleShapeRoundRectangle
 import khelp.ui.style.shape.StyleShapeSausage
 import khelp.ui.utilities.CHARACTER_ESCAPE
@@ -66,6 +66,8 @@ fun main()
     styledButton.onClick(TaskContext.INDEPENDENT) { mark("CLICK") }
     styleImageWithTextClickable.shape = StyleShapeRoundRectangle
     styleImageWithTextClickable.textAlignment = TextAlignment.CENTER
+    styleImageWithText.background =
+        StyleBackgroundPaint(CornerGradientPaint(Color.BLUE, Color.RED, Color.GREEN, Color.WHITE))
 
     frame {
         message("alert", resourcesText) {

@@ -1,16 +1,16 @@
 package khelp.database
 
-import java.sql.Connection
-import java.sql.DriverManager
 import khelp.security.rsa.RSAKeyPair
 import org.hsqldb.lib.FileUtil
 import org.hsqldb.lib.SecureFileUtil
+import java.sql.Connection
+import java.sql.DriverManager
 
 internal object DatabaseAccess
 {
-    private val secureFileUtil: SecureFileUtil by lazy { SecureFileUtil() }
+    private val secureFileUtil : SecureFileUtil by lazy { SecureFileUtil() }
 
-    fun createConnection(path: String, rsaKeyPair: RSAKeyPair): Connection
+    fun createConnection(path : String, rsaKeyPair : RSAKeyPair) : Connection
     {
         this.secureFileUtil.associate(path, rsaKeyPair)
 
@@ -21,12 +21,12 @@ internal object DatabaseAccess
                 if (field.type == FileUtil::class.java)
                 {
                     field.isAccessible = true
-                    field.set(null, secureFileUtil)
+                    field.set(null, this.secureFileUtil)
                     break
                 }
             }
         }
-        catch (exception: Exception)
+        catch (exception : Exception)
         {
             exception.printStackTrace()
         }

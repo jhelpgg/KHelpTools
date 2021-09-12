@@ -7,14 +7,18 @@ import khelp.utilities.extensions.regularExpression
 import java.io.InputStream
 import java.net.URL
 import java.util.Locale
+import java.util.concurrent.atomic.AtomicInteger
 
 class Resources(private val source : ReferenceSource)
 {
     companion object
     {
         val languageObservableData = ObservableData<Locale>(Locale.getDefault())
+
         @JvmStatic // Necessary to force be static because Kotlin companion object not well initialized at launch ...
-        private val resourcePathGroup = '"'.allCharactersExcludeThis.oneOrMore().group()
+        private val resourcePathGroup = '"'.allCharactersExcludeThis.oneOrMore()
+            .group()
+
         @JvmStatic // Necessary to force be static because Kotlin companion object not well initialized at launch ...
         private val resourcesReferenceRegex = "\"resources:/".regularExpression + Resources.resourcePathGroup + '"'
     }
@@ -48,4 +52,19 @@ class Resources(private val source : ReferenceSource)
         stringBuilder.append(string.substring(start))
         return stringBuilder.toString()
     }
+
+    override fun equals(other : Any?) : Boolean
+    {
+        if(this===other){
+            return true
+        }
+
+        if(null==other || other !is Resources) {
+            return false
+        }
+
+        return this.source == other.source
+    }
+
+    override fun hashCode() : Int = this.source.hashCode()
 }

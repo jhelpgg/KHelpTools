@@ -71,8 +71,9 @@ class ForeignKeyTests
 
         tableAddress.delete { }
         tablePerson.delete { }
-        database.dropTable(tableAddress)
+
         database.dropTable(tablePerson)
+        database.dropTable(tableAddress)
         database.close()
     }
 

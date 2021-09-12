@@ -16,6 +16,29 @@ sealed class ReferenceSource
     abstract fun outputStream(path : String) : OutputStream
     abstract fun url(path : String) : URL
     abstract fun exists(path : String) : Boolean
+
+    override fun equals(other : Any?) : Boolean
+    {
+        if (this === other)
+        {
+            return true
+        }
+
+        if (null == other || this.javaClass != other.javaClass)
+        {
+            return false
+        }
+
+        return this.internalEquals(other as ReferenceSource)
+    }
+
+    override fun hashCode() : Int = this.javaClass.name.hashCode() + 31 * this.internalHashcode()
+
+    override fun toString() : String = "${this.javaClass.name} : ${this.internalHashcode()}"
+
+    protected abstract fun internalEquals(referenceSource : ReferenceSource) : Boolean
+    protected abstract fun internalHashcode() : Int
+    protected abstract fun internalDescription() : String
 }
 
 class ExternalSource(directoryRelativePath : String = "") : ReferenceSource()
@@ -48,6 +71,16 @@ class ExternalSource(directoryRelativePath : String = "") : ReferenceSource()
         .toURL()
 
     override fun exists(path : String) : Boolean = obtainFile(this.baseDirectory, path).exists()
+
+    override fun internalEquals(referenceSource : ReferenceSource) : Boolean
+    {
+        val externalSource = referenceSource as ExternalSource
+        return this.baseDirectory.absolutePath == externalSource.baseDirectory.absolutePath
+    }
+
+    override fun internalHashcode() : Int = this.baseDirectory.absolutePath.hashCode()
+
+    override fun internalDescription() : String = this.baseDirectory.absolutePath
 }
 
 class DirectorySource(private val directory : File) : ReferenceSource()
@@ -78,6 +111,16 @@ class DirectorySource(private val directory : File) : ReferenceSource()
         .toURL()
 
     override fun exists(path : String) : Boolean = obtainFile(this.directory, path).exists()
+
+    override fun internalEquals(referenceSource : ReferenceSource) : Boolean
+    {
+        val directorySource = referenceSource as DirectorySource
+        return this.directory.absolutePath == directorySource.directory.absolutePath
+    }
+
+    override fun internalHashcode() : Int = this.directory.absolutePath.hashCode()
+
+    override fun internalDescription() : String = this.directory.absolutePath
 }
 
 class ClassSource(private val classReference : Class<*> = ReferenceSource::class.java) : ReferenceSource()
@@ -94,6 +137,16 @@ class ClassSource(private val classReference : Class<*> = ReferenceSource::class
         ?: throw IllegalArgumentException("Can't retrieve path '$path' from class ${this.classReference.name}")
 
     override fun exists(path : String) : Boolean = this.classReference.getResource(path) != null
+
+    override fun internalEquals(referenceSource : ReferenceSource) : Boolean
+    {
+        val classSource = referenceSource as ClassSource
+        return this.classReference.name == classSource.classReference.name
+    }
+
+    override fun internalHashcode() : Int = this.classReference.name.hashCode()
+
+    override fun internalDescription() : String = this.classReference.name
 }
 
 class UrlSource(private val urlBase : String) : ReferenceSource()
@@ -151,4 +204,14 @@ class UrlSource(private val urlBase : String) : ReferenceSource()
 
         return URL(urlPath).openConnection()
     }
+
+    override fun internalEquals(referenceSource : ReferenceSource) : Boolean
+    {
+        val urlSource = referenceSource as UrlSource
+        return this.urlBase == urlSource.urlBase
+    }
+
+    override fun internalHashcode() : Int = this.urlBase.hashCode()
+
+    override fun internalDescription() : String = this.urlBase
 }
