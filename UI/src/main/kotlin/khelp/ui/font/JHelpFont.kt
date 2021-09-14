@@ -1,13 +1,19 @@
 package khelp.ui.font
 
+import khelp.thread.TaskContext
+import khelp.thread.future.FutureResult
+import khelp.thread.parallel
 import khelp.ui.TextAlignment
 import khelp.ui.game.GameImage
+import khelp.ui.utilities.DEFAULT_FONT
 import khelp.ui.utilities.FONT_RENDER_CONTEXT
+import khelp.utilities.log.exception
 import khelp.utilities.text.StringExtractor
 import khelp.utilities.text.lastIndexOf
 import java.awt.Dimension
 import java.awt.Font
 import java.awt.FontMetrics
+import java.io.InputStream
 import java.util.Collections
 import kotlin.math.ceil
 import kotlin.math.max
@@ -40,6 +46,112 @@ class JHelpFont(val font : Font, val underline : Boolean = false)
 
             return Font(family, style, size)
         }
+
+        /**
+         * Create a font from a stream
+         *
+         * @param type      Font type
+         * @param stream    Stream to get the font data
+         * @param size      Size of created font
+         * @param bold      Bold value
+         * @param italic    Italic value
+         * @param underline Indicates if have to underline or not
+         * @return Created font
+         */
+        fun createFont(type : FontType, stream : InputStream, size : Int,
+                       bold : FontValue, italic : FontValue, underline : Boolean) : FutureResult<JHelpFont> =
+            JHelpFont.obtainFont(type, stream, size, bold, italic, underline).and(TaskContext.INDEPENDENT)
+            { font ->
+                if (font == DEFAULT_FONT)
+                {
+                    val newSize = if (size < 1)
+                    {
+                        18
+                    }
+                    else
+                    {
+                        size
+                    }
+
+                    JHelpFont("Arial", newSize, bold == FontValue.TRUE, italic == FontValue.TRUE, underline)
+                }
+                else
+                {
+                    font
+                }
+            }
+
+        /**
+         * Create a font from a stream
+         *
+         * @param type      Font type
+         * @param stream    Stream to get the font data
+         * @param size      Size of created font
+         * @param bold      Bold value
+         * @param italic    Italic value
+         * @param underline Indicates if have to underline or not
+         * @return Created font OR `null` if stream not a managed font
+         */
+        fun obtainFont(type : FontType, stream : InputStream, size : Int,
+                       bold : FontValue = FontValue.AS_DEFINED, italic : FontValue = FontValue.AS_DEFINED,
+                       underline : Boolean = false) : FutureResult<JHelpFont> =
+            parallel(TaskContext.MAIN) {
+                try
+                {
+                    val fontFormat =
+                        if (type == FontType.TYPE1)
+                        {
+                            Font.TYPE1_FONT
+                        }
+                        else
+                        {
+                            Font.TRUETYPE_FONT
+                        }
+
+                    var font = Font.createFont(fontFormat, stream)
+                    val fontSize = font.size
+                    val fontStyle = font.style
+
+                    var style = 0
+
+                    when (bold)
+                    {
+                        FontValue.FALSE      -> Unit
+                        FontValue.AS_DEFINED -> style = style or (fontStyle and Font.BOLD)
+                        FontValue.TRUE       -> style = style or Font.BOLD
+                    }
+
+                    when (italic)
+                    {
+                        FontValue.FALSE      -> Unit
+                        FontValue.AS_DEFINED -> style = style or (fontStyle and Font.ITALIC)
+                        FontValue.TRUE       -> style = style or Font.ITALIC
+                    }
+
+                    if (fontSize != size || style != fontStyle)
+                    {
+                        if (fontSize == size)
+                        {
+                            font = font.deriveFont(style)
+                        }
+                        else if (style == fontStyle)
+                        {
+                            font = font.deriveFont(size.toFloat())
+                        }
+                        else
+                        {
+                            font = font.deriveFont(style, size.toFloat())
+                        }
+                    }
+
+                    JHelpFont(font, underline)
+                }
+                catch (exception : Exception)
+                {
+                    exception(exception, "Failed to create the font")
+                    DEFAULT_FONT
+                }
+            }
     }
 
     /**Font measure metrics*/
@@ -265,11 +377,13 @@ class JHelpFont(val font : Font, val underline : Boolean = false)
 
     override fun equals(other : Any?) : Boolean
     {
-        if(this === other) {
+        if (this === other)
+        {
             return true
         }
 
-        if(null == other || other !is JHelpFont) {
+        if (null == other || other !is JHelpFont)
+        {
             return false
         }
 

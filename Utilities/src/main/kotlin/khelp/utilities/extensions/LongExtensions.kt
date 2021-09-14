@@ -5,6 +5,17 @@ import kotlin.math.max
 import kotlin.math.min
 
 /**
+ * Limit an integer inside given bounds
+ *
+ * * If the integer is less than the minimum of given bounds, the minimum of bounds is returned
+ * * If the integer is more than the maximum of given bounds, the maximum of bounds is returned
+ * * Else, it means the integer is inside bounds, so the integer itself is returned
+ */
+fun Long.bounds(bound1: Long, bound2: Long) =
+    max(min(bound1, bound2), min(max(bound1, bound2), this))
+
+
+/**
  * Compute the greater common divider of this number and given one
  * @param long Given number
  * @return The greater common divider

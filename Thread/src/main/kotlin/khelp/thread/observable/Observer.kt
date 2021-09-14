@@ -3,8 +3,8 @@ package khelp.thread.observable
 import khelp.thread.TaskContext
 import java.util.concurrent.atomic.AtomicInteger
 
-class Observer internal constructor(private val observable : Observable<*>,
-                                    internal val taskContext : TaskContext, internal val action : () -> Unit)
+class Observer<T:Any> internal constructor(private val observable : Observable<T>,
+                                    internal val taskContext : TaskContext, internal val action : (T) -> Unit)
 {
     companion object
     {
@@ -25,7 +25,7 @@ class Observer internal constructor(private val observable : Observable<*>,
             return true
         }
 
-        if (null == other || other !is Observer)
+        if (null == other || other !is Observer<*>)
         {
             return false
         }

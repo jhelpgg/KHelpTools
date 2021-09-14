@@ -1,0 +1,21 @@
+plugins {
+    id 'org.jetbrains.kotlin.jvm'
+}
+
+group 'khelp.sound'
+version '1.0-SNAPSHOT'
+
+dependencies {
+    implementation project(":Utilities")
+    implementation project(":Thread")
+    implementation project(":Resources")
+    implementation project(":IO")
+    implementation files("libs/jl020.jar")
+    implementation('org.jetbrains.kotlin:kotlin-reflect:1.5.21')
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.2'
+}
+
+tasks.test {
+    useJUnitPlatform()
+}

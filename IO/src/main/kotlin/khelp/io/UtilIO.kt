@@ -1,11 +1,33 @@
 package khelp.io
 
+import khelp.io.extensions.createFile
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStream
 import java.io.InputStreamReader
 import java.io.OutputStream
 import khelp.utilities.log.exception
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
+
+
+/**
+ * One kilo-byte in bytes
+ */
+const val KILO_BYTES = 1024
+/**
+ * Size of a file header
+ */
+const val HEADER_SIZE = KILO_BYTES
+/**
+ * One mega-byte in bytes
+ */
+const val MEGA_BYTES = 1024 * KILO_BYTES
+/**
+ * Buffer size
+ */
+const val BUFFER_SIZE = 4 * MEGA_BYTES
 
 
 /**
@@ -230,3 +252,73 @@ fun <I : InputStream> readLines(producerInput: () -> I,
 
                          bufferedReader.close()
                      }, onError)
+
+/**
+ * Write a stream inside a file
+ *
+ * @param inputStream     Stream source
+ * @param fileDestination File destination
+ * @throws IOException On copying issue
+ */
+@Throws(IOException::class)
+fun write(inputStream: InputStream, fileDestination: File)
+{
+    if (!fileDestination.createFile())
+    {
+        throw IOException("Can't create the file " + fileDestination.absolutePath)
+    }
+
+    var exception: IOException? = null
+
+    treatOutputStream({ FileOutputStream(fileDestination) },
+                      { write(inputStream, it) },
+                      { exception = it })
+
+    if (exception != null)
+    {
+        throw exception!!
+    }
+}
+
+/**
+ * Write a file inside a stream
+ *
+ * @param fileSource   Source file
+ * @param outputStream Stream where write
+ * @throws IOException On copying issue
+ */
+@Throws(IOException::class)
+fun write(fileSource: File, outputStream: OutputStream)
+{
+    var exception: IOException? = null
+
+    treatInputStream({ FileInputStream(fileSource) },
+                     { write(it, outputStream) },
+                     { exception = it })
+
+    if (exception != null)
+    {
+        throw exception!!
+    }
+}
+
+/**
+ * Write a stream inside on other one
+ *
+ * @param inputStream  Stream source
+ * @param outputStream Stream destination
+ * @throws IOException On copying issue
+ */
+@Throws(IOException::class)
+fun write(inputStream: InputStream, outputStream: OutputStream)
+{
+    val buffer = ByteArray(BUFFER_SIZE)
+    var read = inputStream.read(buffer)
+
+    while (read >= 0)
+    {
+        outputStream.write(buffer, 0, read)
+        read = inputStream.read(buffer)
+    }
+}
+

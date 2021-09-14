@@ -7,8 +7,8 @@ import khelp.utilities.collections.IntMap
 
 class Observable<T : Any> internal constructor(private val observableData : ObservableData<T>)
 {
-    private val observers = IntMap<Observer>()
-    private var internalObserver : Observer? = null
+    private val observers = IntMap<Observer<T>>()
+    private var internalObserver : Observer<*>? = null
 
     fun value() : T = this.observableData.value()
 
@@ -16,25 +16,26 @@ class Observable<T : Any> internal constructor(private val observableData : Obse
         parallel(taskContext, this.value(), action)
             .and { result ->
                 val observableData = ObservableData<R>(result)
-                val observer = this.addObserver(taskContext) { observableData.value(action(this.value())) }
+                val observer = this.addObserver(taskContext) { value -> observableData.value(action(value)) }
                 val observable = observableData.observable
                 observable.internalObserver = observer
                 observable
             }
 
-    fun observedBy(taskContext : TaskContext, action : (T) -> Unit) : Observer
+    fun observedBy(taskContext : TaskContext, action : (T) -> Unit) : Observer<T>
     {
-        taskContext.parallel { action(this.value()) }
-        return this.addObserver(taskContext) { action(this.value()) }
+        val value = this.value()
+        taskContext.parallel(TaskContext.INDEPENDENT) { action(value) }
+        return this.addObserver(taskContext) { value -> action(value) }
     }
 
-    internal fun valueChanged()
+    internal fun valueChanged(value : T)
     {
         synchronized(this.observers)
         {
             for (observer in this.observers.values())
             {
-                observer.taskContext.parallel(observer.action)
+                observer.taskContext.parallel(value, observer.action)
             }
         }
     }
@@ -50,7 +51,7 @@ class Observable<T : Any> internal constructor(private val observableData : Obse
         synchronized(this.observers) { this.observers.remove(id) }
     }
 
-    private fun addObserver(taskContext : TaskContext, action : () -> Unit) : Observer
+    private fun addObserver(taskContext : TaskContext, action : (T) -> Unit) : Observer<T>
     {
         val observer = Observer(this, taskContext, action)
 

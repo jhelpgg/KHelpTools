@@ -42,6 +42,15 @@ const val CHARACTER_DELETE = '\b'
 const val CHARACTER_ESCAPE = (0x1B).toChar()
 
 /**
+ * Character unicode for the smiley :)
+ */
+val SMILEY_HAPPY = 0x263A.toChar()
+/**
+ * Character unicode for the smiley :(
+ */
+val SMILEY_SAD = 0x2639.toChar()
+
+/**
  * Current toolkit
  */
 val TOOLKIT : Toolkit = Toolkit.getDefaultToolkit()
@@ -70,26 +79,6 @@ val FLATNESS = 0.01
  * Font render context
  */
 val FONT_RENDER_CONTEXT = FontRenderContext(AFFINE_TRANSFORM, true, true)
-
-/**
- * Font use for text
- */
-val TEXT_FONT = JHelpFont("Arial", 14)
-
-/**
- * Font use for button text
- */
-val BUTTON_FONT = JHelpFont("Arial", 14, bold = true)
-
-/**
- * Font use for sub title
- */
-val SUB_TITLE_FONT = JHelpFont("Arial", 16)
-
-/**
- * Font use for title
- */
-val TITLE_FONT = JHelpFont("Arial", 20, bold = true)
 
 /**
  * List of graphics devices

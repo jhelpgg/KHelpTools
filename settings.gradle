@@ -10,3 +10,5 @@ include ':Grammar'
 include ':kotlinspector'
 include ':UI'
 include ':Resources'
+include ':Sound'
+

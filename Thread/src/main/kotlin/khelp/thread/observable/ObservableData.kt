@@ -1,16 +1,20 @@
 package khelp.thread.observable
 
+import khelp.thread.Mutex
+
 class ObservableData<T : Any>(private var value : T)
 {
-    private val lock = Object()
+    private val mutex = Mutex()
 
     val observable = Observable<T>(this)
 
-    fun value() : T = synchronized(this.lock) { this.value }
+    fun value() : T = this.mutex { this.value }
 
     fun value(value : T)
     {
-        synchronized(this.lock) { this.value = value }
-        this.observable.valueChanged()
+        this.mutex {
+            this.value = value
+            this.observable.valueChanged(value)
+        }
     }
 }
