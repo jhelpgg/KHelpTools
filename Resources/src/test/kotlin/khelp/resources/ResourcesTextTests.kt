@@ -15,6 +15,7 @@ class ResourcesTextTests
         val resources = Resources(ClassSource(ResourcesTextTests::class.java))
         val resourcesText = resources.resourcesText("testTexts")
 
+        Thread.sleep(1024)
         Resources.languageObservableData.value(Locale.ENGLISH)
         Thread.sleep(1024)
         Assertions.assertEquals("This is a value in one line", resourcesText[oneLine])
