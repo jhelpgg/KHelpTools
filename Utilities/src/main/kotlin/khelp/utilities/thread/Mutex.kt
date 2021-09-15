@@ -12,7 +12,7 @@ import java.util.concurrent.Semaphore
  * If a second thread arrive while one already in critical section,
  * the arrived thread will wait for the critical section is free (First leave it) before able to enter in critical section
  */
-class Mutex
+internal class Mutex
 {
     /**
      * The mutex
