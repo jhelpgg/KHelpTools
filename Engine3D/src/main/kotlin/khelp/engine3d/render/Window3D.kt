@@ -1,5 +1,6 @@
 package khelp.engine3d.render
 
+import khelp.engine3d.utils.gluPerspective
 import khelp.io.ExternalSource
 import khelp.preferences.Preferences
 import khelp.resources.Resources
@@ -157,6 +158,7 @@ class Window3D private constructor()
         private set
     var height : Int = 0
         private set
+    val scene = Scene()
     private var windowId : Long = 0
     private val waitCloseLocker = Locker()
     private val readyLocker = Locker()
@@ -287,7 +289,7 @@ class Window3D private constructor()
         {
             // TODO
             // Draw the background and clear Z-Buffer
-            // this.currentScene.drawBackground()
+            this.scene.drawBackground()
             GL11.glClear(GL11.GL_COLOR_BUFFER_BIT or GL11.GL_DEPTH_BUFFER_BIT)
 
             // Draw 2D objects under 3D
@@ -297,7 +299,7 @@ class Window3D private constructor()
 
             // Render the scene
             GL11.glPushMatrix()
-            //  this.currentScene.renderTheScene(this)
+            this.scene.render()
             GL11.glPopMatrix()
 
             // Draw 2D objects over 3D

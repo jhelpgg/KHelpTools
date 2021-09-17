@@ -1,4 +1,4 @@
-package khelp.engine3d.uil
+package khelp.engine3d.utils
 
 /**
  * Indicates if method called inside Animation thread.
