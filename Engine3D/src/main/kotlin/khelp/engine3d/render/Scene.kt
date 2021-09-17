@@ -14,11 +14,10 @@ class Scene
 
     var backgroundColor : Color4f = BLACK
     private val root : Node = Node(Scene.ROOT_ID)
-    private var nodeList : Array<Node>? = null
 
     init
     {
-        this.root.z = -5f
+        this.root.z = - 5f
     }
 
     @NodeDSL
@@ -26,6 +25,8 @@ class Scene
     {
         creator(this.root)
     }
+
+    fun <N:Node> findById(id:String): N? = this.root.findById(id)
 
     @ThreadOpenGL
     internal fun drawBackground()
@@ -44,15 +45,18 @@ class Scene
         {
             val node = stack.pop()
 
-            if (node.countInRender)
+            if (node.visible)
             {
-                node.zOrder = node.reverseProjection(node.center()).z
-                nodes.add(node)
-            }
+                if (node.countInRender)
+                {
+                    node.zOrder = node.reverseProjection(node.center).z
+                    nodes.add(node)
+                }
 
-            for (child in node)
-            {
-                stack.push(child)
+                for (child in node)
+                {
+                    stack.push(child)
+                }
             }
         }
 

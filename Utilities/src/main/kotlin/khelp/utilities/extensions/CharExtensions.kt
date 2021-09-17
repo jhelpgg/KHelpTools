@@ -65,3 +65,15 @@ fun Char.atMost(times: Int): RegularExpression =
 fun Char.between(minimum: Int, maximum: Int): RegularExpression =
     this.regularExpression.between(minimum, maximum)
 
+
+fun Char.repeat(number:Int) : String
+{
+    val stringBuilder = StringBuilder()
+
+    for(time in 0 until  number)
+    {
+        stringBuilder.append(this)
+    }
+
+    return stringBuilder.toString()
+}

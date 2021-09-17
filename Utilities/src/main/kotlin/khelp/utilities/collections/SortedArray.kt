@@ -7,7 +7,7 @@ import khelp.utilities.extensions.forEachReversed
 /**
  * Create an array of [Comparable] sorted on their "natural order"
  */
-fun <C : Comparable<C>> sortedArray(unique: Boolean = false) =
+fun <C : Comparable<C>> sortedArray(unique : Boolean = false) =
     SortedArray<C>(ComparableNaturalOrderComparator(), unique)
 
 /**
@@ -17,7 +17,7 @@ fun <C : Comparable<C>> sortedArray(unique: Boolean = false) =
  *
  * * Addition, indexOf, contains and remove are on O(log(N))
  */
-class SortedArray<T>(private val comparator: Comparator<T>, val unique: Boolean = false) : Collection<T>
+class SortedArray<T>(private val comparator : Comparator<T>, val unique : Boolean = false) : Collection<T>
 {
     private val list = ArrayList<T>()
 
@@ -28,7 +28,7 @@ class SortedArray<T>(private val comparator: Comparator<T>, val unique: Boolean 
     /**
      * Iterator in sorted elements order
      */
-    override fun iterator(): Iterator<T> =
+    override fun iterator() : Iterator<T> =
         this.list.iterator()
 
     /**
@@ -36,7 +36,7 @@ class SortedArray<T>(private val comparator: Comparator<T>, val unique: Boolean 
      *
      * If array is on unique mode and the [Comparator] indicates that given element is same than an other one already inside the array, the element is not added
      */
-    operator fun plusAssign(element: T)
+    operator fun plusAssign(element : T)
     {
         val indexInsert = this.indexFor(true, element)
 
@@ -55,22 +55,22 @@ class SortedArray<T>(private val comparator: Comparator<T>, val unique: Boolean 
      *
      * If element is not exists a negative value is returned. Don't assume it is -1
      */
-    fun indexOf(element: T): Int =
+    fun indexOf(element : T) : Int =
         this.indexFor(add = false, element)
 
-    override operator fun contains(element: T) =
+    override operator fun contains(element : T) =
         this.indexFor(add = false, element) >= 0
 
-    operator fun get(index: Int) =
+    operator fun get(index : Int) =
         this.list[index]
 
-    override fun toString(): String =
+    override fun toString() : String =
         this.list.toString()
 
     /**
      * Remove, if exists, an element form the array
      */
-    operator fun minusAssign(element: T)
+    operator fun minusAssign(element : T)
     {
         val index = this.indexFor(add = false, element)
 
@@ -83,7 +83,7 @@ class SortedArray<T>(private val comparator: Comparator<T>, val unique: Boolean 
     /**
      * Add all elements of given [Iterable] in the array
      */
-    operator fun plusAssign(iterable: Iterable<T>)
+    operator fun plusAssign(iterable : Iterable<T>)
     {
         for (element in iterable)
         {
@@ -94,7 +94,7 @@ class SortedArray<T>(private val comparator: Comparator<T>, val unique: Boolean 
     /**
      * Remove all elements of given [Iterable] from the array
      */
-    operator fun minusAssign(iterable: Iterable<T>)
+    operator fun minusAssign(iterable : Iterable<T>)
     {
         for (element in iterable)
         {
@@ -107,9 +107,9 @@ class SortedArray<T>(private val comparator: Comparator<T>, val unique: Boolean 
      *
      * It will left only the intersection
      */
-    operator fun remAssign(iterable: Iterable<T>)
+    operator fun remAssign(iterable : Iterable<T>)
     {
-        val contains: (T) -> Boolean =
+        val contains : (T) -> Boolean =
             when (iterable)
             {
                 is Collection ->
@@ -126,7 +126,7 @@ class SortedArray<T>(private val comparator: Comparator<T>, val unique: Boolean 
 
         while (iterator.hasNext())
         {
-            if (!contains(iterator.next()))
+            if (! contains(iterator.next()))
             {
                 iterator.remove()
             }
@@ -138,7 +138,7 @@ class SortedArray<T>(private val comparator: Comparator<T>, val unique: Boolean 
      *
      * Only case of remove on O(N)
      */
-    fun removeIf(condition: (T) -> Boolean)
+    fun removeIf(condition : (T) -> Boolean)
     {
         val iterator = this.list.iterator()
 
@@ -159,7 +159,7 @@ class SortedArray<T>(private val comparator: Comparator<T>, val unique: Boolean 
         this.list.clear()
     }
 
-    fun forEachReversed(action: (T) -> Unit)
+    fun forEachReversed(action : (T) -> Unit)
     {
         this.list.forEachReversed(action)
     }
@@ -167,7 +167,7 @@ class SortedArray<T>(private val comparator: Comparator<T>, val unique: Boolean 
     /**
      * Indicates if all elements of given [Collection] are inside the array
      */
-    override fun containsAll(elements: Collection<T>): Boolean
+    override fun containsAll(elements : Collection<T>) : Boolean
     {
         for (element in elements)
         {
@@ -180,14 +180,14 @@ class SortedArray<T>(private val comparator: Comparator<T>, val unique: Boolean 
         return true
     }
 
-    override fun isEmpty(): Boolean =
+    override fun isEmpty() : Boolean =
         this.list.isEmpty()
 
     /**
      * Searech an element index
      * @param add Indicates we want use this index for insert in array
      */
-    private fun indexFor(add: Boolean, element: T): Int
+    private fun indexFor(add : Boolean, element : T) : Int
     {
         if (this.list.isEmpty())
         {
@@ -197,7 +197,7 @@ class SortedArray<T>(private val comparator: Comparator<T>, val unique: Boolean 
             }
             else
             {
-                -1
+                - 1
             }
         }
 
@@ -245,7 +245,7 @@ class SortedArray<T>(private val comparator: Comparator<T>, val unique: Boolean 
             return sameDelta + maximum
         }
 
-        var middle: Int
+        var middle : Int
 
         while (minimum + 1 < maximum)
         {
@@ -263,13 +263,13 @@ class SortedArray<T>(private val comparator: Comparator<T>, val unique: Boolean 
         return differentDelta + maximum
     }
 
-    internal fun listIterator(): ListIterator<T> =
+    internal fun listIterator() : ListIterator<T> =
         this.list.listIterator()
 
-    internal fun listIterator(index: Int): ListIterator<T> =
+    internal fun listIterator(index : Int) : ListIterator<T> =
         this.list.listIterator(index)
 
-    fun subList(start: Int, end: Int): SortedArray<T>
+    fun subList(start : Int, end : Int) : SortedArray<T>
     {
         val subArray = SortedArray(this.comparator, this.unique)
 
@@ -283,4 +283,17 @@ class SortedArray<T>(private val comparator: Comparator<T>, val unique: Boolean 
 
     fun immutableList() : List<T> =
         SortedArrayImmutable(this)
+
+    fun subPart(minIndex : Int, maxIndex : Int, destination : SortedArray<T>) : SortedArray<T>
+    {
+        val indexMin = minIndex.bounds(0, this.size - 1)
+        val indexMax = maxIndex.bounds(0, this.size - 1)
+
+        for (index in indexMin until indexMax)
+        {
+            destination += this[index]
+        }
+
+        return destination
+    }
 }

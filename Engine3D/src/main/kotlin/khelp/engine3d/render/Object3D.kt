@@ -1,19 +1,29 @@
 package khelp.engine3d.render
 
+import khelp.engine3d.geometry.Mesh
 import khelp.engine3d.utils.ThreadOpenGL
-import org.lwjgl.opengl.GL11
 
-class Object3D(id:String) : NodeWithMaterial(id)
+open class Object3D(id : String) : NodeWithMaterial(id)
 {
+    private val mesh : Mesh = Mesh()
+    var showWire : Boolean = false
+    var wireColor : Color4f = DEFAULT_WIRE_FRAME_COLOR
+
+    @MeshDSL
+    fun mesh(creator : Mesh.() -> Unit)
+    {
+        creator(this.mesh)
+    }
+
     @ThreadOpenGL
     override fun renderSpecific()
     {
-        GL11.glDisable(GL11.GL_CULL_FACE)
-        RED.glColor4f()
-        GL11.glBegin(GL11.GL_POLYGON)
-        GL11.glVertex3f(-1f,-1f,-1f)
-        GL11.glVertex3f(1f,0f,-1f)
-        GL11.glVertex3f(-1f,1f,-1f)
-        GL11.glEnd()
+        this.material.renderMaterial(this)
+    }
+
+    @ThreadOpenGL
+    internal fun drawObject()
+    {
+        this.mesh.render()
     }
 }

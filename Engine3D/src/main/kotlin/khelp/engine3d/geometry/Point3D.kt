@@ -1,5 +1,8 @@
 package khelp.engine3d.geometry
 
+import khelp.engine3d.utils.ThreadOpenGL
+import org.lwjgl.opengl.GL11
+
 data class Point3D(val x : Float = 0f, val y : Float = 0f, val z : Float = 0f)
 {
     constructor(vect3f : Vec3f) : this(vect3f.x, vect3f.y, vect3f.z)
@@ -14,4 +17,16 @@ data class Point3D(val x : Float = 0f, val y : Float = 0f, val z : Float = 0f)
 
     fun add(x : Float, y : Float, z : Float) : Point3D =
         Point3D(this.x + x, this.y + y, this.z + z)
+
+    @ThreadOpenGL
+    internal fun glVertex3f()
+    {
+        GL11.glVertex3f(this.x,this.y,this.z)
+    }
+
+    @ThreadOpenGL
+    internal fun glNormal3f()
+    {
+        GL11.glNormal3f(this.x,this.y,this.z)
+    }
 }

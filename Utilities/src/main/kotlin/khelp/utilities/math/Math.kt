@@ -71,6 +71,29 @@ fun isNul(value : Double) = abs(value) <= EPSILON
  */
 fun isNul(value : Float) = abs(value) <= EPSILON_FLOAT
 
+fun compare(value1:Float,value2:Float) : Int
+{
+    val diff = value1 - value2
+
+    return when
+    {
+        isNul(diff) -> 0
+        diff > 0f  -> 1
+        else -> -1
+    }
+}
+
+fun compare(value1:Double,value2:Double) : Int
+{
+    val diff = value1 - value2
+
+    return when
+    {
+        isNul(diff) -> 0
+        diff > 0.0  -> 1
+        else -> -1
+    }
+}
 
 /**
  * Indicates if two given real can be considered as equals

@@ -165,6 +165,8 @@ class Window3D private constructor()
     val preferences : Preferences = Preferences("game/preferences.pref")
     val resources : Resources = Resources(ExternalSource("game/resources"))
 
+    fun <N:Node> findById(id:String): N? = this.scene.findById(id)
+
     fun close()
     {
         this.closeWindow(this.windowId)

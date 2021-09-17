@@ -4,6 +4,9 @@ import khelp.engine3d.extensions.degreeToRadian
 import khelp.engine3d.geometry.Point3D
 import khelp.engine3d.geometry.Rotf
 import khelp.engine3d.geometry.Vec3f
+import khelp.engine3d.render.prebuilt.Box
+import khelp.engine3d.render.prebuilt.BoxUV
+import khelp.engine3d.render.prebuilt.Sphere
 import khelp.engine3d.utils.ThreadOpenGL
 import khelp.utilities.collections.queue.Queue
 import khelp.utilities.extensions.bounds
@@ -92,6 +95,8 @@ open class Node(val id : String) : Iterable<Node>
     /**Parent node*/
     var parent : Node? = null
         protected set
+    var visible : Boolean = true
+    open val center : Point3D get() = Point3D(this.x, this.y, this.z)
     private val children = Vector<Node>(8)
 
     /**Node Z order*/
@@ -113,6 +118,25 @@ open class Node(val id : String) : Iterable<Node>
         val child = Object3D(id)
         child.parent = this
         objectCreator(child)
+        this.children.add(child)
+    }
+
+    @NodeDSL
+    fun box(id : String, boxUV : BoxUV = BoxUV(), boxCreator : Box.() -> Unit)
+    {
+        val child = Box(id, boxUV)
+        child.parent = this
+        boxCreator(child)
+        this.children.add(child)
+    }
+
+    @NodeDSL
+    fun sphere(id : String, slice : Int = 33, stack : Int = 33, multiplierU : Float = 1f, multiplierV : Float = 1f,
+               sphereCreator : Sphere.() -> Unit)
+    {
+        val child = Sphere(id, slice, stack, multiplierU, multiplierV)
+        child.parent = this
+        sphereCreator(child)
         this.children.add(child)
     }
 
@@ -281,8 +305,6 @@ open class Node(val id : String) : Iterable<Node>
 
         return point
     }
-
-    open fun center() : Point3D = Point3D(this.x, this.y, this.z)
 
     override fun iterator() : Iterator<Node> = this.children.iterator()
 

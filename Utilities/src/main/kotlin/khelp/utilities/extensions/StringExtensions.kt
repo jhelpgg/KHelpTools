@@ -329,3 +329,31 @@ fun String.double(defaultValue : Double = 0.0) =
     {
         defaultValue
     }
+
+val String.removeWhiteCharacters : String
+    get()
+    {
+        val stringBuilder = StringBuilder()
+
+        for (character in this)
+        {
+            if (character > ' ')
+            {
+                stringBuilder.append(character)
+            }
+        }
+
+        return stringBuilder.toString()
+    }
+
+fun String.compareToIgnoreCaseFirst(string : String) : Int
+{
+    val comparision = this.compareTo(string, true)
+
+    if (comparision != 0)
+    {
+        return comparision
+    }
+
+    return this.compareTo(string)
+}

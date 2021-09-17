@@ -6,3 +6,6 @@ annotation class WindowDSL
 @DslMarker
 annotation class NodeDSL
 
+@DslMarker
+annotation class MeshDSL
+

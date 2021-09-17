@@ -4,9 +4,10 @@ import khelp.engine3d.extensions.alpha
 import khelp.engine3d.extensions.blue
 import khelp.engine3d.extensions.green
 import khelp.engine3d.extensions.red
-import khelp.engine3d.utils.ThreadOpenGL
 import khelp.engine3d.utils.TEMPORARY_FLOAT_BUFFER
+import khelp.engine3d.utils.ThreadOpenGL
 import khelp.utilities.extensions.bounds
+import khelp.utilities.log.debug
 import org.lwjgl.opengl.GL11
 import java.awt.Color
 import java.nio.FloatBuffer
@@ -67,6 +68,12 @@ class Color4f(red : Float, green : Float = red, blue : Float = red, alpha : Floa
     internal fun glColor4f()
     {
         GL11.glColor4f(this.red, this.green, this.blue, this.alpha)
+    }
+
+    @ThreadOpenGL
+    internal fun glColor4f(alpha : Float)
+    {
+        GL11.glColor4f(this.red, this.green, this.blue, alpha)
     }
 
     @ThreadOpenGL

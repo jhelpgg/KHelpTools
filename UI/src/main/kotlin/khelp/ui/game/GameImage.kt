@@ -1,6 +1,8 @@
 package khelp.ui.game
 
 import khelp.resources.Resources
+import khelp.thread.flow.Flow
+import khelp.thread.flow.FlowData
 import khelp.ui.utilities.FONT_RENDER_CONTEXT
 import khelp.ui.utilities.PercentGraphics
 import khelp.ui.utilities.TRANSPARENT
@@ -72,7 +74,8 @@ class GameImage(val width : Int, val height : Int) : Icon
      * Image for draw in a swing component
      */
     internal val image : BufferedImage = BufferedImage(this.width, this.height, BufferedImage.TYPE_INT_ARGB)
-    internal var refreshListener : () -> Unit = {}
+    private val refreshFlowData = FlowData<Unit>()
+    val refreshFlow : Flow<Unit> = this.refreshFlowData.flow
 
     fun clear(color : Color)
     {
@@ -143,9 +146,40 @@ class GameImage(val width : Int, val height : Int) : Icon
 
     override fun getIconHeight() : Int = this.height
 
+    fun grabPixels(x : Int = 0, y : Int = 0, width : Int = this.width - x, height : Int = this.height - y) : IntArray
+    {
+        if (x < 0 || width <= 0 || y < 0 || height <= 0 || x + width > this.width || y + height > this.height)
+        {
+            throw IllegalArgumentException(
+                "The image is ${this.width}x${this.height} but its required : ($x, $y) ${width}x$height that is out of bounds")
+        }
+
+        val pixels = IntArray(width * height)
+        this.image.getRGB(x, y, width, height, pixels, 0, width)
+        return pixels
+    }
+
+    fun putPixels(x : Int, y : Int, width : Int, height : Int, pixels : IntArray)
+    {
+        if (x < 0 || width <= 0 || y < 0 || height <= 0 || x + width > this.width || y + height > this.height)
+        {
+            throw IllegalArgumentException(
+                "The image is ${this.width}x${this.height} but its required : ($x, $y) ${width}x$height that is out of bounds")
+        }
+
+        if (pixels.size != width * height)
+        {
+            throw IllegalArgumentException(
+                "Pixels array must have size $width*$height=${width * height}, but it is ${pixels.size}")
+        }
+
+        this.image.setRGB(x, y, width, height, pixels, 0, width)
+        this.refresh()
+    }
+
     private fun refresh()
     {
         this.image.flush()
-        this.refreshListener()
+        this.refreshFlowData.publish(Unit)
     }
 }

@@ -1,5 +1,6 @@
 package khelp.ui.game
 
+import khelp.thread.TaskContext
 import java.awt.Dimension
 import java.awt.Graphics
 import javax.swing.JComponent
@@ -16,7 +17,7 @@ class GameComponent(width : Int, height : Int) : JComponent()
         this.preferredSize = dimension
         this.maximumSize = dimension
         this.minimumSize = dimension
-        this.gameImage.refreshListener = this::repaint
+        this.gameImage.refreshFlow.then(TaskContext.MAIN) { this.repaint() }
     }
 
     override fun paintComponent(graphics : Graphics)
