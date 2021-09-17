@@ -12,4 +12,5 @@ include ':UI'
 include ':Resources'
 include ':Sound'
 include ':Preferences'
+include 'Engine3D'
 

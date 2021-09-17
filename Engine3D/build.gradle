@@ -1,0 +1,58 @@
+plugins {
+    id 'org.jetbrains.kotlin.jvm'
+}
+
+group 'khelp.engine3d'
+version '1.0-SNAPSHOT'
+
+dependencies {
+    implementation project(":Utilities")
+    implementation project(":Thread")
+    implementation project(":Preferences")
+    implementation project(":Resources")
+    implementation project(":IO")
+
+    implementation files("libs/javazoom/jl020.jar")
+
+    implementation files("libs/lwjgl/lwjgl.jar")
+    runtime files("libs/lwjgl/lwjgl-natives-linux.jar")
+    runtime files("libs/lwjgl/lwjgl-natives-linux-arm32.jar")
+    runtime files("libs/lwjgl/lwjgl-natives-linux-arm64.jar")
+    runtime files("libs/lwjgl/lwjgl-natives-macos.jar")
+    runtime files("libs/lwjgl/lwjgl-natives-windows.jar")
+    runtime files("libs/lwjgl/lwjgl-natives-windows-x86.jar")
+
+    implementation files("libs/lwjgl-glfw/lwjgl-glfw.jar")
+    runtime files("libs/lwjgl-glfw/lwjgl-glfw-natives-linux.jar")
+    runtime files("libs/lwjgl-glfw/lwjgl-glfw-natives-linux-arm32.jar")
+    runtime files("libs/lwjgl-glfw/lwjgl-glfw-natives-linux-arm64.jar")
+    runtime files("libs/lwjgl-glfw/lwjgl-glfw-natives-macos.jar")
+    runtime files("libs/lwjgl-glfw/lwjgl-glfw-natives-windows.jar")
+    runtime files("libs/lwjgl-glfw/lwjgl-glfw-natives-windows-x86.jar")
+
+    implementation files("libs/lwjgl-jawt/lwjgl-jawt.jar")
+
+    implementation files("libs/lwjgl-opengl/lwjgl-opengl.jar")
+    runtime files("libs/lwjgl-opengl/lwjgl-opengl-natives-linux.jar")
+    runtime files("libs/lwjgl-opengl/lwjgl-opengl-natives-linux-arm32.jar")
+    runtime files("libs/lwjgl-opengl/lwjgl-opengl-natives-linux-arm64.jar")
+    runtime files("libs/lwjgl-opengl/lwjgl-opengl-natives-macos.jar")
+    runtime files("libs/lwjgl-opengl/lwjgl-opengl-natives-windows.jar")
+    runtime files("libs/lwjgl-opengl/lwjgl-opengl-natives-windows-x86.jar")
+
+    implementation files("libs/lwjgl-openal/lwjgl-openal.jar")
+    runtime files("libs/lwjgl-openal/lwjgl-openal-natives-linux.jar")
+    runtime files("libs/lwjgl-openal/lwjgl-openal-natives-linux-arm32.jar")
+    runtime files("libs/lwjgl-openal/lwjgl-openal-natives-linux-arm64.jar")
+    runtime files("libs/lwjgl-openal/lwjgl-openal-natives-macos.jar")
+    runtime files("libs/lwjgl-openal/lwjgl-openal-natives-windows.jar")
+    runtime files("libs/lwjgl-openal/lwjgl-openal-natives-windows-x86.jar")
+
+    implementation('org.jetbrains.kotlin:kotlin-reflect:1.5.21')
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.2'
+}
+
+tasks.test {
+    useJUnitPlatform()
+}

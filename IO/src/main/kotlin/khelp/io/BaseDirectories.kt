@@ -27,7 +27,7 @@ const val CURRENT_DIRECTORY = "."
 /**
  * Directory external of the code
  */
-val outsideDirectory = File("")
+val outsideDirectory = File(File("").absolutePath)
 
 /**
  * "Home" directory

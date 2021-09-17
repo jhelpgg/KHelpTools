@@ -5,3 +5,6 @@ local*
 data/
 /Database/unitTest/
 /Grammar/out/
+/game/
+/pref/
+/Preferences/pref/

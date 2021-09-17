@@ -60,26 +60,27 @@ class JHelpFont(val font : Font, val underline : Boolean = false)
          */
         fun createFont(type : FontType, stream : InputStream, size : Int,
                        bold : FontValue, italic : FontValue, underline : Boolean) : FutureResult<JHelpFont> =
-            JHelpFont.obtainFont(type, stream, size, bold, italic, underline).and(TaskContext.INDEPENDENT)
-            { font ->
-                if (font == DEFAULT_FONT)
-                {
-                    val newSize = if (size < 1)
+            JHelpFont.obtainFont(type, stream, size, bold, italic, underline)
+                .and(TaskContext.INDEPENDENT)
+                { font ->
+                    if (font == DEFAULT_FONT)
                     {
-                        18
+                        val newSize = if (size < 1)
+                        {
+                            18
+                        }
+                        else
+                        {
+                            size
+                        }
+
+                        JHelpFont("Arial", newSize, bold == FontValue.TRUE, italic == FontValue.TRUE, underline)
                     }
                     else
                     {
-                        size
+                        font
                     }
-
-                    JHelpFont("Arial", newSize, bold == FontValue.TRUE, italic == FontValue.TRUE, underline)
                 }
-                else
-                {
-                    font
-                }
-            }
 
         /**
          * Create a font from a stream
@@ -161,21 +162,23 @@ class JHelpFont(val font : Font, val underline : Boolean = false)
     /**
      * Font size
      */
-    val size : Int get() = this.font.size
+    val size : Int = this.font.size
 
     /**
      * Indicates if font is bold
      *
      * @return `true` if font is bold
      */
-    val bold : Boolean get() = this.font.style and Font.BOLD != 0
+    val bold : Boolean = this.font.style and Font.BOLD != 0
 
     /**
      * Indicates if font is italic
      *
      * @return `true` if font is italic
      */
-    val italic : Boolean get() = this.font.style and Font.ITALIC != 0
+    val italic : Boolean = this.font.style and Font.ITALIC != 0
+
+    val family : String = this.font.family
 
     /**Maximum width of a character*/
     private val maximumCharacterWidth : Int by lazy {
