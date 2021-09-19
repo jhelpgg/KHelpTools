@@ -284,16 +284,31 @@ class SortedArray<T>(private val comparator : Comparator<T>, val unique : Boolea
     fun immutableList() : List<T> =
         SortedArrayImmutable(this)
 
-    fun subPart(minIndex : Int, maxIndex : Int, destination : SortedArray<T>) : SortedArray<T>
+    /**
+     * Copy a part of this array inside the given ony
+     * @param index Index where start the copy
+     * @param length Number of elements to copy
+     * @param subPart Array where add elements
+     * @param L Array result type
+     * @return The array where the copy done (**subPart**)
+     */
+    fun <L : SortedArray<T>> subPart(index: Int = 0, length: Int = this.size - index, subPart: L): L
     {
-        val indexMin = minIndex.bounds(0, this.size - 1)
-        val indexMax = maxIndex.bounds(0, this.size - 1)
+        var offset = index
+        var size = length
 
-        for (index in indexMin until indexMax)
+        if (offset < 0)
         {
-            destination += this[index]
+            size += offset
+            offset = 0
         }
 
-        return destination
+        if (offset + size > this.size)
+        {
+            size = this.size - offset
+        }
+
+        (offset until offset + size).forEach { subPart += this[it] }
+        return subPart
     }
 }
