@@ -1,11 +1,14 @@
 package khelp.engine3d.render.prebuilt
 
 import khelp.engine3d.render.Object3D
+import khelp.engine3d.render.TwoSidedRule
 
 class Plane(id : String, faceUV : FaceUV = FaceUV()) : Object3D(id)
 {
     init
     {
+        this.twoSidedRule = TwoSidedRule.FORCE_TWO_SIDE
+
         mesh {
             face {
                 add(- 0.5f, 0.5f, 0f,

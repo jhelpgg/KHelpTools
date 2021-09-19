@@ -4,6 +4,14 @@ import khelp.utilities.extensions.compareToIgnoreCaseFirst
 import khelp.utilities.extensions.ifElse
 import khelp.utilities.extensions.removeWhiteCharacters
 
+val X = Variable("x")
+val Y = Variable("y")
+val Z = Variable("z")
+val T = Variable("t")
+val ALPHA = Variable("alpha")
+val BETA = Variable("beta")
+val GAMMA = Variable("gamma")
+
 /**
  * Symbol represented by some letters for replace an unknown value like in **`3x+1`**, **`x`** is a variable
  * @param name Variable name

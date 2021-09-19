@@ -13,7 +13,7 @@ class Scene
     }
 
     var backgroundColor : Color4f = BLACK
-    private val root : Node = Node(Scene.ROOT_ID)
+    val root : Node = Node(Scene.ROOT_ID)
 
     init
     {
@@ -26,7 +26,7 @@ class Scene
         creator(this.root)
     }
 
-    fun <N:Node> findById(id:String): N? = this.root.findById(id)
+    fun <N : Node> findById(id : String) : N? = this.root.findById(id)
 
     @ThreadOpenGL
     internal fun drawBackground()
@@ -49,7 +49,7 @@ class Scene
             {
                 if (node.countInRender)
                 {
-                    node.zOrder = node.reverseProjection(node.center).z
+                    node.zOrder = node.reverseProjectionWithRoot(node.center).z
                     nodes.add(node)
                 }
 

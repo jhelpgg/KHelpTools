@@ -1,6 +1,7 @@
 package khelp.engine3d.render.prebuilt
 
 import khelp.engine3d.render.Object3D
+import khelp.engine3d.render.TwoSidedRule
 import kotlin.math.cos
 import kotlin.math.max
 import kotlin.math.sin
@@ -10,6 +11,8 @@ class Sphere(id : String, slice : Int = 33, stack : Int = 33, multiplierU : Floa
 {
     init
     {
+        this.twoSidedRule = TwoSidedRule.FORCE_ONE_SIDE
+
         mesh {
             val slice = max(2, slice)
             val stack = max(2, stack)

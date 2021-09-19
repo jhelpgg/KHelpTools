@@ -167,6 +167,10 @@ fun sign(double : Double) : Int =
         else          -> 1
     }
 
+fun square(number:Float):Float = number*number
+
+fun square(number:Double):Double = number*number
+
 fun computeIntersectedArea(rectangle1 : Rectangle, rectangle2 : Rectangle) : Int
 {
     val xMin1 = rectangle1.x

@@ -4,8 +4,12 @@ import khelp.engine3d.extensions.degreeToRadian
 import khelp.engine3d.geometry.Point3D
 import khelp.engine3d.geometry.Rotf
 import khelp.engine3d.geometry.Vec3f
+import khelp.engine3d.geometry.VirtualBox
 import khelp.engine3d.render.prebuilt.Box
 import khelp.engine3d.render.prebuilt.BoxUV
+import khelp.engine3d.render.prebuilt.FaceUV
+import khelp.engine3d.render.prebuilt.Plane
+import khelp.engine3d.render.prebuilt.Revolution
 import khelp.engine3d.render.prebuilt.Sphere
 import khelp.engine3d.utils.ThreadOpenGL
 import khelp.utilities.collections.queue.Queue
@@ -97,7 +101,73 @@ open class Node(val id : String) : Iterable<Node>
         protected set
     var visible : Boolean = true
     open val center : Point3D get() = Point3D(this.x, this.y, this.z)
+    open val virtualBox : VirtualBox get() = VirtualBox()
     private val children = Vector<Node>(8)
+    val root : Node by lazy {
+        var root = this
+
+        while (root.parent != null)
+        {
+            root = root.parent !!
+        }
+
+        root
+    }
+
+    fun totalBox() : VirtualBox
+    {
+        val virtualBox = VirtualBox()
+        val stack = Stack<Node>()
+        stack.push(this)
+
+        while (stack.isNotEmpty())
+        {
+            val node = stack.pop()
+            virtualBox.add(node.projectedBox())
+
+            for (child in node.children)
+            {
+                stack.push(child)
+            }
+        }
+
+        return virtualBox
+    }
+
+    private fun projectedBox() : VirtualBox
+    {
+        val box = this.virtualBox
+
+        if (box.empty)
+        {
+            return box
+        }
+
+        val virtualBox = VirtualBox()
+        virtualBox.add(this.projection(Point3D(box.minX, box.minY, box.minZ)))
+        virtualBox.add(this.projection(Point3D(box.minX, box.minY, box.maxZ)))
+        virtualBox.add(this.projection(Point3D(box.minX, box.maxY, box.minZ)))
+        virtualBox.add(this.projection(Point3D(box.minX, box.maxY, box.maxZ)))
+        virtualBox.add(this.projection(Point3D(box.maxX, box.minY, box.minZ)))
+        virtualBox.add(this.projection(Point3D(box.maxX, box.minY, box.maxZ)))
+        virtualBox.add(this.projection(Point3D(box.maxX, box.maxY, box.minZ)))
+        virtualBox.add(this.projection(Point3D(box.maxX, box.maxY, box.maxZ)))
+        return virtualBox
+    }
+
+    fun projectionPure(box : VirtualBox) : VirtualBox
+    {
+        val virtualBox = VirtualBox()
+        virtualBox.add(this.projectionPure(Point3D(box.minX, box.minY, box.minZ)))
+        virtualBox.add(this.projectionPure(Point3D(box.minX, box.minY, box.maxZ)))
+        virtualBox.add(this.projectionPure(Point3D(box.minX, box.maxY, box.minZ)))
+        virtualBox.add(this.projectionPure(Point3D(box.minX, box.maxY, box.maxZ)))
+        virtualBox.add(this.projectionPure(Point3D(box.maxX, box.minY, box.minZ)))
+        virtualBox.add(this.projectionPure(Point3D(box.maxX, box.minY, box.maxZ)))
+        virtualBox.add(this.projectionPure(Point3D(box.maxX, box.maxY, box.minZ)))
+        virtualBox.add(this.projectionPure(Point3D(box.maxX, box.maxY, box.maxZ)))
+        return virtualBox
+    }
 
     /**Node Z order*/
     internal var zOrder = 0f
@@ -122,6 +192,15 @@ open class Node(val id : String) : Iterable<Node>
     }
 
     @NodeDSL
+    fun plane(id : String, faceUV : FaceUV = FaceUV(), planeCreator : Plane.() -> Unit)
+    {
+        val child = Plane(id, faceUV)
+        child.parent = this
+        planeCreator(child)
+        this.children.add(child)
+    }
+
+    @NodeDSL
     fun box(id : String, boxUV : BoxUV = BoxUV(), boxCreator : Box.() -> Unit)
     {
         val child = Box(id, boxUV)
@@ -137,6 +216,36 @@ open class Node(val id : String) : Iterable<Node>
         val child = Sphere(id, slice, stack, multiplierU, multiplierV)
         child.parent = this
         sphereCreator(child)
+        this.children.add(child)
+    }
+
+    @NodeDSL
+    fun clone(id : String, nodeClonedId : String, objectCloneCreator : ObjectClone.() -> Unit)
+    {
+        val node = this.root.findById<Node>(nodeClonedId)
+                   ?: throw NoSuchElementException("$nodeClonedId not yet defined")
+
+        val child : ObjectClone =
+            when (node)
+            {
+                is ObjectClone -> ObjectClone(id, node.reference)
+                is Object3D    -> ObjectClone(id, node)
+                else           ->
+                    throw IllegalArgumentException(
+                        "$nodeClonedId don't refer to ObjectClone or Object3D, but to ${node.javaClass.name}")
+            }
+
+        child.parent = this
+        objectCloneCreator(child)
+        this.children.add(child)
+    }
+
+    @NodeDSL
+    fun revolution(id : String, revolutionCreator : Revolution.() -> Unit)
+    {
+        val child = Revolution(id)
+        revolutionCreator(child)
+        child.parent = this
         this.children.add(child)
     }
 
@@ -281,12 +390,99 @@ open class Node(val id : String) : Iterable<Node>
     }
 
     /**
+     * Compute a point projection from node space to world space
+     *
+     * @param point3D Point to project
+     * @return Projected point
+     */
+    fun projection(point3D : Point3D) : Point3D
+    {
+        var point = point3D
+        val stack = Stack<Node>()
+        var node = this
+        var parent = this.parent
+
+        while (parent != null)
+        {
+            stack.push(node)
+            node = parent
+            parent = parent.parent
+        }
+
+        while (stack.isNotEmpty())
+        {
+            point = stack.pop()
+                .projectionPure(point)
+        }
+
+        return this.projectionPure(point)
+    }
+
+    fun projectionPure(point3D : Point3D) : Point3D
+    {
+        var point = point3D
+        point = point.add(this.x, this.y, this.z)
+        var vect = point.toVect3f()
+        val rotX = Rotf(Vec3f(1f, 0f, 0f), this.angleX.degreeToRadian)
+        vect = rotX.rotateVector(vect)
+        val rotY = Rotf(Vec3f(0f, 1f, 0f), this.angleY.degreeToRadian)
+        vect = rotY.rotateVector(vect)
+        val rotZ = Rotf(Vec3f(0f, 0f, 1f), this.angleZ.degreeToRadian)
+        vect = rotZ.rotateVector(vect)
+        return Point3D(vect)
+    }
+
+    /**
      * Compute a point projection from world space to node space
      *
      * @param point3D Point to project
      * @return Projected point
      */
     fun reverseProjection(point3D : Point3D) : Point3D
+    {
+        var node = this
+        var parent = this.parent
+        var point = point3D
+
+        while (parent != null)
+        {
+            point = node.reverseProjectionPure(point3D)
+            node = parent
+            parent = node.parent
+        }
+
+        return point
+    }
+
+    internal fun reverseProjectionWithRoot(point3D : Point3D) : Point3D
+    {
+        var node : Node? = this
+        var point = point3D
+
+        while (node != null)
+        {
+            point = node.reverseProjectionPure(point3D)
+            node = node.parent
+        }
+
+        return point
+    }
+
+    fun reverseProjection(virtualBox : VirtualBox) : VirtualBox
+    {
+        val box = VirtualBox()
+        box.add(this.reverseProjection(Point3D(virtualBox.minX, virtualBox.minY, virtualBox.minZ)))
+        box.add(this.reverseProjection(Point3D(virtualBox.minX, virtualBox.minY, virtualBox.maxZ)))
+        box.add(this.reverseProjection(Point3D(virtualBox.minX, virtualBox.maxY, virtualBox.minZ)))
+        box.add(this.reverseProjection(Point3D(virtualBox.minX, virtualBox.maxY, virtualBox.maxZ)))
+        box.add(this.reverseProjection(Point3D(virtualBox.maxX, virtualBox.minY, virtualBox.minZ)))
+        box.add(this.reverseProjection(Point3D(virtualBox.maxX, virtualBox.minY, virtualBox.maxZ)))
+        box.add(this.reverseProjection(Point3D(virtualBox.maxX, virtualBox.maxY, virtualBox.minZ)))
+        box.add(this.reverseProjection(Point3D(virtualBox.maxX, virtualBox.maxY, virtualBox.maxZ)))
+        return box
+    }
+
+    private fun reverseProjectionPure(point3D : Point3D) : Point3D
     {
         var point = point3D
         var vect = point.toVect3f()
@@ -296,14 +492,7 @@ open class Node(val id : String) : Iterable<Node>
         vect = rotY.rotateVector(vect)
         val rotX = Rotf(Vec3f(1f, 0f, 0f), - this.angleX.degreeToRadian)
         vect = rotX.rotateVector(vect)
-        point = Point3D(vect.x - this.x, vect.y - this.y, vect.z - this.z)
-
-        if (this.parent != null)
-        {
-            point = this.parent !!.reverseProjection(point)
-        }
-
-        return point
+        return Point3D(vect.x - this.x, vect.y - this.y, vect.z - this.z)
     }
 
     override fun iterator() : Iterator<Node> = this.children.iterator()
