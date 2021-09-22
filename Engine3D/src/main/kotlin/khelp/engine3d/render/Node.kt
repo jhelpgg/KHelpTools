@@ -573,6 +573,10 @@ open class Node(val id : String) : Iterable<Node>
         this.children.add(node)
     }
 
+    internal val numberOfChild : Int = this.children.size
+
+    internal fun child(index:Int) : Node = this.children[index]
+
     /**
      * Locate the node in the scene
      */

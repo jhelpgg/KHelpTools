@@ -25,7 +25,7 @@ fun main()
     window3D(800, 600, "Test") {
         scene.backgroundColor = YELLOW
         scene.root {
-            text("HelloWorld", "Hello world") {
+            text("HelloWorld", "Hello world!") {
                 z = -5f
                 applyMaterialHierarchically(material)
                 delay(4096) { rotate(this) }
@@ -39,6 +39,18 @@ fun rotate(node : Node)
     for (time in 0 until 360)
     {
         node.angleX = time.toFloat()
+        Thread.sleep(40)
+    }
+
+    for (time in 0 until 360)
+    {
+        node.angleY = time.toFloat()
+        Thread.sleep(40)
+    }
+
+    for (time in 0 until 360)
+    {
+        node.angleZ = time.toFloat()
         Thread.sleep(40)
     }
 }

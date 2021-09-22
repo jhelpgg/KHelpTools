@@ -6,7 +6,7 @@ import khelp.engine3d.render.Object3D
 import khelp.engine3d.render.ObjectClone
 import khelp.engine3d.render.TwoSidedRule
 import khelp.ui.font.JHelpFont
-import khelp.ui.utilities.FONT_RENDER_CONTEXT
+import khelp.utilities.log.debug
 import khelp.utilities.math.square
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.math.sqrt
@@ -31,20 +31,38 @@ class Font3D private constructor(val family : String)
     fun computeText(id : String, string : String) : Node
     {
         val node = Node(id)
-
         val characters = string.toCharArray()
-        var x = - (characters.size.toFloat() / 2f)
+        val widths = FloatArray(characters.size)
+        var width = 0f
 
-        for (character in characters)
+        for ((index, character) in characters.withIndex())
         {
             if (character > ' ')
             {
                 val letter = this.obtainLetter(character)
-                letter.x = x
+                val w = letter.virtualBox.maxX - letter.virtualBox.minX + 0.25f
+                widths[index] = w
+                width += w
                 node.addChild(letter)
             }
+            else
+            {
+                widths[index] = 0.25f
+                width += 0.25f
+            }
+        }
 
-            x += 1f
+        var indexCharacter = 0
+        var x = - width / 2f
+
+        for ((index, character) in characters.withIndex())
+        {
+            if (character > ' ')
+            {
+                node.child(indexCharacter++).x = x
+            }
+
+            x += widths[index]
         }
 
         return node
