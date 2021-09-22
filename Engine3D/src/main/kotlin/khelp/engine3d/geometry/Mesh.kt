@@ -8,7 +8,7 @@ class Mesh
 {
     private val faces = ArrayList<Face>()
     private val barycenter = BarycenterPoint3D()
-    val center : Point3D = this.barycenter.barycenter()
+    val center : Point3D get() = this.barycenter.barycenter()
     val virtualBox: VirtualBox = VirtualBox()
 
     @MeshDSL

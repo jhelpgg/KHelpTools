@@ -1,7 +1,8 @@
 package khelp.engine3d
 
+import khelp.engine3d.render.Material
+import khelp.engine3d.render.Node
 import khelp.engine3d.render.Texture
-import khelp.engine3d.render.TwoSidedRule
 import khelp.engine3d.render.YELLOW
 import khelp.engine3d.render.window3D
 import khelp.thread.delay
@@ -19,28 +20,25 @@ fun main()
         percentGraphics.fillRectangle(0.4, 0.6, 0.2, 0.4)
     }
     val texture = Texture(gameImage)
+    val material = Material()
+    material.textureDiffuse = texture
     window3D(800, 600, "Test") {
         scene.backgroundColor = YELLOW
         scene.root {
-            revolution("revolution") {
-                material.textureDiffuse = texture
-                twoSidedRule = TwoSidedRule.FORCE_TWO_SIDE
-
-                path(precision = 12, multiplierU = 3f, rotationPrecision = 32) {
-                    move(0.25f, 1f)
-                    line(0.25f, 0.5f)
-                    quadratic(1f, -0.5f, 0.25f, -1f)
-                    line(0f,-1f)
-                }
-
-                delay(4096) {
-                    for(t in 0 until 1024)
-                    {
-                        angleX += 1f
-                        Thread.sleep(32)
-                    }
-                }
+            text("HelloWorld", "Hello world") {
+                z = -5f
+                applyMaterialHierarchically(material)
+                delay(4096) { rotate(this) }
             }
         }
+    }
+}
+
+fun rotate(node : Node)
+{
+    for (time in 0 until 360)
+    {
+        node.angleX = time.toFloat()
+        Thread.sleep(40)
     }
 }

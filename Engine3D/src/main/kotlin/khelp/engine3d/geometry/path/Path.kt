@@ -40,6 +40,11 @@ class Path
                                         x, y))
     }
 
+    fun append(path : Path)
+    {
+        this.pathElements.addAll(path.pathElements)
+    }
+
     fun path(precision : Int = 5, start : Float = 0f, end : Float = 1f) : List<PathLine>
     {
         @Suppress("NAME_SHADOWING")

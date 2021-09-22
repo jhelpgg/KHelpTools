@@ -5,6 +5,7 @@ import khelp.engine3d.geometry.Point3D
 import khelp.engine3d.geometry.Rotf
 import khelp.engine3d.geometry.Vec3f
 import khelp.engine3d.geometry.VirtualBox
+import khelp.engine3d.render.font.Font3D
 import khelp.engine3d.render.prebuilt.Box
 import khelp.engine3d.render.prebuilt.BoxUV
 import khelp.engine3d.render.prebuilt.FaceUV
@@ -249,6 +250,16 @@ open class Node(val id : String) : Iterable<Node>
         this.children.add(child)
     }
 
+    @NodeDSL
+    fun text(id : String, text : String, fontFamily : String = "Arial", textCreator : Node.() -> Unit)
+    {
+        val child = Font3D.font3D(fontFamily)
+            .computeText(id, text)
+        textCreator(child)
+        child.parent = this
+        this.children.add(child)
+    }
+
     fun <N : Node> findById(id : String) : N?
     {
         val queue = Queue<Node>()
@@ -270,6 +281,65 @@ open class Node(val id : String) : Iterable<Node>
         }
 
         return null
+    }
+
+    fun cloneHierarchy() : Node
+    {
+        val clone =
+            when (this)
+            {
+                is Object3D    -> ObjectClone("clone_${this.id}", this)
+                is ObjectClone -> ObjectClone("clone_${this.id}", this.reference)
+                else           -> Node("clone_${this.id}")
+            }
+
+        clone.x = this.x
+        clone.y = this.y
+        clone.z = this.z
+        clone.angleX = this.angleX
+        clone.angleY = this.angleY
+        clone.angleZ = this.angleZ
+        clone.scaleX = this.scaleX
+        clone.scaleY = this.scaleY
+        clone.scaleZ = this.scaleZ
+
+        if (this is NodeWithMaterial && clone is NodeWithMaterial)
+        {
+            clone.material = this.material
+            clone.materialForSelection = this.materialForSelection
+            clone.twoSidedRule = this.twoSidedRule
+        }
+
+        for (child in this.children)
+        {
+            val childClone = child.cloneHierarchy()
+            childClone.parent = clone
+            clone.children.add(childClone)
+        }
+
+        return clone
+    }
+
+    fun applyMaterialHierarchically(material : Material, materialForSelection : Material = material)
+    {
+        val stack = Stack<Node>()
+        stack.push(this)
+
+        while (stack.isNotEmpty())
+        {
+            val node = stack.pop()
+
+            if (node is NodeWithMaterial)
+            {
+                node.material = material
+                node.materialForSelection = materialForSelection
+            }
+
+            for (child in node.children)
+            {
+                stack.push(child)
+            }
+        }
     }
 
     fun limitX(limit1 : Float, limit2 : Float)
@@ -496,6 +566,12 @@ open class Node(val id : String) : Iterable<Node>
     }
 
     override fun iterator() : Iterator<Node> = this.children.iterator()
+
+    internal fun addChild(node : Node)
+    {
+        node.parent = this
+        this.children.add(node)
+    }
 
     /**
      * Locate the node in the scene

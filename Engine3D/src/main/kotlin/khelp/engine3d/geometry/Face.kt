@@ -4,7 +4,7 @@ import khelp.engine3d.utils.BarycenterPoint3D
 import khelp.engine3d.utils.ThreadOpenGL
 import org.lwjgl.opengl.GL11
 
-class Face internal constructor(internal val barycenter : BarycenterPoint3D, internal val virtualBox : VirtualBox)
+class Face internal constructor(private val barycenter : BarycenterPoint3D, private val virtualBox : VirtualBox)
 {
     private val vertices = ArrayList<Vertex>()
 

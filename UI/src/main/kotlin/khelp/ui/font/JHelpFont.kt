@@ -13,6 +13,8 @@ import khelp.utilities.text.lastIndexOf
 import java.awt.Dimension
 import java.awt.Font
 import java.awt.FontMetrics
+import java.awt.Shape
+import java.awt.font.GlyphVector
 import java.io.InputStream
 import java.util.Collections
 import kotlin.math.ceil
@@ -377,6 +379,12 @@ class JHelpFont(val font : Font, val underline : Boolean = false)
 
         return round(y.toFloat() + lineMetrics.underlineOffset + lineMetrics.ascent).toInt()
     }
+
+    fun glyphVector(string : String) : GlyphVector =
+        this.font.createGlyphVector(FONT_RENDER_CONTEXT, string)
+
+    fun shape(string:String,x:Int=0,y:Int=0) : Shape =
+        this.glyphVector(string).getOutline(x.toFloat(), y + this.font.getLineMetrics(string, FONT_RENDER_CONTEXT).ascent)
 
     override fun equals(other : Any?) : Boolean
     {

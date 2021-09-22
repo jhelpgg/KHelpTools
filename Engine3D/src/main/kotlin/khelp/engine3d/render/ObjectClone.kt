@@ -9,6 +9,11 @@ class ObjectClone(id : String, internal val reference : Object3D) : NodeWithMate
     override val center : Point3D get() = this.reference.center
     override val virtualBox : VirtualBox get() = this.reference.virtualBox
 
+    init
+    {
+        this.twoSidedRule = this.reference.twoSidedRule
+    }
+
     @ThreadOpenGL
     override fun renderSpecific()
     {
