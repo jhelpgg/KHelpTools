@@ -25,8 +25,8 @@ fun main()
     window3D(800, 600, "Test") {
         scene.backgroundColor = YELLOW
         scene.root {
-            text("HelloWorld", "Hello world!") {
-                z = -5f
+            text("HelloWorld", "Hello world") {
+                z = - 5f
                 applyMaterialHierarchically(material)
                 delay(4096) { rotate(this) }
             }

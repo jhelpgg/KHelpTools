@@ -8,7 +8,7 @@ import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.sqrt
 
-class BorderIterator(shape:Shape) : Iterable<BorderElement>
+class BorderIterator(shape : Shape) : Iterable<BorderElement>
 {
     private val elements = ArrayList<BorderElement>()
     val windingRule : WindingRule
@@ -36,38 +36,38 @@ class BorderIterator(shape:Shape) : Iterable<BorderElement>
         var minY = 0f
         var maxY = 0f
 
-        while(!pathIterator.isDone)
+        while (! pathIterator.isDone)
         {
             val type = pathIterator.currentSegment(coordinates)
             val borderElement = BorderElement(borderElementType(type), coordinates[0], coordinates[1])
             this.elements.add(borderElement)
 
-            when(borderElement.borderElementType)
+            when (borderElement.borderElementType)
             {
-                BorderElementType.MOVE ->
+                BorderElementType.MOVE  ->
                 {
                     dx = borderElement.x
                     dy = borderElement.y
                     cx = borderElement.x
                     cy = borderElement.y
                 }
-                BorderElementType.LINE ->
+                BorderElementType.LINE  ->
                 {
                     fx = borderElement.x
                     fy = borderElement.y
-                    length += sqrt(square(cx-fx) + square(cy-fy))
-                    cx =fx
+                    length += sqrt(square(cx - fx) + square(cy - fy))
+                    cx = fx
                     cy = fy
                 }
                 BorderElementType.CLOSE ->
                 {
-                    length += sqrt(square(cx-dx) + square(cy-dy))
-                    cx =dx
+                    length += sqrt(square(cx - dx) + square(cy - dy))
+                    cx = dx
                     cy = dy
                 }
             }
 
-            if(first)
+            if (first)
             {
                 minX = borderElement.x
                 maxX = borderElement.x

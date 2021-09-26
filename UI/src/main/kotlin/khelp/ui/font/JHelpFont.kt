@@ -160,6 +160,7 @@ class JHelpFont(val font : Font, val underline : Boolean = false)
     /**Font measure metrics*/
     private lateinit var fontMetrics : FontMetrics
     val fontHeight : Int get() = this.fontMetrics.height
+    val ascent : Int get() = this.fontMetrics.ascent
 
     /**
      * Font size
@@ -383,8 +384,9 @@ class JHelpFont(val font : Font, val underline : Boolean = false)
     fun glyphVector(string : String) : GlyphVector =
         this.font.createGlyphVector(FONT_RENDER_CONTEXT, string)
 
-    fun shape(string:String,x:Int=0,y:Int=0) : Shape =
-        this.glyphVector(string).getOutline(x.toFloat(), y + this.font.getLineMetrics(string, FONT_RENDER_CONTEXT).ascent)
+    fun shape(string : String, x : Int = 0, y : Int = 0) : Shape =
+        this.glyphVector(string)
+            .getOutline(x.toFloat(), y + this.font.getLineMetrics(string, FONT_RENDER_CONTEXT).ascent)
 
     override fun equals(other : Any?) : Boolean
     {

@@ -6,9 +6,10 @@ import khelp.engine3d.render.Object3D
 import khelp.engine3d.render.ObjectClone
 import khelp.engine3d.render.TwoSidedRule
 import khelp.ui.font.JHelpFont
-import khelp.utilities.log.debug
 import khelp.utilities.math.square
 import java.util.concurrent.atomic.AtomicInteger
+import kotlin.math.max
+import kotlin.math.min
 import kotlin.math.sqrt
 
 class Font3D private constructor(val family : String)
@@ -19,7 +20,7 @@ class Font3D private constructor(val family : String)
         private val nextID = AtomicInteger(0)
 
         fun font3D(family : String) : Font3D =
-            Font3D.fonts.getOrPut(family) { Font3D((family)) }
+            Font3D.fonts.getOrPut(family) { Font3D(family) }
 
         private fun createName(family : String, letter : Char) : String =
             "Font3D_${family}_${letter.toInt()}_${Font3D.nextID.getAndIncrement()}"
@@ -34,6 +35,8 @@ class Font3D private constructor(val family : String)
         val characters = string.toCharArray()
         val widths = FloatArray(characters.size)
         var width = 0f
+        var minY = Float.POSITIVE_INFINITY
+        var maxY = Float.NEGATIVE_INFINITY
 
         for ((index, character) in characters.withIndex())
         {
@@ -41,6 +44,8 @@ class Font3D private constructor(val family : String)
             {
                 val letter = this.obtainLetter(character)
                 val w = letter.virtualBox.maxX - letter.virtualBox.minX + 0.25f
+                minY = min(minY, letter.virtualBox.minY)
+                maxY = max(maxY, letter.virtualBox.maxY)
                 widths[index] = w
                 width += w
                 node.addChild(letter)
@@ -54,12 +59,15 @@ class Font3D private constructor(val family : String)
 
         var indexCharacter = 0
         var x = - width / 2f
+        minY = (minY + maxY) / 2f - 0.5f
 
         for ((index, character) in characters.withIndex())
         {
             if (character > ' ')
             {
-                node.child(indexCharacter++).x = x
+                val child = node.child(indexCharacter ++)
+                child.x = x
+                child.y = minY + (child.y - child.virtualBox.minY)
             }
 
             x += widths[index]
@@ -87,8 +95,8 @@ class Font3D private constructor(val family : String)
         val object3D = Object3D(Font3D.createName(this.family, character))
         object3D.twoSidedRule = TwoSidedRule.FORCE_TWO_SIDE
 
-        val z = font.font.size2D / 8f
-        val borderIterator = BorderIterator(font.shape(character.toString()))
+        val z = this.font.font.size2D / 8f
+        val borderIterator = BorderIterator(this.font.shape(character.toString()))
 
         val tx = (borderIterator.maxX - borderIterator.minX) / 2f
         val ty = (borderIterator.maxY - borderIterator.minY) / 2f - 0.5f

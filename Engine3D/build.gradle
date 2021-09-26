@@ -12,6 +12,7 @@ dependencies {
     implementation project(":Resources")
     implementation project(":IO")
     implementation project(":UI")
+    implementation project(":Math")
 
     implementation files("libs/javazoom/jl020.jar")
 
