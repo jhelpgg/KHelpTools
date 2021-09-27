@@ -1,5 +1,7 @@
 package khelp.engine3d.render
 
+import khelp.engine3d.animation.AnimationManager
+import khelp.engine3d.animation.AnimationNodePosition
 import khelp.engine3d.comparator.NodeComparatorOrderZ
 import khelp.engine3d.utils.ThreadOpenGL
 import org.lwjgl.opengl.GL11
@@ -24,6 +26,19 @@ class Scene
     fun root(creator : Node.() -> Unit)
     {
         creator(this.root)
+    }
+
+    @AnimationDSL
+    fun animationNodePositionElement(animationName : String, nodeName : String,
+                                     creator : AnimationNodePosition.() -> Unit)
+    {
+        val node = this.findById<Node>(nodeName) ?: return
+        AnimationManager.animationNodePositionElement(animationName, node, creator)
+    }
+
+    fun playAnimation(animationName : String)
+    {
+        AnimationManager.play(animationName)
     }
 
     fun <N : Node> findById(id : String) : N? = this.root.findById(id)

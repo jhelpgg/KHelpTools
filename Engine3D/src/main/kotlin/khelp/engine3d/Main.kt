@@ -28,29 +28,30 @@ fun main()
             text("HelloWorld", "Hello world") {
                 z = - 5f
                 applyMaterialHierarchically(material)
-                delay(4096) { rotate(this) }
             }
         }
-    }
-}
 
-fun rotate(node : Node)
-{
-    for (time in 0 until 360)
-    {
-        node.angleX = time.toFloat()
-        Thread.sleep(40)
-    }
+        scene.animationNodePositionElement("rotateHelloWorld", "HelloWorld") {
+            add(4000L) {
+                angleX = 360f
+            }
+            add(4040L) {
+                angleX = 0f
+            }
+            add(5400L) {
+                angleY = 360f
+            }
+            add(5440L) {
+                angleY = 0f
+            }
+            add(6800L) {
+                angleZ = 360f
+            }
+            add(6840L) {
+                angleZ = 0f
+            }
+        }
 
-    for (time in 0 until 360)
-    {
-        node.angleY = time.toFloat()
-        Thread.sleep(40)
-    }
-
-    for (time in 0 until 360)
-    {
-        node.angleZ = time.toFloat()
-        Thread.sleep(40)
+        scene.playAnimation("rotateHelloWorld")
     }
 }

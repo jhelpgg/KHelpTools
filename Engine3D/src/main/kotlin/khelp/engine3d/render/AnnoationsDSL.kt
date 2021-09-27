@@ -9,3 +9,6 @@ annotation class NodeDSL
 @DslMarker
 annotation class MeshDSL
 
+@DslMarker
+annotation class AnimationDSL
+
