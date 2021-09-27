@@ -3,7 +3,6 @@ package khelp.engine3d.animation
 import khelp.engine3d.render.AnimationDSL
 import khelp.engine3d.render.Node
 import khelp.thread.parallel
-import khelp.utilities.log.verbose
 import java.util.concurrent.atomic.AtomicBoolean
 
 internal object AnimationManager
@@ -21,6 +20,30 @@ internal object AnimationManager
         synchronized(this.animations)
         {
             this.animations[name] = animationNodePosition
+        }
+    }
+
+    @AnimationDSL
+    fun animationGroup(name : String, creator:AnimationGroup.()->Unit)
+    {
+        val animationGroup = AnimationGroup()
+        creator(animationGroup)
+
+        synchronized(this.animations)
+        {
+            this.animations[name] = animationGroup
+        }
+    }
+
+    @AnimationDSL
+    fun animationList(name : String, creator:AnimationList.()->Unit)
+    {
+        val animationList = AnimationList()
+        creator(animationList)
+
+        synchronized(this.animations)
+        {
+            this.animations[name] = animationList
         }
     }
 

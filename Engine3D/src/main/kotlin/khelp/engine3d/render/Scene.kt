@@ -1,5 +1,7 @@
 package khelp.engine3d.render
 
+import khelp.engine3d.animation.AnimationGroup
+import khelp.engine3d.animation.AnimationList
 import khelp.engine3d.animation.AnimationManager
 import khelp.engine3d.animation.AnimationNodePosition
 import khelp.engine3d.comparator.NodeComparatorOrderZ
@@ -34,6 +36,18 @@ class Scene
     {
         val node = this.findById<Node>(nodeName) ?: return
         AnimationManager.animationNodePositionElement(animationName, node, creator)
+    }
+
+    @AnimationDSL
+    fun animationGroup(animationName : String, creator : AnimationGroup.() -> Unit)
+    {
+        AnimationManager.animationGroup(animationName, creator)
+    }
+
+    @AnimationDSL
+    fun animationList(name : String, creator : AnimationList.() -> Unit)
+    {
+        AnimationManager.animationList(name, creator)
     }
 
     fun playAnimation(animationName : String)

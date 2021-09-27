@@ -16,7 +16,7 @@ abstract class Animation
     {
     }
 
-    protected abstract fun animate(time : Long) : Boolean
+    internal abstract fun animate(time : Long) : Boolean
 
     internal fun start()
     {
