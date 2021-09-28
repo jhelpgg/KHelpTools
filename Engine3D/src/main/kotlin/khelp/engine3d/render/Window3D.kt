@@ -1,5 +1,6 @@
 package khelp.engine3d.render
 
+import khelp.engine3d.event.ActionManager
 import khelp.engine3d.utils.gluPerspective
 import khelp.io.ExternalSource
 import khelp.preferences.Preferences
@@ -9,13 +10,7 @@ import khelp.thread.parallel
 import khelp.utilities.log.warning
 import org.lwjgl.glfw.Callbacks
 import org.lwjgl.glfw.GLFW
-import org.lwjgl.glfw.GLFWCursorEnterCallbackI
-import org.lwjgl.glfw.GLFWCursorPosCallbackI
 import org.lwjgl.glfw.GLFWErrorCallback
-import org.lwjgl.glfw.GLFWJoystickCallbackI
-import org.lwjgl.glfw.GLFWKeyCallbackI
-import org.lwjgl.glfw.GLFWMouseButtonCallbackI
-import org.lwjgl.glfw.GLFWWindowCloseCallbackI
 import org.lwjgl.opengl.GL
 import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL12
@@ -82,23 +77,20 @@ class Window3D private constructor()
 
                 window3D.windowId = window
                 //Register UI events
-                GLFW.glfwSetKeyCallback(window, GLFWKeyCallbackI { windowId, key, scanCode, action, modifiers ->
+                GLFW.glfwSetKeyCallback(window) { windowId, key, scanCode, action, modifiers ->
                     window3D.keyEvent(windowId, key, scanCode, action, modifiers)
-                })
-                GLFW.glfwSetCursorEnterCallback(window, GLFWCursorEnterCallbackI { windowId, entered ->
+                }
+                GLFW.glfwSetCursorEnterCallback(window) { windowId, entered ->
                     window3D.mouseEntered(windowId, entered)
-                })
-                GLFW.glfwSetJoystickCallback(
-                    GLFWJoystickCallbackI { joystickID, event -> window3D.joystickConnected(joystickID, event) })
-                GLFW.glfwSetMouseButtonCallback(window,
-                                                GLFWMouseButtonCallbackI { windowId, button, action, modifiers ->
-                                                    window3D.mouseButton(windowId, button, action, modifiers)
-                                                })
-                GLFW.glfwSetCursorPosCallback(window, GLFWCursorPosCallbackI { windowId, cursorX, cursorY ->
+                }
+                GLFW.glfwSetJoystickCallback { joystickID, event -> window3D.joystickConnected(joystickID, event) }
+                GLFW.glfwSetMouseButtonCallback(window) { windowId, button, action, modifiers ->
+                    window3D.mouseButton(windowId, button, action, modifiers)
+                }
+                GLFW.glfwSetCursorPosCallback(window) { windowId, cursorX, cursorY ->
                     window3D.mousePosition(windowId, cursorX, cursorY)
-                })
-                GLFW.glfwSetWindowCloseCallback(window,
-                                                GLFWWindowCloseCallbackI { windowId -> window3D.closeWindow(windowId) })
+                }
+                GLFW.glfwSetWindowCloseCallback(window) { windowId -> window3D.closeWindow(windowId) }
 
                 // Get the thread stack and push a new frame
 
@@ -164,8 +156,9 @@ class Window3D private constructor()
     private val readyLocker = Locker()
     val preferences : Preferences = Preferences("game/preferences.pref")
     val resources : Resources = Resources(ExternalSource("game/resources"))
+    val actionManager = ActionManager(this.preferences)
 
-    fun <N:Node> findById(id:String): N? = this.scene.findById(id)
+    fun <N : Node> findById(id : String) : N? = this.scene.findById(id)
 
     fun close()
     {
@@ -189,7 +182,7 @@ class Window3D private constructor()
 
     private fun keyEvent(window : Long, key : Int, scanCode : Int, action : Int, modifiers : Int)
     {
-        // TODO
+        this.actionManager.keyEvent(key, action)
     }
 
     private fun mouseEntered(window : Long, entered : Boolean)
@@ -342,6 +335,7 @@ class Window3D private constructor()
 
             // Poll for window events. The key callback will only be invoked during this call.
             GLFW.glfwPollEvents()
+            this.actionManager.publishActions()
         }
 
         // Free the window callbacks and destroy the window

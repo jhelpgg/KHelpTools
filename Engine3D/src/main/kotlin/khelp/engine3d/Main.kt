@@ -1,15 +1,19 @@
 package khelp.engine3d
 
 import khelp.engine3d.animation.AccelerationInterpolation
+import khelp.engine3d.animation.AnimationManager
 import khelp.engine3d.animation.AnticipateOvershootInterpolation
 import khelp.engine3d.animation.BounceInterpolation
 import khelp.engine3d.animation.DecelerationInterpolation
 import khelp.engine3d.animation.HesitateInterpolation
 import khelp.engine3d.render.Material
+import khelp.engine3d.render.Node
 import khelp.engine3d.render.YELLOW
 import khelp.engine3d.render.window3DFull
+import khelp.thread.TaskContext
 import khelp.ui.game.GameImage
 import khelp.ui.utilities.SHADOW
+import khelp.utilities.log.debug
 import java.awt.Color
 
 fun main()
@@ -30,7 +34,7 @@ fun main()
     }
     val material = Material()
     window3DFull("Test") {
-        material.textureDiffuse = scene.animationTexture("textureAnime", gameImage2, gameImage, 20_000L)
+        material.textureDiffuse = AnimationManager.animationTexture("textureAnime", gameImage2, gameImage, 20_000L)
         scene.backgroundColor = YELLOW
 
         scene.root {
@@ -40,25 +44,28 @@ fun main()
             }
         }
 
-        scene.animationNodePositionElement("rotateHelloWorld", "HelloWorld") {
-            add(10_000L, AccelerationInterpolation(3.21)) {
-                angleX = 360f
-            }
-            add(20_000L, DecelerationInterpolation(3.21)) {
-                angleX = 0f
-            }
-            add(40_000L, BounceInterpolation) {
-                angleY = 360f
-            }
-            add(50_000L, AnticipateOvershootInterpolation(1.23456789)) {
-                angleY = 0f
-            }
-            add(60_000L, HesitateInterpolation) {
-                angleZ = 360f
+        findById<Node>("HelloWorld")?.let { node ->
+            AnimationManager.animationNodePositionElement("rotateHelloWorld", node) {
+                add(10_000L, AccelerationInterpolation(3.21)) {
+                    angleX = 360f
+                }
+                add(20_000L, DecelerationInterpolation(3.21)) {
+                    angleX = 0f
+                }
+                add(40_000L, BounceInterpolation) {
+                    angleY = 360f
+                }
+                add(50_000L, AnticipateOvershootInterpolation(1.23456789)) {
+                    angleY = 0f
+                }
+                add(60_000L, HesitateInterpolation) {
+                    angleZ = 360f
+                }
             }
         }
 
-        scene.playAnimation("rotateHelloWorld")
-        scene.playAnimation("textureAnime")
+        AnimationManager.play("rotateHelloWorld")
+        AnimationManager.play("textureAnime")
+        actionManager.actionObservable.observedBy(TaskContext.INDEPENDENT) { list -> debug(list) }
     }
 }

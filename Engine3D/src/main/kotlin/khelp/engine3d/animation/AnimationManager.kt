@@ -9,7 +9,7 @@ import khelp.ui.game.interpolation.GameImageInterpolationMelt
 import khelp.ui.game.interpolation.GameImageInterpolationType
 import java.util.concurrent.atomic.AtomicBoolean
 
-internal object AnimationManager
+object AnimationManager
 {
     private val animations = HashMap<String, Animation>()
     private val animationPlaying = AtomicBoolean(false)
