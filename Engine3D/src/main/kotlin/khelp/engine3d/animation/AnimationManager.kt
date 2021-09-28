@@ -2,7 +2,11 @@ package khelp.engine3d.animation
 
 import khelp.engine3d.render.AnimationDSL
 import khelp.engine3d.render.Node
+import khelp.engine3d.render.Texture
 import khelp.thread.parallel
+import khelp.ui.game.GameImage
+import khelp.ui.game.interpolation.GameImageInterpolationMelt
+import khelp.ui.game.interpolation.GameImageInterpolationType
 import java.util.concurrent.atomic.AtomicBoolean
 
 internal object AnimationManager
@@ -24,7 +28,7 @@ internal object AnimationManager
     }
 
     @AnimationDSL
-    fun animationGroup(name : String, creator:AnimationGroup.()->Unit)
+    fun animationGroup(name : String, creator : AnimationGroup.() -> Unit)
     {
         val animationGroup = AnimationGroup()
         creator(animationGroup)
@@ -36,7 +40,7 @@ internal object AnimationManager
     }
 
     @AnimationDSL
-    fun animationList(name : String, creator:AnimationList.()->Unit)
+    fun animationList(name : String, creator : AnimationList.() -> Unit)
     {
         val animationList = AnimationList()
         creator(animationList)
@@ -45,6 +49,19 @@ internal object AnimationManager
         {
             this.animations[name] = animationList
         }
+    }
+
+    fun animationTexture(name:String, start : GameImage, end : GameImage, transitionMillisecond : Long,
+                         gameImageInterpolationType : GameImageInterpolationType = GameImageInterpolationMelt) : Texture
+    {
+        val animationTexture = AnimationTexture(start, end, transitionMillisecond, gameImageInterpolationType)
+
+        synchronized(this.animations)
+        {
+            this.animations[name] = animationTexture
+        }
+
+        return animationTexture.texture
     }
 
     fun play(animationName : String)

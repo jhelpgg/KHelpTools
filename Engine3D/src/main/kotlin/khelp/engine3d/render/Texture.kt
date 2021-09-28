@@ -18,7 +18,9 @@ class Texture(val gameImage : GameImage)
 
     init
     {
-        this.gameImage.refreshFlow.then(TaskContext.INDEPENDENT) { this.needRefresh.set(true) }
+        this.gameImage.refreshFlow.then(TaskContext.INDEPENDENT) {
+            this.needRefresh.set(true)
+        }
     }
 
     @ThreadOpenGL

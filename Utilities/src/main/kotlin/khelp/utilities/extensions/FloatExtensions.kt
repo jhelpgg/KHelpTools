@@ -1,5 +1,7 @@
 package khelp.utilities.extensions
 
+import khelp.utilities.math.isNul
+import khelp.utilities.math.sign
 import kotlin.math.max
 import kotlin.math.min
 
@@ -12,3 +14,8 @@ import kotlin.math.min
  */
 fun Float.bounds(bound1: Float, bound2: Float) =
     max(min(bound1, bound2), min(max(bound1, bound2), this))
+
+fun Float.compare(number : Float) : Int =
+    sign(this - number)
+
+val Float.nul : Boolean get() = isNul(this)

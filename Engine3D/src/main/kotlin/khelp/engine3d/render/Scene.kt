@@ -6,6 +6,9 @@ import khelp.engine3d.animation.AnimationManager
 import khelp.engine3d.animation.AnimationNodePosition
 import khelp.engine3d.comparator.NodeComparatorOrderZ
 import khelp.engine3d.utils.ThreadOpenGL
+import khelp.ui.game.GameImage
+import khelp.ui.game.interpolation.GameImageInterpolationMelt
+import khelp.ui.game.interpolation.GameImageInterpolationType
 import org.lwjgl.opengl.GL11
 import java.util.Stack
 
@@ -49,6 +52,10 @@ class Scene
     {
         AnimationManager.animationList(name, creator)
     }
+
+    fun animationTexture(name : String, start : GameImage, end : GameImage, transitionMillisecond : Long,
+                         gameImageInterpolationType : GameImageInterpolationType = GameImageInterpolationMelt) : Texture =
+        AnimationManager.animationTexture(name, start, end, transitionMillisecond, gameImageInterpolationType)
 
     fun playAnimation(animationName : String)
     {

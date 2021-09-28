@@ -1,12 +1,15 @@
 package khelp.engine3d
 
+import khelp.engine3d.animation.AccelerationInterpolation
+import khelp.engine3d.animation.AnticipateOvershootInterpolation
+import khelp.engine3d.animation.BounceInterpolation
+import khelp.engine3d.animation.DecelerationInterpolation
+import khelp.engine3d.animation.HesitateInterpolation
 import khelp.engine3d.render.Material
-import khelp.engine3d.render.Node
-import khelp.engine3d.render.Texture
 import khelp.engine3d.render.YELLOW
-import khelp.engine3d.render.window3D
-import khelp.thread.delay
+import khelp.engine3d.render.window3DFull
 import khelp.ui.game.GameImage
+import khelp.ui.utilities.SHADOW
 import java.awt.Color
 
 fun main()
@@ -19,39 +22,43 @@ fun main()
         percentGraphics.color = Color.ORANGE
         percentGraphics.fillRectangle(0.4, 0.6, 0.2, 0.4)
     }
-    val texture = Texture(gameImage)
+    val gameImage2 = GameImage(256, 256)
+    gameImage2.clear(SHADOW)
+    gameImage2.drawPercent { percentGraphics ->
+        percentGraphics.color = Color.PINK
+        percentGraphics.fillOval(0.1, 0.2, 0.8, 0.6)
+    }
     val material = Material()
-    material.textureDiffuse = texture
-    window3D(800, 600, "Test") {
+    window3DFull("Test") {
+        material.textureDiffuse = scene.animationTexture("textureAnime", gameImage2, gameImage, 20_000L)
         scene.backgroundColor = YELLOW
+
         scene.root {
             text("HelloWorld", "Hello world") {
-                z = - 5f
+                z = - 2f
                 applyMaterialHierarchically(material)
             }
         }
 
         scene.animationNodePositionElement("rotateHelloWorld", "HelloWorld") {
-            add(4000L) {
+            add(10_000L, AccelerationInterpolation(3.21)) {
                 angleX = 360f
             }
-            add(4040L) {
+            add(20_000L, DecelerationInterpolation(3.21)) {
                 angleX = 0f
             }
-            add(5400L) {
+            add(40_000L, BounceInterpolation) {
                 angleY = 360f
             }
-            add(5440L) {
+            add(50_000L, AnticipateOvershootInterpolation(1.23456789)) {
                 angleY = 0f
             }
-            add(6800L) {
+            add(60_000L, HesitateInterpolation) {
                 angleZ = 360f
-            }
-            add(6840L) {
-                angleZ = 0f
             }
         }
 
         scene.playAnimation("rotateHelloWorld")
+        scene.playAnimation("textureAnime")
     }
 }

@@ -15,6 +15,7 @@ import java.awt.image.BufferedImage
 import java.io.InputStream
 import javax.imageio.ImageIO
 import javax.swing.Icon
+import kotlin.math.max
 
 
 class GameImage(val width : Int, val height : Int) : Icon
@@ -175,6 +176,22 @@ class GameImage(val width : Int, val height : Int) : Icon
 
         this.image.setRGB(x, y, width, height, pixels, 0, width)
         this.refresh()
+    }
+
+    fun resize(targetWidth : Int, targetHeight : Int) : GameImage
+    {
+        val width = max(1, targetWidth)
+        val height = max(1, targetHeight)
+
+        if (this.width == width && this.height == height)
+        {
+            return this
+        }
+
+        val resized = GameImage(width, height)
+        resized.clear(TRANSPARENT)
+        resized.drawPercent { percentGraphics -> percentGraphics.drawImageFit(0.0, 0.0, this.image, 1.0, 1.0) }
+        return resized
     }
 
     private fun refresh()
