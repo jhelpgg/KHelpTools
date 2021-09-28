@@ -5,6 +5,7 @@ import khelp.engine3d.geometry.Point3D
 import khelp.engine3d.geometry.Rotf
 import khelp.engine3d.geometry.Vec3f
 import khelp.engine3d.geometry.VirtualBox
+import khelp.engine3d.render.complex.Dice
 import khelp.engine3d.render.font.Font3D
 import khelp.engine3d.render.prebuilt.Box
 import khelp.engine3d.render.prebuilt.BoxUV
@@ -256,6 +257,15 @@ open class Node(val id : String) : Iterable<Node>
         val child = Font3D.font3D(fontFamily)
             .computeText(id, text)
         textCreator(child)
+        child.parent = this
+        this.children.add(child)
+    }
+
+    @NodeDSL
+    fun dice(id : String, diceCreator : Dice.() -> Unit)
+    {
+        val child = Dice(id)
+        diceCreator(child)
         child.parent = this
         this.children.add(child)
     }
@@ -575,7 +585,7 @@ open class Node(val id : String) : Iterable<Node>
 
     internal val numberOfChild : Int = this.children.size
 
-    internal fun child(index:Int) : Node = this.children[index]
+    internal fun child(index : Int) : Node = this.children[index]
 
     /**
      * Locate the node in the scene
@@ -619,4 +629,7 @@ open class Node(val id : String) : Iterable<Node>
     internal open fun renderSpecific()
     {
     }
+
+    override fun toString() : String =
+        "${this.javaClass.name} : ${this.id} : ${this.hashCode()}"
 }

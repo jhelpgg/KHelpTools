@@ -3,6 +3,7 @@ package khelp.engine3d.animation
 import khelp.engine3d.render.AnimationDSL
 import khelp.engine3d.render.Node
 import khelp.engine3d.render.Texture
+import khelp.thread.TaskContext
 import khelp.thread.parallel
 import khelp.ui.game.GameImage
 import khelp.ui.game.interpolation.GameImageInterpolationMelt
@@ -51,7 +52,16 @@ object AnimationManager
         }
     }
 
-    fun animationTexture(name:String, start : GameImage, end : GameImage, transitionMillisecond : Long,
+    @AnimationDSL
+    fun animationTask(name : String, taskContext : TaskContext = TaskContext.INDEPENDENT, task : () -> Unit)
+    {
+        synchronized(this.animations)
+        {
+            this.animations[name] = AnimationTask(taskContext, task)
+        }
+    }
+
+    fun animationTexture(name : String, start : GameImage, end : GameImage, transitionMillisecond : Long,
                          gameImageInterpolationType : GameImageInterpolationType = GameImageInterpolationMelt) : Texture
     {
         val animationTexture = AnimationTexture(start, end, transitionMillisecond, gameImageInterpolationType)
@@ -62,6 +72,14 @@ object AnimationManager
         }
 
         return animationTexture.texture
+    }
+
+    fun addAnimation(name : String, animation : Animation)
+    {
+        synchronized(this.animations)
+        {
+            this.animations[name] = animation
+        }
     }
 
     fun play(animationName : String)

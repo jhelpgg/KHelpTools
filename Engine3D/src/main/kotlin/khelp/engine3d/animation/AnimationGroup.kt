@@ -3,6 +3,7 @@ package khelp.engine3d.animation
 import khelp.engine3d.render.AnimationDSL
 import khelp.engine3d.render.Node
 import khelp.engine3d.render.Texture
+import khelp.thread.TaskContext
 import khelp.ui.game.GameImage
 import khelp.ui.game.interpolation.GameImageInterpolationMelt
 import khelp.ui.game.interpolation.GameImageInterpolationType
@@ -32,6 +33,15 @@ class AnimationGroup : Animation()
         synchronized(this.animations)
         {
             this.animations.add(animationList)
+        }
+    }
+
+    @AnimationDSL
+    fun animationTask(taskContext : TaskContext = TaskContext.INDEPENDENT, task : () -> Unit)
+    {
+        synchronized(this.animations)
+        {
+            this.animations.add(AnimationTask(taskContext, task))
         }
     }
 
