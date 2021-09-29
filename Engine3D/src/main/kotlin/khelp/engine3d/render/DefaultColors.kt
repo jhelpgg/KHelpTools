@@ -1,5 +1,7 @@
 package khelp.engine3d.render
 
+import java.awt.Color
+
 /**
  * Default black color
  */
@@ -71,3 +73,15 @@ val WHITE = Color4f(1f)
  * Default yellow color
  */
 val YELLOW = Color4f(1f, 1f, 0f)
+
+val ORANGE = Color4f(Color.ORANGE)
+
+/**
+ * Default arm color
+ */
+val COLOR_ARM = Color4f(0xFF828105.toInt())
+
+/**
+ * Default leg color
+ */
+val COLOR_LEG = Color4f(0xFF020260.toInt())

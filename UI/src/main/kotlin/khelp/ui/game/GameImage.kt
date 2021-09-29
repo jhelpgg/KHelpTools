@@ -3,9 +3,11 @@ package khelp.ui.game
 import khelp.resources.Resources
 import khelp.thread.flow.Flow
 import khelp.thread.flow.FlowData
+import khelp.ui.extensions.y
 import khelp.ui.utilities.FONT_RENDER_CONTEXT
 import khelp.ui.utilities.PercentGraphics
 import khelp.ui.utilities.TRANSPARENT
+import khelp.utilities.extensions.bounds
 import java.awt.Color
 import java.awt.Component
 import java.awt.Graphics
@@ -192,6 +194,59 @@ class GameImage(val width : Int, val height : Int) : Icon
         resized.clear(TRANSPARENT)
         resized.drawPercent { percentGraphics -> percentGraphics.drawImageFit(0.0, 0.0, this.image, 1.0, 1.0) }
         return resized
+    }
+
+    fun copy() : GameImage
+    {
+        val copy = GameImage(this.width, this.height)
+        copy.putPixels(0, 0, this.width, this.height, this.grabPixels())
+        return copy
+    }
+
+    fun gray()
+    {
+        this.manipulatePixels { pixels ->
+            for (index in pixels.indices)
+            {
+                val color = pixels[index]
+                val y = color.y.toInt()
+                    .bounds(0, 255)
+                pixels[index] = (color and 0xFF000000.toInt()) or (y shl 16) or (y shl 8) or y
+            }
+        }
+    }
+
+    fun tint(color : Color)
+    {
+        val red = color.red
+        val green = color.green
+        val blue = color.blue
+
+        this.manipulatePixels { pixels ->
+            for (index in pixels.indices)
+            {
+                val col = pixels[index]
+                val y = col.y.toInt()
+                    .bounds(0, 255)
+                pixels[index] =
+                    (col and 0xFF000000.toInt()) or (((red * y) shr 8) shl 16) or (((green * y) shr 8) shl 8) or ((blue * y) shr 8)
+            }
+        }
+    }
+
+    fun toBufferedImage() : BufferedImage
+    {
+        val image = BufferedImage(this.width, this.height, BufferedImage.TYPE_INT_ARGB)
+        val pixels = this.grabPixels()
+        image.setRGB(0, 0, this.width, this.height, pixels, 0, this.width)
+        return image
+    }
+
+    private fun manipulatePixels(pixelsModifier : (IntArray) -> Unit)
+    {
+        val pixels = this.grabPixels()
+        pixelsModifier(pixels)
+        this.putPixels(0, 0, this.width, this.height, pixels)
     }
 
     private fun refresh()

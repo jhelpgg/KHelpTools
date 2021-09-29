@@ -2,6 +2,7 @@ package khelp.utilities.extensions
 
 import khelp.utilities.math.isNul
 import khelp.utilities.math.sign
+import kotlin.math.floor
 import kotlin.math.max
 import kotlin.math.min
 
@@ -19,3 +20,33 @@ fun Double.compare(number : Double) : Int =
     sign(this - number)
 
 val Double.nul : Boolean get() = isNul(this)
+
+/**
+ * Modulate a real inside an interval
+ *
+ * @param minimum  Minimum of interval
+ * @param maximum  Maximum of interval
+ * @return Modulated value
+ */
+@Throws(IllegalArgumentException::class)
+fun Double.modulo(minimum : Double, maximum : Double) : Double
+{
+    var real = this
+    val min = min(minimum, maximum)
+    val max = max(min, maximum)
+
+    if (real in min .. max)
+    {
+        return real
+    }
+
+    val space = max - min
+
+    if (isNul(space))
+    {
+        throw IllegalArgumentException("Can't take modulo in empty interval")
+    }
+
+    real = (real - min) / space
+    return (space * (real - floor(real))) + min
+}

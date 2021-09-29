@@ -6,6 +6,8 @@ import khelp.engine3d.geometry.Rotf
 import khelp.engine3d.geometry.Vec3f
 import khelp.engine3d.geometry.VirtualBox
 import khelp.engine3d.render.complex.Dice
+import khelp.engine3d.render.complex.Sword
+import khelp.engine3d.render.complex.robot.Robot
 import khelp.engine3d.render.font.Font3D
 import khelp.engine3d.render.prebuilt.Box
 import khelp.engine3d.render.prebuilt.BoxUV
@@ -176,53 +178,58 @@ open class Node(val id : String) : Iterable<Node>
     internal var countInRender = false
 
     @NodeDSL
-    fun node(id : String, nodeCreator : Node.() -> Unit)
+    fun node(id : String, nodeCreator : Node.() -> Unit) : Node
     {
         val child = Node(id)
         child.parent = this
         nodeCreator(child)
         this.children.add(child)
+        return child
     }
 
     @NodeDSL
-    fun object3D(id : String, objectCreator : Object3D.() -> Unit)
+    fun object3D(id : String, objectCreator : Object3D.() -> Unit) : Object3D
     {
         val child = Object3D(id)
         child.parent = this
         objectCreator(child)
         this.children.add(child)
+        return child
     }
 
     @NodeDSL
-    fun plane(id : String, faceUV : FaceUV = FaceUV(), planeCreator : Plane.() -> Unit)
+    fun plane(id : String, faceUV : FaceUV = FaceUV(), planeCreator : Plane.() -> Unit) : Plane
     {
         val child = Plane(id, faceUV)
         child.parent = this
         planeCreator(child)
         this.children.add(child)
+        return child
     }
 
     @NodeDSL
-    fun box(id : String, boxUV : BoxUV = BoxUV(), boxCreator : Box.() -> Unit)
+    fun box(id : String, boxUV : BoxUV = BoxUV(), boxCreator : Box.() -> Unit) : Box
     {
         val child = Box(id, boxUV)
         child.parent = this
         boxCreator(child)
         this.children.add(child)
+        return child
     }
 
     @NodeDSL
     fun sphere(id : String, slice : Int = 33, stack : Int = 33, multiplierU : Float = 1f, multiplierV : Float = 1f,
-               sphereCreator : Sphere.() -> Unit)
+               sphereCreator : Sphere.() -> Unit) : Sphere
     {
         val child = Sphere(id, slice, stack, multiplierU, multiplierV)
         child.parent = this
         sphereCreator(child)
         this.children.add(child)
+        return child
     }
 
     @NodeDSL
-    fun clone(id : String, nodeClonedId : String, objectCloneCreator : ObjectClone.() -> Unit)
+    fun clone(id : String, nodeClonedId : String, objectCloneCreator : ObjectClone.() -> Unit) : ObjectClone
     {
         val node = this.root.findById<Node>(nodeClonedId)
                    ?: throw NoSuchElementException("$nodeClonedId not yet defined")
@@ -240,34 +247,58 @@ open class Node(val id : String) : Iterable<Node>
         child.parent = this
         objectCloneCreator(child)
         this.children.add(child)
+        return child
     }
 
     @NodeDSL
-    fun revolution(id : String, revolutionCreator : Revolution.() -> Unit)
+    fun revolution(id : String, revolutionCreator : Revolution.() -> Unit) : Revolution
     {
         val child = Revolution(id)
         revolutionCreator(child)
         child.parent = this
         this.children.add(child)
+        return child
     }
 
     @NodeDSL
-    fun text(id : String, text : String, fontFamily : String = "Arial", textCreator : Node.() -> Unit)
+    fun text(id : String, text : String, fontFamily : String = "Arial", textCreator : Node.() -> Unit) : Node
     {
         val child = Font3D.font3D(fontFamily)
             .computeText(id, text)
         textCreator(child)
         child.parent = this
         this.children.add(child)
+        return child
     }
 
     @NodeDSL
-    fun dice(id : String, diceCreator : Dice.() -> Unit)
+    fun dice(id : String, diceCreator : Dice.() -> Unit) : Dice
     {
         val child = Dice(id)
         diceCreator(child)
         child.parent = this
         this.children.add(child)
+        return child
+    }
+
+    @NodeDSL
+    fun sword(id : String, swordCreator : Sword.() -> Unit) : Sword
+    {
+        val child = Sword(id)
+        swordCreator(child)
+        child.parent = this
+        this.children.add(child)
+        return child
+    }
+
+    @NodeDSL
+    fun robot(id : String, robotCreator : Robot.() -> Unit) : Robot
+    {
+        val child = Robot(id)
+        robotCreator(child)
+        child.parent = this
+        this.children.add(child)
+        return child
     }
 
     fun <N : Node> findById(id : String) : N?
@@ -579,8 +610,28 @@ open class Node(val id : String) : Iterable<Node>
 
     internal fun addChild(node : Node)
     {
+        node.parent?.removeChild(node)
         node.parent = this
         this.children.add(node)
+    }
+
+    internal fun removeChild(node : Node)
+    {
+        if (this.children.remove(node))
+        {
+            node.parent = null
+            this.root.addChild(node)
+        }
+    }
+
+    internal fun removeAllChildren()
+    {
+        for (child in this.children)
+        {
+            child.parent = null
+        }
+
+        this.children.clear()
     }
 
     internal val numberOfChild : Int = this.children.size

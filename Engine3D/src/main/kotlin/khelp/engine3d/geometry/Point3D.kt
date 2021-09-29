@@ -18,15 +18,35 @@ data class Point3D(val x : Float = 0f, val y : Float = 0f, val z : Float = 0f)
     fun add(x : Float, y : Float, z : Float) : Point3D =
         Point3D(this.x + x, this.y + y, this.z + z)
 
+    operator fun times(factor : Float) : Point3D =
+        Point3D(factor * this.x, factor * this.y, factor * this.z)
+
+    override fun equals(other : Any?) : Boolean
+    {
+        if (this === other)
+        {
+            return true
+        }
+
+        if (null == other || other !is Point3D)
+        {
+            return false
+        }
+
+        return khelp.utilities.math.equals(this.x, other.x)
+               && khelp.utilities.math.equals(this.y, other.y)
+               && khelp.utilities.math.equals(this.z, other.z)
+    }
+
     @ThreadOpenGL
     internal fun glVertex3f()
     {
-        GL11.glVertex3f(this.x,this.y,this.z)
+        GL11.glVertex3f(this.x, this.y, this.z)
     }
 
     @ThreadOpenGL
     internal fun glNormal3f()
     {
-        GL11.glNormal3f(this.x,this.y,this.z)
+        GL11.glNormal3f(this.x, this.y, this.z)
     }
 }

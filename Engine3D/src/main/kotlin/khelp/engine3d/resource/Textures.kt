@@ -6,7 +6,7 @@ enum class Textures(private val path : String)
 {
     BODY_COSTUME("textures/BodyCostume.png"),
     DICE("textures/Dice.png"),
-    HAIR("textures/hair1.png")
+    HAIR("textures/hair.png")
     ;
 
     val image : GameImage get() = Resources3D.loadImage(this.path)

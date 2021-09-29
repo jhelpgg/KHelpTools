@@ -96,5 +96,17 @@ class VirtualBox
         return zMin < zMax
     }
 
-    override fun toString() : String = "Box (${this.minX}, ${this.minY}, ${this.minZ}) x (${this.maxX}, ${this.maxY}, ${this.maxZ})"
+    override fun toString() : String =
+        "Box (${this.minX}, ${this.minY}, ${this.minZ}) x (${this.maxX}, ${this.maxY}, ${this.maxZ})"
+
+    fun reset()
+    {
+        this.empty = true
+        this.minX = Float.POSITIVE_INFINITY
+        this.maxX = Float.NEGATIVE_INFINITY
+        this.minY = Float.POSITIVE_INFINITY
+        this.maxY = Float.NEGATIVE_INFINITY
+        this.minZ = Float.POSITIVE_INFINITY
+        this.maxZ = Float.NEGATIVE_INFINITY
+    }
 }

@@ -1,5 +1,6 @@
 package khelp.engine3d.render.prebuilt
 
+import khelp.engine3d.geometry.Point3D
 import khelp.engine3d.render.Object3D
 import khelp.engine3d.render.TwoSidedRule
 import kotlin.math.cos
@@ -9,11 +10,30 @@ import kotlin.math.sin
 class Sphere(id : String, slice : Int = 33, stack : Int = 33, multiplierU : Float = 1f,
              multiplierV : Float = 1f) : Object3D(id)
 {
+    val northPole : Point3D
+    val southPole : Point3D
+    val lastPoint : Point3D
+
     init
     {
         this.twoSidedRule = TwoSidedRule.FORCE_ONE_SIDE
 
+        var northPoleX = 0f
+        var northPoleY = 0f
+        var northPoleZ = 0f
+
+        var southPoleX = 0f
+        var southPoleY = 0f
+        var southPoleZ = 0f
+
+        var lastX = 0f
+        var lastY = 0f
+        var lastZ = 0f
+
         mesh {
+            var firstNorth = true
+            var firstSouth = true
+
             val slice = max(2, slice)
             val stack = max(2, stack)
 
@@ -110,6 +130,14 @@ class Sphere(id : String, slice : Int = 33, stack : Int = 33, multiplierU : Floa
                     nyFF = sinStackAngleFuture.toFloat()
                     nzFF = (cosSliceAngleFuture * cosStackAngleFuture).toFloat()
 
+                    if (firstNorth)
+                    {
+                        firstNorth = false
+                        northPoleX = nxAA
+                        northPoleY = nyAA
+                        northPoleZ = nzAA
+                    }
+
                     face {
                         add(nxAA, nyAA, nzAA,
                             uA, vA,
@@ -128,11 +156,27 @@ class Sphere(id : String, slice : Int = 33, stack : Int = 33, multiplierU : Floa
                             - nxFA, - nyFA, - nzFA)
                     }
 
+                    lastX = nxFA
+                    lastY = nyFA
+                    lastZ = nzFA
+
                     sta ++
+                }
+
+                if (firstSouth)
+                {
+                    firstSouth = false
+                    southPoleX = lastX
+                    southPoleY = lastY
+                    southPoleZ = lastZ
                 }
 
                 sli ++
             }
         }
+
+        this.northPole = Point3D(northPoleX, northPoleY, northPoleZ)
+        this.southPole = Point3D(southPoleX, southPoleY, southPoleZ)
+        this.lastPoint = Point3D(lastX, lastY, lastZ)
     }
 }

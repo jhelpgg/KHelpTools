@@ -12,10 +12,12 @@ class BarycenterPoint3D
      * Barycenter for X
      */
     private val barycenterX = Barycenter()
+
     /**
      * Barycenter for Y
      */
     private val barycenterY = Barycenter()
+
     /**
      * Barycenter for Z
      */
@@ -28,7 +30,7 @@ class BarycenterPoint3D
      * @param y Y
      * @param z Z
      */
-    fun add(x: Double, y: Double, z: Double)
+    fun add(x : Double, y : Double, z : Double)
     {
         this.barycenterX.add(x)
         this.barycenterY.add(y)
@@ -40,7 +42,7 @@ class BarycenterPoint3D
      *
      * @param point Point to add
      */
-    fun add(point: Point3D) = this.add(point.x.toDouble(), point.y.toDouble(), point.z.toDouble())
+    fun add(point : Point3D) = this.add(point.x.toDouble(), point.y.toDouble(), point.z.toDouble())
 
     /**
      * Indicates if barycenter is empty.
@@ -57,4 +59,11 @@ class BarycenterPoint3D
     fun barycenter() = Point3D(this.barycenterX.barycenter.toFloat(),
                                this.barycenterY.barycenter.toFloat(),
                                this.barycenterZ.barycenter.toFloat())
+
+    fun reset()
+    {
+        this.barycenterX.reset()
+        this.barycenterY.reset()
+        this.barycenterZ.reset()
+    }
 }

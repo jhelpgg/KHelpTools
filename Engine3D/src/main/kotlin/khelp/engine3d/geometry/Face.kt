@@ -2,6 +2,7 @@ package khelp.engine3d.geometry
 
 import khelp.engine3d.utils.BarycenterPoint3D
 import khelp.engine3d.utils.ThreadOpenGL
+import khelp.utilities.extensions.transform
 import org.lwjgl.opengl.GL11
 
 class Face internal constructor(private val barycenter : BarycenterPoint3D, private val virtualBox : VirtualBox)
@@ -44,5 +45,64 @@ class Face internal constructor(private val barycenter : BarycenterPoint3D, priv
         }
 
         GL11.glEnd()
+    }
+
+    internal fun movePoint(point : Point3D, vector : Point3D, solidity : Float, solidityFactor : Float, near : Int)
+    {
+        val indexStart = this.vertices.indexOfFirst { vertex -> vertex.position == point }
+
+        if (indexStart < 0)
+        {
+            return
+        }
+
+        var vertex = this.vertices[indexStart]
+        this.vertices[indexStart] = Vertex(vertex.position + vector, vertex.uv, vertex.normal)
+        var newVector = vector
+        var newSolidity = solidity
+        var indexForward = indexStart
+        var indexBackward = indexStart
+        var notChanged : Boolean
+        val size = this.vertices.size
+
+        for (time in 0 until near)
+        {
+            notChanged = true
+            newVector *= newSolidity
+            newSolidity *= solidityFactor
+
+            indexForward = (indexForward + 1) % size
+
+            if (indexForward != indexStart)
+            {
+                notChanged = false
+                vertex = this.vertices[indexForward]
+                this.vertices[indexForward] = Vertex(vertex.position + newVector, vertex.uv, vertex.normal)
+            }
+
+            indexBackward = (indexBackward + size - 1) % size
+
+
+            if (indexBackward != indexStart)
+            {
+                notChanged = false
+                vertex = this.vertices[indexBackward]
+                this.vertices[indexBackward] = Vertex(vertex.position + newVector, vertex.uv, vertex.normal)
+            }
+
+            if (notChanged)
+            {
+                break
+            }
+        }
+    }
+
+    internal fun refillBarycenterAndVirtualBox()
+    {
+        for (point in this.vertices.transform { vertex -> vertex.position })
+        {
+            this.barycenter.add(point)
+            this.virtualBox.add(point)
+        }
     }
 }
