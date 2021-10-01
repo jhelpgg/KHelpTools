@@ -26,7 +26,24 @@ class Observable<T : Any> internal constructor(private val observableData : Obse
     {
         val value = this.value()
         taskContext.parallel(TaskContext.INDEPENDENT) { action(value) }
-        return this.addObserver(taskContext) { value -> action(value) }
+        return this.addObserver(taskContext) { actualValue -> action(actualValue) }
+    }
+
+    fun observedBy(taskContext : TaskContext, condition : (T) -> Boolean, action : (T) -> Unit) : Observer<T>
+    {
+        val value = this.value()
+        taskContext.parallel(TaskContext.INDEPENDENT) {
+            if (condition(value))
+            {
+                action(value)
+            }
+        }
+        return this.addObserver(taskContext) { actualValue ->
+            if (condition(actualValue))
+            {
+                action(actualValue)
+            }
+        }
     }
 
     internal fun valueChanged(value : T)

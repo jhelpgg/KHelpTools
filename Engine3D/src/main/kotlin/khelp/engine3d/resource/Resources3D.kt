@@ -6,7 +6,7 @@ import khelp.ui.game.GameImage
 
 object Resources3D
 {
-    private val resources = Resources(ClassSource(Resources3D::class.java))
+    val resources = Resources(ClassSource(Resources3D::class.java))
 
     fun loadImage(path:String) : GameImage =
         GameImage.Companion.load(path, this.resources)

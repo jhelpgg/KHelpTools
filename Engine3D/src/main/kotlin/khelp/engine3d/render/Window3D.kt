@@ -1,6 +1,7 @@
 package khelp.engine3d.render
 
 import khelp.engine3d.event.ActionManager
+import khelp.engine3d.sound3d.SoundManager
 import khelp.engine3d.utils.gluPerspective
 import khelp.io.ExternalSource
 import khelp.preferences.Preferences
@@ -157,6 +158,12 @@ class Window3D private constructor()
     val preferences : Preferences = Preferences("game/preferences.pref")
     val resources : Resources = Resources(ExternalSource("game/resources"))
     val actionManager = ActionManager(this.preferences)
+
+    /**
+     * Sound manager
+     */
+    val soundManager : SoundManager by lazy { SoundManager() }
+
 
     fun <N : Node> findById(id : String) : N? = this.scene.findById(id)
 
@@ -317,6 +324,7 @@ class Window3D private constructor()
 
     private fun render3D()
     {
+        this.soundManager.init()
         this.initialize3D()
 
         this.readyLocker.unlock()
@@ -338,6 +346,7 @@ class Window3D private constructor()
             this.actionManager.publishActions()
         }
 
+        this.soundManager.destroy()
         // Free the window callbacks and destroy the window
         Callbacks.glfwFreeCallbacks(this.windowId)
         GLFW.glfwDestroyWindow(this.windowId)

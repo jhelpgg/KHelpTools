@@ -59,6 +59,14 @@ class AnimationList : Animation()
         return animationTexture.texture
     }
 
+    fun addAnimation(animation : Animation)
+    {
+        synchronized(this.animations)
+        {
+            this.animations.add(animation)
+        }
+    }
+
     override fun started()
     {
         synchronized(this.animations)

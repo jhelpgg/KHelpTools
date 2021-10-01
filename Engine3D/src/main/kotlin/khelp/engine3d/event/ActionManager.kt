@@ -8,8 +8,8 @@ import khelp.thread.future.FutureResult
 import khelp.thread.future.Promise
 import khelp.thread.observable.Observable
 import khelp.thread.observable.ObservableData
+import khelp.utilities.collections.ImmutableList
 import org.lwjgl.glfw.GLFW
-import java.util.Collections
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.math.min
 
@@ -313,7 +313,7 @@ class ActionManager internal constructor(private val preferences : Preferences)
             }
         }
 
-        this.actionObservableData.value(Collections.unmodifiableList(this.currentActionCodes))
+        this.actionObservableData.value(ImmutableList(this.currentActionCodes))
 
         //Publish active actions
         if (this.currentActionCodes.isNotEmpty())

@@ -25,7 +25,7 @@ class AnimationGroup : Animation()
     }
 
     @AnimationDSL
-    fun animationList(creator:AnimationList.()->Unit)
+    fun animationList(creator : AnimationList.() -> Unit)
     {
         val animationList = AnimationList()
         creator(animationList)
@@ -56,6 +56,14 @@ class AnimationGroup : Animation()
         }
 
         return animationTexture.texture
+    }
+
+    fun addAnimation(animation : Animation)
+    {
+        synchronized(this.animations)
+        {
+            this.animations.add(animation)
+        }
     }
 
     override fun started()

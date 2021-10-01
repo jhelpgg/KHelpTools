@@ -1,6 +1,8 @@
 package khelp.engine3d.render
 
+import khelp.engine3d.animation.NodePosition
 import khelp.engine3d.extensions.degreeToRadian
+import khelp.engine3d.extensions.position
 import khelp.engine3d.geometry.Point3D
 import khelp.engine3d.geometry.Rotf
 import khelp.engine3d.geometry.Vec3f
@@ -16,6 +18,8 @@ import khelp.engine3d.render.prebuilt.Plane
 import khelp.engine3d.render.prebuilt.Revolution
 import khelp.engine3d.render.prebuilt.Sphere
 import khelp.engine3d.utils.ThreadOpenGL
+import khelp.thread.observable.Observable
+import khelp.thread.observable.ObservableData
 import khelp.utilities.collections.queue.Queue
 import khelp.utilities.extensions.bounds
 import org.lwjgl.opengl.GL11
@@ -55,50 +59,102 @@ open class Node(val id : String) : Iterable<Node>
     var x : Float = 0f
         set(value)
         {
+            val oldValue = field
             field = value.bounds(this.limitMinX, this.limitMaxX)
+
+            if (! khelp.utilities.math.equals(oldValue, field))
+            {
+                this.nodePositionObservableData.value(this.position)
+            }
         }
     var y : Float = 0f
         set(value)
         {
+            val oldValue = field
             field = value.bounds(this.limitMinY, this.limitMaxY)
+
+            if (! khelp.utilities.math.equals(oldValue, field))
+            {
+                this.nodePositionObservableData.value(this.position)
+            }
         }
     var z : Float = 0f
         set(value)
         {
+            val oldValue = field
             field = value.bounds(this.limitMinZ, this.limitMaxZ)
+
+            if (! khelp.utilities.math.equals(oldValue, field))
+            {
+                this.nodePositionObservableData.value(this.position)
+            }
         }
 
     var angleX : Float = 0f
         set(value)
         {
+            val oldValue = field
             field = value.bounds(this.limitMinAngleX, this.limitMaxAngleX)
+
+            if (! khelp.utilities.math.equals(oldValue, field))
+            {
+                this.nodePositionObservableData.value(this.position)
+            }
         }
     var angleY : Float = 0f
         set(value)
         {
+            val oldValue = field
             field = value.bounds(this.limitMinAngleY, this.limitMaxAngleY)
+
+            if (! khelp.utilities.math.equals(oldValue, field))
+            {
+                this.nodePositionObservableData.value(this.position)
+            }
         }
     var angleZ : Float = 0f
         set(value)
         {
+            val oldValue = field
             field = value.bounds(this.limitMinAngleZ, this.limitMaxAngleZ)
         }
 
     var scaleX : Float = 1f
         set(value)
         {
+            val oldValue = field
             field = value.bounds(this.limitMinScaleX, this.limitMaxScaleX)
+
+            if (! khelp.utilities.math.equals(oldValue, field))
+            {
+                this.nodePositionObservableData.value(this.position)
+            }
         }
     var scaleY : Float = 1f
         set(value)
         {
+            val oldValue = field
             field = value.bounds(this.limitMinScaleY, this.limitMaxScaleY)
+
+            if (! khelp.utilities.math.equals(oldValue, field))
+            {
+                this.nodePositionObservableData.value(this.position)
+            }
         }
     var scaleZ : Float = 1f
         set(value)
         {
+            val oldValue = field
             field = value.bounds(this.limitMinScaleZ, this.limitMaxScaleZ)
+
+            if (! khelp.utilities.math.equals(oldValue, field))
+            {
+                this.nodePositionObservableData.value(this.position)
+            }
         }
+
+    private val nodePositionObservableData = ObservableData<NodePosition>(NodePosition())
+    val nodePositionObservable : Observable<NodePosition> = this.nodePositionObservableData.observable
 
     /**Parent node*/
     var parent : Node? = null
