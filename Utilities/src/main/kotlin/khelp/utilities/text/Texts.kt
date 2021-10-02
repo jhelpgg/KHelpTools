@@ -1,18 +1,20 @@
 package khelp.utilities.text
 
+import kotlin.math.min
+
 /**
  * Default escape characters : \ (see [StringExtractor])
  */
-val DEFAULT_ESCAPE_CHARACTERS = "\\"
+const val DEFAULT_ESCAPE_CHARACTERS = "\\"
 /**
  * Default escape separators : [space], [Line return \n], [tabulation \t], [carriage return \r] (see
  * [StringExtractor])
  */
-val DEFAULT_SEPARATORS = " \n\t\r"
+const val DEFAULT_SEPARATORS = " \n\t\r"
 /**
  * Default string limiters : " and ' (see [StringExtractor])
  */
-val DEFAULT_STRING_LIMITERS = "\"'"
+const val DEFAULT_STRING_LIMITERS = "\"'"
 
 /**
  * Compute the last index <= of given offset in the char sequence of one of given characters
@@ -26,7 +28,7 @@ val DEFAULT_STRING_LIMITERS = "\"'"
  */
 fun lastIndexOf(charSequence: CharSequence, offset: Int = charSequence.length, vararg characters: Char): Int
 {
-    val start = Math.min(charSequence.length - 1, offset)
+    val start = min(charSequence.length - 1, offset)
     var character: Char
 
     for (index in start downTo 0)
