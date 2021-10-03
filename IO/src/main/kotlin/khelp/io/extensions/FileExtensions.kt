@@ -1,13 +1,34 @@
 package khelp.io.extensions
 
+import khelp.utilities.log.exception
 import java.io.File
+import java.io.IOException
 import java.util.Stack
+
+val File.isVirtualLink : Boolean
+    get()
+    {
+        if (! this.exists())
+        {
+            return false
+        }
+
+        return try
+        {
+            this.canonicalPath != this.absolutePath
+        }
+        catch (exception : IOException)
+        {
+            exception(exception, "Failed to determine virtual link : ", this.absolutePath)
+            false
+        }
+    }
 
 /**
  * Create directory and its parents directories if necessary
  * @return `true`if directory exists at the exit of method. `false` if directory can't be created, or given path refer to an existing file, not a directory
  */
-fun File.createDirectory(): Boolean
+fun File.createDirectory() : Boolean
 {
     if (this.exists())
     {
@@ -18,7 +39,7 @@ fun File.createDirectory(): Boolean
     {
         this.mkdirs()
     }
-    catch (_: Exception)
+    catch (_ : Exception)
     {
         false
     }
@@ -28,14 +49,14 @@ fun File.createDirectory(): Boolean
  * Create file and its parents directories if necessary
  * @return `true` if file exists at the end of the method. `false` if file can't be created
  */
-fun File.createFile(): Boolean
+fun File.createFile() : Boolean
 {
     if (this.exists())
     {
         return true
     }
 
-    if (!this.parentFile.createDirectory())
+    if (! this.parentFile.createDirectory())
     {
         return false
     }
@@ -44,7 +65,7 @@ fun File.createFile(): Boolean
     {
         this.createNewFile()
     }
-    catch (_: Exception)
+    catch (_ : Exception)
     {
         false
     }
@@ -58,17 +79,17 @@ fun File.createFile(): Boolean
  * @param tryOnExitIfFail to indicates to try delete when application exit if deletion actually failed
  * @return `true` if deletion succeed. `false`if failed, but for directory, may some content file/directory are deleted
  */
-fun File.deleteFull(tryOnExitIfFail: Boolean = false): Boolean
+fun File.deleteFull(tryOnExitIfFail : Boolean = false) : Boolean
 {
-    if (!this.exists())
+    if (! this.exists())
     {
         return true
     }
 
     val stack = Stack<File>()
     stack.push(this)
-    var file: File
-    var children: Array<File>?
+    var file : File
+    var children : Array<File>?
 
     while (stack.isNotEmpty())
     {
@@ -89,13 +110,13 @@ fun File.deleteFull(tryOnExitIfFail: Boolean = false): Boolean
             }
             else
             {
-                if (!file.deleteDirect(tryOnExitIfFail))
+                if (! file.deleteDirect(tryOnExitIfFail))
                 {
                     return false
                 }
             }
         }
-        else if (!file.deleteDirect(tryOnExitIfFail))
+        else if (! file.deleteDirect(tryOnExitIfFail))
         {
             return false
         }
@@ -104,9 +125,9 @@ fun File.deleteFull(tryOnExitIfFail: Boolean = false): Boolean
     return true
 }
 
-private fun File.deleteDirect(tryOnExitIfFail: Boolean): Boolean
+private fun File.deleteDirect(tryOnExitIfFail : Boolean) : Boolean
 {
-    if (!this.exists())
+    if (! this.exists())
     {
         return true
     }
@@ -116,12 +137,12 @@ private fun File.deleteDirect(tryOnExitIfFail: Boolean): Boolean
         {
             this.delete()
         }
-        catch (_: Exception)
+        catch (_ : Exception)
         {
             false
         }
 
-    if (!deleted && tryOnExitIfFail)
+    if (! deleted && tryOnExitIfFail)
     {
         deleted =
             try
@@ -129,7 +150,7 @@ private fun File.deleteDirect(tryOnExitIfFail: Boolean): Boolean
                 this.deleteOnExit()
                 true
             }
-            catch (_: Exception)
+            catch (_ : Exception)
             {
                 false
             }

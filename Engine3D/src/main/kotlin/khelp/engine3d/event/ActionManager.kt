@@ -42,6 +42,11 @@ class ActionManager internal constructor(private val preferences : Preferences)
 
     init
     {
+        for(joystickCode in JoystickCode.values())
+        {
+            this.currentJoystickCodes[joystickCode] = JoystickStatus.RELEASED
+        }
+
         for (actionCode in ActionCode.values())
         {
             val joystickCode =

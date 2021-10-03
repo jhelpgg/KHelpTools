@@ -8,6 +8,7 @@ import khelp.preferences.Preferences
 import khelp.resources.Resources
 import khelp.thread.Locker
 import khelp.thread.parallel
+import khelp.utilities.log.verbose
 import khelp.utilities.log.warning
 import org.lwjgl.glfw.Callbacks
 import org.lwjgl.glfw.GLFW
@@ -17,12 +18,13 @@ import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL12
 import org.lwjgl.system.MemoryStack
 import org.lwjgl.system.MemoryUtil
+import kotlin.math.max
 
 
 @WindowDSL
-fun window3D(width : Int, height : Int, title : String, decorated : Boolean = true, windowCreator : Window3D.() -> Unit)
+fun window3D(width : Int, height : Int, title : String, windowCreator : Window3D.() -> Unit)
 {
-    val window3D = Window3D.createWindow3D(width, height, title, decorated, false)
+    val window3D = Window3D.createWindow3D(- 1, - 1, width, height, title, true, false, false)
     windowCreator(window3D)
     window3D.waitWindowClose()
 }
@@ -30,18 +32,26 @@ fun window3D(width : Int, height : Int, title : String, decorated : Boolean = tr
 @WindowDSL
 fun window3DFull(title : String, windowCreator : Window3D.() -> Unit)
 {
-    val window3D = Window3D.createWindow3D(800, 600, title, false, true)
+    val window3D = Window3D.createWindow3D(- 1, - 1, 800, 600, title, false, true, false)
     windowCreator(window3D)
     window3D.waitWindowClose()
 }
 
+@WindowDSL
+fun window3DFix(x : Int, y : Int, width : Int, height : Int, title : String, windowCreator : Window3D.() -> Unit)
+{
+    val window3D = Window3D.createWindow3D(max(0, x), max(0, y), width, height, title, false, false, true)
+    windowCreator(window3D)
+    window3D.waitWindowClose()
+}
 
 class Window3D private constructor()
 {
     companion object
     {
-        internal fun createWindow3D(requestWidth : Int, requestHeight : Int, title : String,
-                                    decorated : Boolean, maximized : Boolean) : Window3D
+        internal fun createWindow3D(x : Int, y : Int,
+                                    requestWidth : Int, requestHeight : Int, title : String,
+                                    decorated : Boolean, maximized : Boolean, atTop : Boolean) : Window3D
         {
             val window3D = Window3D()
 
@@ -67,6 +77,7 @@ class Window3D private constructor()
                 GLFW.glfwWindowHint(GLFW.GLFW_DECORATED, if (decorated) GLFW.GLFW_TRUE else GLFW.GLFW_FALSE)
                 GLFW.glfwWindowHint(GLFW.GLFW_RESIZABLE, GLFW.GLFW_FALSE)
                 GLFW.glfwWindowHint(GLFW.GLFW_MAXIMIZED, if (maximized) GLFW.GLFW_TRUE else GLFW.GLFW_FALSE)
+                GLFW.glfwWindowHint(GLFW.GLFW_FLOATING, if (atTop) GLFW.GLFW_TRUE else GLFW.GLFW_FALSE)
 
                 // Create the window
                 val window = GLFW.glfwCreateWindow(width, height, title, MemoryUtil.NULL, MemoryUtil.NULL)
@@ -78,8 +89,8 @@ class Window3D private constructor()
 
                 window3D.windowId = window
                 //Register UI events
-                GLFW.glfwSetKeyCallback(window) { windowId, key, scanCode, action, modifiers ->
-                    window3D.keyEvent(windowId, key, scanCode, action, modifiers)
+                GLFW.glfwSetKeyCallback(window) { _, key, _, action, _ ->
+                    window3D.keyEvent(key, action)
                 }
                 GLFW.glfwSetCursorEnterCallback(window) { windowId, entered ->
                     window3D.mouseEntered(windowId, entered)
@@ -91,7 +102,7 @@ class Window3D private constructor()
                 GLFW.glfwSetCursorPosCallback(window) { windowId, cursorX, cursorY ->
                     window3D.mousePosition(windowId, cursorX, cursorY)
                 }
-                GLFW.glfwSetWindowCloseCallback(window) { windowId -> window3D.closeWindow(windowId) }
+                GLFW.glfwSetWindowCloseCallback(window) { window3D.closeWindow() }
 
                 // Get the thread stack and push a new frame
 
@@ -110,8 +121,8 @@ class Window3D private constructor()
                     // Center the window
                     GLFW.glfwSetWindowPos(
                         window,
-                        (videoMode.width() - pWidth.get(0)) / 2,
-                        (videoMode.height() - pHeight.get(0)) / 2)
+                        if (x >= 0) x + (width - pWidth.get(0)) / 2 else (videoMode.width() - pWidth.get(0)) / 2,
+                        if (y >= 0) y + (height - pHeight.get(0)) / 2 else (videoMode.height() - pHeight.get(0)) / 2)
                 }
                 else
                 {
@@ -151,6 +162,7 @@ class Window3D private constructor()
         private set
     var height : Int = 0
         private set
+    var canCloseNow : () -> Boolean = { true }
     val scene = Scene()
     private var windowId : Long = 0
     private val waitCloseLocker = Locker()
@@ -169,7 +181,7 @@ class Window3D private constructor()
 
     fun close()
     {
-        this.closeWindow(this.windowId)
+        this.closeWindow()
     }
 
     internal fun waitWindowClose()
@@ -177,17 +189,21 @@ class Window3D private constructor()
         this.waitCloseLocker.lock()
     }
 
-    private fun closeWindow(window : Long)
+    private fun closeWindow()
     {
+        if (! this.canCloseNow())
+        {
+            //Avoid the closing
+            GLFW.glfwSetWindowShouldClose(this.windowId, false)
+            return
+        }
+
         //Closing
         GLFW.glfwSetWindowShouldClose(this.windowId, true)
-
-        // TODO
-
         this.waitCloseLocker.unlock()
     }
 
-    private fun keyEvent(window : Long, key : Int, scanCode : Int, action : Int, modifiers : Int)
+    private fun keyEvent(key : Int, action : Int)
     {
         this.actionManager.keyEvent(key, action)
     }
@@ -355,5 +371,6 @@ class Window3D private constructor()
         GLFW.glfwTerminate()
         GLFW.glfwSetErrorCallback(null)
             ?.free()
+        verbose("Good bye !")
     }
 }

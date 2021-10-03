@@ -5,8 +5,8 @@ package khelp.engine3d.event
  * @param index Axes or button joystick index
  * @param joystickInputType Nature of joystick event : from an axis or a button ?
  */
-enum class JoystickCode private constructor(public val index : Int,
-                                            public val joystickInputType : JoystickInputType)
+enum class JoystickCode constructor(val index : Int,
+                                    val joystickInputType : JoystickInputType)
 {
     /**
      * Joystick axis 1 positive press
@@ -47,6 +47,26 @@ enum class JoystickCode private constructor(public val index : Int,
      * Joystick axis 4 negative press
      */
     AXIS_4_NEGATIVE(3, JoystickInputType.AXIS_NEGATIVE),
+
+    /**
+     * Joystick axis 3 positive press
+     */
+    AXIS_5_POSITIVE(4, JoystickInputType.AXIS_POSITIVE),
+
+    /**
+     * Joystick axis 3 negative press
+     */
+    AXIS_5_NEGATIVE(4, JoystickInputType.AXIS_NEGATIVE),
+
+    /**
+     * Joystick axis 4 positive press
+     */
+    AXIS_6_POSITIVE(5, JoystickInputType.AXIS_POSITIVE),
+
+    /**
+     * Joystick axis 4 negative press
+     */
+    AXIS_6_NEGATIVE(5, JoystickInputType.AXIS_NEGATIVE),
 
     /**
      * Joystick button 1
@@ -138,12 +158,12 @@ enum class JoystickCode private constructor(public val index : Int,
         /**
          * Maximum index of managed joystick axis
          */
-        val MAX_AXIS_INDEX = 3
+        const val MAX_AXIS_INDEX = 5
 
         /**
          * Maximum index of managed joystick button
          */
-        val MAX_BUTTON_INDEX = 15
+        const val MAX_BUTTON_INDEX = 15
 
         /**
          * Obtain Joystick code associate to an axis

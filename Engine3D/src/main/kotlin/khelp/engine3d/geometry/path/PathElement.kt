@@ -4,13 +4,13 @@ sealed class PathElement
 
 object PathClose : PathElement()
 
-class PathMove(val x : Float, val y : Float) : PathElement()
+class PathMove(var x : Float, var y : Float) : PathElement()
 
-class PathLineTo(val x : Float, val y : Float) : PathElement()
+class PathLineTo(var x : Float, var y : Float) : PathElement()
 
-class PathQuadratic(val controlX : Float, val controlY : Float,
-                    val x : Float, val y : Float) : PathElement()
+class PathQuadratic(var controlX : Float, var controlY : Float,
+                    var x : Float, var y : Float) : PathElement()
 
-class PathCubic(val control1X : Float, val control1Y : Float,
-                val control2X : Float, val control2Y : Float,
-                val x : Float, val y : Float) : PathElement()
+class PathCubic(var control1X : Float, var control1Y : Float,
+                var control2X : Float, var control2Y : Float,
+                var x : Float, var y : Float) : PathElement()

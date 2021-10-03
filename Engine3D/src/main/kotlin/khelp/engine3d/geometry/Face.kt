@@ -3,10 +3,20 @@ package khelp.engine3d.geometry
 import khelp.engine3d.utils.BarycenterPoint3D
 import khelp.engine3d.utils.ThreadOpenGL
 import khelp.utilities.extensions.transform
+import khelp.utilities.serialization.ParsableSerializable
+import khelp.utilities.serialization.Parser
+import khelp.utilities.serialization.Serializer
 import org.lwjgl.opengl.GL11
 
-class Face internal constructor(private val barycenter : BarycenterPoint3D, private val virtualBox : VirtualBox)
+class Face internal constructor() : ParsableSerializable
 {
+    companion object
+    {
+        fun provider() : Face = Face()
+    }
+
+    internal var barycenter : BarycenterPoint3D = BarycenterPoint3D()
+    internal var virtualBox : VirtualBox = VirtualBox()
     private val vertices = ArrayList<Vertex>()
 
     fun add(x : Float, y : Float, z : Float,
@@ -104,5 +114,16 @@ class Face internal constructor(private val barycenter : BarycenterPoint3D, priv
             this.barycenter.add(point)
             this.virtualBox.add(point)
         }
+    }
+
+    override fun serialize(serializer : Serializer)
+    {
+        serializer.setParsableSerializableList("vertices", this.vertices)
+    }
+
+    override fun parse(parser : Parser)
+    {
+        this.vertices.clear()
+        parser.appendParsableSerializableList("vertices", this.vertices, Vertex::provider)
     }
 }

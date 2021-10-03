@@ -3,11 +3,30 @@ package khelp.engine3d.geometry.path
 import khelp.engine3d.utils.cubics
 import khelp.engine3d.utils.quadratics
 import khelp.utilities.math.isNul
+import khelp.utilities.serialization.ParsableSerializable
+import khelp.utilities.serialization.Parser
+import khelp.utilities.serialization.Serializer
 import kotlin.math.max
 
-class Path
+class Path : ParsableSerializable
 {
+    companion object
+    {
+        fun provider() : Path = Path()
+    }
+
     private val pathElements = ArrayList<PathElement>()
+
+    val size : Int get() = this.pathElements.size
+
+    operator fun get(index : Int) : PathElement = this.pathElements[index]
+
+    operator fun set(index : Int, pathElement : PathElement)
+    {
+        this.pathElements[index] = pathElement
+    }
+
+    fun remove(index : Int) : PathElement = this.pathElements.removeAt(index)
 
     fun close()
     {
@@ -59,7 +78,7 @@ class Path
         var xs : FloatArray
         var ys : FloatArray
 
-        for (element in this.pathElements)
+        for ((elementIndex, element) in this.pathElements.withIndex())
         {
             when (element)
             {
@@ -67,7 +86,7 @@ class Path
                 {
                     if (! khelp.utilities.math.equals(x, xStart) || ! khelp.utilities.math.equals(y, yStart))
                     {
-                        line = PathLine(x, y, 0f, xStart, yStart, 1f)
+                        line = PathLine(x, y, 0f, xStart, yStart, 1f, element, elementIndex)
                         distance += line.distance
                         lines.add(line)
                     }
@@ -84,7 +103,7 @@ class Path
                 }
                 is PathLineTo    ->
                 {
-                    line = PathLine(x, y, 0f, element.x, element.y, 1f)
+                    line = PathLine(x, y, 0f, element.x, element.y, 1f, element, elementIndex)
                     distance += line.distance
                     lines.add(line)
                     x = element.x
@@ -97,7 +116,8 @@ class Path
 
                     for (index in 1 until precision)
                     {
-                        line = PathLine(xs[index - 1], ys[index - 1], 0f, xs[index], ys[index], 1f)
+                        line =
+                            PathLine(xs[index - 1], ys[index - 1], 0f, xs[index], ys[index], 1f, element, elementIndex)
                         distance += line.distance
                         lines.add(line)
                     }
@@ -112,7 +132,8 @@ class Path
 
                     for (index in 1 until precision)
                     {
-                        line = PathLine(xs[index - 1], ys[index - 1], 0f, xs[index], ys[index], 1f)
+                        line =
+                            PathLine(xs[index - 1], ys[index - 1], 0f, xs[index], ys[index], 1f, element, elementIndex)
                         distance += line.distance
                         lines.add(line)
                     }
@@ -139,5 +160,23 @@ class Path
         }
 
         return lines
+    }
+
+    override fun serialize(serializer : Serializer)
+    {
+        serializer.setParsableSerializableList("elements",
+                                               this.pathElements.map { pathElement -> PathElementInfo(pathElement) })
+    }
+
+    override fun parse(parser : Parser)
+    {
+        val list = ArrayList<PathElementInfo>()
+        parser.appendParsableSerializableList("elements", list, PathElementInfo::provider)
+        this.pathElements.clear()
+
+        for (element in list)
+        {
+            this.pathElements.add(element.get())
+        }
     }
 }

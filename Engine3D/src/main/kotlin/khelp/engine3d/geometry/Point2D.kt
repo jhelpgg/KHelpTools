@@ -1,13 +1,26 @@
 package khelp.engine3d.geometry
 
 import khelp.engine3d.utils.ThreadOpenGL
+import khelp.utilities.serialization.ParsableSerializable
+import khelp.utilities.serialization.Parser
+import khelp.utilities.serialization.Serializer
 import org.lwjgl.opengl.GL11
 import java.util.Objects
 import kotlin.math.sqrt
 
-data class Point2D(val x : Float = 0f, val y : Float = 0f)
+class Point2D(x : Float = 0f, y : Float = 0f) : ParsableSerializable
 {
-    val length : Float = sqrt(this.x * this.x + this.y * this.y)
+    companion object
+    {
+        fun provider() : Point2D = Point2D()
+    }
+
+    var x : Float = x
+        private set
+    var y : Float = y
+        private set
+    var length : Float = sqrt(this.x * this.x + this.y * this.y)
+        private set
 
     operator fun plus(point2D : Point2D) : Point2D =
         Point2D(this.x + point2D.x, this.y + point2D.y)
@@ -48,5 +61,18 @@ data class Point2D(val x : Float = 0f, val y : Float = 0f)
     internal fun glTexCoord2f()
     {
         GL11.glTexCoord2f(this.x, this.y)
+    }
+
+    override fun serialize(serializer : Serializer)
+    {
+        serializer.setFloat("x", this.x)
+        serializer.setFloat("y", this.y)
+    }
+
+    override fun parse(parser : Parser)
+    {
+        this.x = parser.getFloat("x")
+        this.y = parser.getFloat("y")
+        this.length = sqrt(this.x * this.x + this.y * this.y)
     }
 }

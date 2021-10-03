@@ -117,6 +117,11 @@ open class Node(val id : String) : Iterable<Node>
         {
             val oldValue = field
             field = value.bounds(this.limitMinAngleZ, this.limitMaxAngleZ)
+
+            if (! khelp.utilities.math.equals(oldValue, field))
+            {
+                this.nodePositionObservableData.value(this.position)
+            }
         }
 
     var scaleX : Float = 1f
@@ -368,6 +373,7 @@ open class Node(val id : String) : Iterable<Node>
 
             if (id == node.id)
             {
+                @Suppress("UNCHECKED_CAST")
                 return node as N
             }
 
@@ -651,8 +657,7 @@ open class Node(val id : String) : Iterable<Node>
 
     private fun reverseProjectionPure(point3D : Point3D) : Point3D
     {
-        var point = point3D
-        var vect = point.toVect3f()
+        var vect = point3D.toVect3f()
         val rotZ = Rotf(Vec3f(0f, 0f, 1f), - this.angleZ.degreeToRadian)
         vect = rotZ.rotateVector(vect)
         val rotY = Rotf(Vec3f(0f, 1f, 0f), - this.angleY.degreeToRadian)
@@ -664,14 +669,14 @@ open class Node(val id : String) : Iterable<Node>
 
     override fun iterator() : Iterator<Node> = this.children.iterator()
 
-    internal fun addChild(node : Node)
+    fun addChild(node : Node)
     {
         node.parent?.removeChild(node)
         node.parent = this
         this.children.add(node)
     }
 
-    internal fun removeChild(node : Node)
+    fun removeChild(node : Node)
     {
         if (this.children.remove(node))
         {
@@ -680,7 +685,7 @@ open class Node(val id : String) : Iterable<Node>
         }
     }
 
-    internal fun removeAllChildren()
+    fun removeAllChildren()
     {
         for (child in this.children)
         {
@@ -690,9 +695,9 @@ open class Node(val id : String) : Iterable<Node>
         this.children.clear()
     }
 
-    internal val numberOfChild : Int = this.children.size
+    val numberOfChild : Int = this.children.size
 
-    internal fun child(index : Int) : Node = this.children[index]
+    fun child(index : Int) : Node = this.children[index]
 
     /**
      * Locate the node in the scene

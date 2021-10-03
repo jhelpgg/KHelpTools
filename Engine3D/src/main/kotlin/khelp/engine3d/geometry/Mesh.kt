@@ -4,9 +4,17 @@ import khelp.engine3d.animation.SinusInterpolation
 import khelp.engine3d.render.MeshDSL
 import khelp.engine3d.utils.BarycenterPoint3D
 import khelp.engine3d.utils.ThreadOpenGL
+import khelp.utilities.serialization.ParsableSerializable
+import khelp.utilities.serialization.Parser
+import khelp.utilities.serialization.Serializer
 
-class Mesh
+class Mesh : ParsableSerializable
 {
+    companion object
+    {
+        fun provider() : Mesh = Mesh()
+    }
+
     private val faces = ArrayList<Face>()
     private val barycenter = BarycenterPoint3D()
     val center : Point3D get() = this.barycenter.barycenter()
@@ -15,7 +23,9 @@ class Mesh
     @MeshDSL
     fun face(faceCreator : Face.() -> Unit)
     {
-        val face = Face(this.barycenter, this.virtualBox)
+        val face = Face()
+        face.barycenter = this.barycenter
+        face.virtualBox = this.virtualBox
         faceCreator(face)
         this.faces.add(face)
     }
@@ -44,6 +54,27 @@ class Mesh
         for (face in this.faces)
         {
             face.render()
+        }
+    }
+
+    override fun serialize(serializer : Serializer)
+    {
+        serializer.setParsableSerializableList("faces", this.faces)
+    }
+
+    override fun parse(parser : Parser)
+    {
+        this.faces.clear()
+        parser.appendParsableSerializableList("faces", this.faces, Face::provider)
+
+        this.barycenter.reset()
+        this.virtualBox.reset()
+
+        for (face in this.faces)
+        {
+            face.barycenter = this.barycenter
+            face.virtualBox = this.virtualBox
+            face.refillBarycenterAndVirtualBox()
         }
     }
 }

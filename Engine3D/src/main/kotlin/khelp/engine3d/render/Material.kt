@@ -1,35 +1,45 @@
 package khelp.engine3d.render
 
 import khelp.engine3d.utils.ThreadOpenGL
-import khelp.utilities.log.debug
 import org.lwjgl.opengl.GL11
 
 class Material
 {
     /**Ambient color*/
     var colorAmbient = BLACK
+
     /**Diffuse color*/
     var colorDiffuse = GRAY
+
     /**Emissive color*/
     var colorEmissive = LIGHT_GRAY
+
     /**Specular color*/
     var colorSpecular = LIGHT_GRAY
+
     /**Influence of specular color*/
     var specularLevel = 0.1f
+
     /**Shininess*/
     var shininess = 12
+
     /**Transparency (0 full transparent, 1 opaque)*/
     var transparency = 1f
+
     /**Indicates if have to render the two parts*/
     var twoSided = false
+
     /**Spherical texture influence*/
     var sphericRate = 1f
+
     /**Cube map influence*/
     var cubeMapRate = 1f
+
     /**Diffuse texture*/
-    var textureDiffuse: Texture? = null
+    var textureDiffuse : Texture? = null
+
     /**Spherical texture*/
-    var textureSpheric: Texture? = null
+    var textureSpheric : Texture? = null
 
     /**
      * Reset all settings to put as default
@@ -46,6 +56,8 @@ class Material
         this.twoSided = false
         this.sphericRate = 1f
         this.cubeMapRate = 1f
+        this.textureSpheric = null
+        this.textureDiffuse = null
     }
 
     /**
@@ -53,12 +65,12 @@ class Material
      */
     fun settingAsFor2D()
     {
-        this.colorEmissive= WHITE
+        this.colorEmissive = WHITE
         this.specularLevel = 1f
         this.shininess = 128
-        this.colorDiffuse= WHITE
-        this.colorSpecular= BLACK
-        this.colorAmbient= WHITE
+        this.colorDiffuse = WHITE
+        this.colorSpecular = BLACK
+        this.colorAmbient = WHITE
         this.twoSided = true
     }
 
@@ -100,7 +112,7 @@ class Material
      * @param object3D Object to render
      */
     @ThreadOpenGL
-    internal fun renderMaterial(object3D: Object3D)
+    internal fun renderMaterial(object3D : Object3D)
     {
         this.prepareMaterial()
         //

@@ -1,0 +1,25 @@
+plugins {
+    id 'org.jetbrains.kotlin.jvm'
+}
+
+group 'khelp.editor'
+version '1.0-SNPASHOT'
+
+dependencies {
+    implementation project(":Utilities")
+    implementation project(":Thread")
+    implementation project(":Preferences")
+    implementation project(":Resources")
+    implementation project(":IO")
+    implementation project(":UI")
+    implementation project(":Math")
+    implementation project(":Engine3D")
+
+    implementation('org.jetbrains.kotlin:kotlin-reflect:1.5.31')
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+}
+
+tasks.test {
+    useJUnitPlatform()
+}

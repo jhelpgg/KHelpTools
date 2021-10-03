@@ -1,34 +1,86 @@
 package khelp.engine3d
 
+import khelp.engine3d.animation.AccelerationInterpolation
+import khelp.engine3d.animation.AnimationGroup
 import khelp.engine3d.animation.AnimationManager
 import khelp.engine3d.event.ActionCode
+import khelp.engine3d.render.Material
+import khelp.engine3d.render.Texture
+import khelp.engine3d.render.TwoSidedRule
 import khelp.engine3d.render.WHITE
+import khelp.engine3d.render.prebuilt.FaceUV
+import khelp.engine3d.render.prebuilt.Plane
 import khelp.engine3d.render.window3D
-import khelp.engine3d.resource.Sounds
+import khelp.engine3d.resource.Resources3D
 import khelp.thread.TaskContext
+import khelp.ui.game.AnimatedImage
+import khelp.ui.game.GameImage
 import java.util.concurrent.atomic.AtomicBoolean
 
 fun main()
 {
-    val enqueued = AtomicBoolean(false)
+    val animationTime = 512L
+    val animationDivideByZero =
+        AnimatedImage(512, 512, GameImage.load("divideBy0/DivideBy0_0.png", Resources3D.resources))
+
+    for (index in 1 .. 10)
+    {
+        animationDivideByZero.appendImage(animationTime,
+                                          GameImage.load("divideBy0/DivideBy0_$index.png", Resources3D.resources))
+    }
+
+    val material = Material()
+    material.textureDiffuse = Texture(animationDivideByZero.imageAnimated)
+
+    val planes = ArrayList<Plane>()
+    var vMin = 0f
+    var vMax = 0.2f
+    val animationGroupTime = 4096L
+    val animationGroup = AnimationGroup()
+
+    for (y in 2 downTo - 2)
+    {
+        var uMin = 0f
+        var uMax = 0.2f
+        val yy = y.toFloat()
+
+        for (x in - 2 .. 2)
+        {
+            val plane = Plane("plane ($x,$y)", FaceUV(uMin, uMax, vMin, vMax))
+            plane.material = material
+            plane.x = x.toFloat()
+            plane.y = yy
+            plane.z = - 1f
+            plane.twoSidedRule = TwoSidedRule.FORCE_TWO_SIDE
+            planes.add(plane)
+
+            animationGroup.animationNodePositionElement(plane) {
+                add(animationGroupTime, AccelerationInterpolation(1.25)) {
+                    this.x *= 5f
+                    this.y *= 5f
+                    this.scaleX = 0f
+                    this.scaleY = 0f
+                    this.scaleZ = 0f
+                }
+            }
+
+            uMin = uMax
+            uMax += 0.2f
+        }
+
+        vMin = vMax
+        vMax += 0.2f
+    }
+
+    AnimationManager.addAnimation("explode", animationGroup)
+    animationDivideByZero.actionAtEnd = { AnimationManager.play("explode") }
     val running = AtomicBoolean(false)
     window3D(800, 600, "Test") {
-        val soundSource = soundManager.createSource()
-
         scene.backgroundColor = WHITE
         scene.root {
-            val robot = robot("Robot") {
-                z = - 10f
-                val sword = sword("Sword") {
-                    positionForBack()
-                }
-                putOnBack(sword)
-            }
-            soundSource.link(robot)
-
-            AnimationManager.animationList("run") {
-                addAnimation(robot.run(1024L, 16))
-                animationTask { running.set(false) }
+            for (plane in planes)
+            {
+                addChild(plane)
             }
 
             actionManager.actionObservable.observedBy(TaskContext.INDEPENDENT) { list ->
@@ -39,22 +91,8 @@ fun main()
                         ActionCode.ACTION_BUTTON_1 ->
                             if (running.compareAndSet(false, true))
                             {
-                                AnimationManager.play("run")
+                                animationDivideByZero.play(false)
                             }
-                        ActionCode.ACTION_BUTTON_2 -> robot.angleY += 1f
-                        ActionCode.ACTION_BUTTON_3 ->
-                        {
-                            if (enqueued.compareAndSet(false, true))
-                            {
-                                soundSource.enqueue(Sounds.ALYA.sound)
-                                soundSource.enqueue(Sounds.KUMA.sound)
-                                soundSource.enqueue(Sounds.SUCCEED.sound)
-                            }
-                        }
-                        ActionCode.ACTION_UP       -> robot.y += 0.01f
-                        ActionCode.ACTION_DOWN     -> robot.y -= 0.01f
-                        ActionCode.ACTION_LEFT     -> robot.x -= 0.01f
-                        ActionCode.ACTION_RIGHT    -> robot.x += 0.01f
                         else                       -> Unit
                     }
                 }

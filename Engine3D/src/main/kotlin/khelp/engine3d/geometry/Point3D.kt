@@ -1,10 +1,26 @@
 package khelp.engine3d.geometry
 
 import khelp.engine3d.utils.ThreadOpenGL
+import khelp.utilities.serialization.ParsableSerializable
+import khelp.utilities.serialization.Parser
+import khelp.utilities.serialization.Serializer
 import org.lwjgl.opengl.GL11
+import java.util.Objects
 
-data class Point3D(val x : Float = 0f, val y : Float = 0f, val z : Float = 0f)
+class Point3D(x : Float = 0f, y : Float = 0f, z : Float = 0f) : ParsableSerializable
 {
+    companion object
+    {
+        fun provider() : Point3D = Point3D()
+    }
+
+    var x = x
+        private set
+    var y = y
+        private set
+    var z = z
+        private set
+
     constructor(vect3f : Vec3f) : this(vect3f.x, vect3f.y, vect3f.z)
 
     fun toVect3f() = Vec3f(this.x, this.y, this.z)
@@ -20,6 +36,8 @@ data class Point3D(val x : Float = 0f, val y : Float = 0f, val z : Float = 0f)
 
     operator fun times(factor : Float) : Point3D =
         Point3D(factor * this.x, factor * this.y, factor * this.z)
+
+    override fun hashCode() : Int = Objects.hash(this.x, this.y, this.z)
 
     override fun equals(other : Any?) : Boolean
     {
@@ -48,5 +66,19 @@ data class Point3D(val x : Float = 0f, val y : Float = 0f, val z : Float = 0f)
     internal fun glNormal3f()
     {
         GL11.glNormal3f(this.x, this.y, this.z)
+    }
+
+    override fun serialize(serializer : Serializer)
+    {
+        serializer.setFloat("x", this.x)
+        serializer.setFloat("y", this.y)
+        serializer.setFloat("z", this.z)
+    }
+
+    override fun parse(parser : Parser)
+    {
+        this.x = parser.getFloat("x")
+        this.y = parser.getFloat("y")
+        this.z = parser.getFloat("z")
     }
 }

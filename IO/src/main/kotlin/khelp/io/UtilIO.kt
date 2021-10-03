@@ -1,29 +1,38 @@
 package khelp.io
 
+import khelp.io.extensions.createDirectory
 import khelp.io.extensions.createFile
+import khelp.io.extensions.isVirtualLink
+import khelp.utilities.log.exception
 import java.io.BufferedReader
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStream
 import java.io.InputStreamReader
 import java.io.OutputStream
-import khelp.utilities.log.exception
-import java.io.File
-import java.io.FileInputStream
-import java.io.FileOutputStream
+import java.util.Stack
+import java.util.zip.ZipEntry
+import java.util.zip.ZipInputStream
+import java.util.zip.ZipOutputStream
 
 
 /**
  * One kilo-byte in bytes
  */
 const val KILO_BYTES = 1024
+
 /**
  * Size of a file header
  */
 const val HEADER_SIZE = KILO_BYTES
+
 /**
  * One mega-byte in bytes
  */
 const val MEGA_BYTES = 1024 * KILO_BYTES
+
 /**
  * Buffer size
  */
@@ -40,17 +49,17 @@ const val BUFFER_SIZE = 4 * MEGA_BYTES
  * @param O Output stream type
  * @return **`true`** If complete operation succeed without exception
  */
-fun <I : InputStream, O : OutputStream> treatInputOutputStream(producerInput: () -> I,
-                                                               producerOutput: () -> O,
-                                                               operation: (I, O) -> Unit,
-                                                               onError: (IOException) -> Unit = {
+fun <I : InputStream, O : OutputStream> treatInputOutputStream(producerInput : () -> I,
+                                                               producerOutput : () -> O,
+                                                               operation : (I, O) -> Unit,
+                                                               onError : (IOException) -> Unit = {
                                                                    exception(it,
                                                                              "Issue on treat input/output streams!")
-                                                               }): Boolean
+                                                               }) : Boolean
 {
-    var ioException: IOException? = null
-    var inputStream: I? = null
-    var outputStream: O? = null
+    var ioException : IOException? = null
+    var inputStream : I? = null
+    var outputStream : O? = null
 
     try
     {
@@ -58,11 +67,11 @@ fun <I : InputStream, O : OutputStream> treatInputOutputStream(producerInput: ()
         outputStream = producerOutput()
         operation(inputStream, outputStream)
     }
-    catch (io: IOException)
+    catch (io : IOException)
     {
         ioException = io
     }
-    catch (e: Exception)
+    catch (e : Exception)
     {
         ioException = IOException("Failed to do operation!", e)
     }
@@ -74,7 +83,7 @@ fun <I : InputStream, O : OutputStream> treatInputOutputStream(producerInput: ()
             {
                 outputStream.flush()
             }
-            catch (ignored: Exception)
+            catch (ignored : Exception)
             {
             }
 
@@ -82,7 +91,7 @@ fun <I : InputStream, O : OutputStream> treatInputOutputStream(producerInput: ()
             {
                 outputStream.close()
             }
-            catch (ignored: Exception)
+            catch (ignored : Exception)
             {
             }
 
@@ -94,7 +103,7 @@ fun <I : InputStream, O : OutputStream> treatInputOutputStream(producerInput: ()
             {
                 inputStream.close()
             }
-            catch (ignored: Exception)
+            catch (ignored : Exception)
             {
             }
 
@@ -118,26 +127,26 @@ fun <I : InputStream, O : OutputStream> treatInputOutputStream(producerInput: ()
  * @param I Input stream type
  * @return **`true`** If complete operation succeed without exception
  */
-fun <I : InputStream> treatInputStream(producer: () -> I,
-                                       operation: (I) -> Unit,
-                                       onError: (IOException) -> Unit = {
+fun <I : InputStream> treatInputStream(producer : () -> I,
+                                       operation : (I) -> Unit,
+                                       onError : (IOException) -> Unit = {
                                            exception(it,
                                                      "Failed to treat input stream!")
-                                       }): Boolean
+                                       }) : Boolean
 {
-    var ioException: IOException? = null
-    var inputStream: I? = null
+    var ioException : IOException? = null
+    var inputStream : I? = null
 
     try
     {
         inputStream = producer()
         operation(inputStream)
     }
-    catch (io: IOException)
+    catch (io : IOException)
     {
         ioException = io
     }
-    catch (e: Exception)
+    catch (e : Exception)
     {
         ioException = IOException("Failed to do operation!", e)
     }
@@ -149,7 +158,7 @@ fun <I : InputStream> treatInputStream(producer: () -> I,
             {
                 inputStream.close()
             }
-            catch (ignored: Exception)
+            catch (ignored : Exception)
             {
             }
 
@@ -173,26 +182,26 @@ fun <I : InputStream> treatInputStream(producer: () -> I,
  * @param O Output stream type
  * @return **`true`** If complete operation succeed without exception
  */
-fun <O : OutputStream> treatOutputStream(producer: () -> O,
-                                         operation: (O) -> Unit,
-                                         onError: (IOException) -> Unit = {
+fun <O : OutputStream> treatOutputStream(producer : () -> O,
+                                         operation : (O) -> Unit,
+                                         onError : (IOException) -> Unit = {
                                              exception(it,
                                                        "Failed to treat output stream")
-                                         }): Boolean
+                                         }) : Boolean
 {
-    var ioException: IOException? = null
-    var outputStream: O? = null
+    var ioException : IOException? = null
+    var outputStream : O? = null
 
     try
     {
         outputStream = producer()
         operation(outputStream)
     }
-    catch (io: IOException)
+    catch (io : IOException)
     {
         ioException = io
     }
-    catch (e: Exception)
+    catch (e : Exception)
     {
         ioException = IOException("Failed to do operation!", e)
     }
@@ -204,7 +213,7 @@ fun <O : OutputStream> treatOutputStream(producer: () -> O,
             {
                 outputStream.flush()
             }
-            catch (ignored: Exception)
+            catch (ignored : Exception)
             {
             }
 
@@ -212,7 +221,7 @@ fun <O : OutputStream> treatOutputStream(producer: () -> O,
             {
                 outputStream.close()
             }
-            catch (ignored: Exception)
+            catch (ignored : Exception)
             {
             }
 
@@ -236,9 +245,9 @@ fun <O : OutputStream> treatOutputStream(producer: () -> O,
  * @param I Input stream type
  * @return **`true`** If complete operation succeed without exception
  */
-fun <I : InputStream> readLines(producerInput: () -> I,
-                                lineReader: (String) -> Unit,
-                                onError: (IOException) -> Unit = { exception(it, "Failed to read lines!!") }) =
+fun <I : InputStream> readLines(producerInput : () -> I,
+                                lineReader : (String) -> Unit,
+                                onError : (IOException) -> Unit = { exception(it, "Failed to read lines!!") }) =
     treatInputStream(producerInput,
                      { inputStream ->
                          val bufferedReader = BufferedReader(InputStreamReader(inputStream, "UTF-8"))
@@ -261,14 +270,14 @@ fun <I : InputStream> readLines(producerInput: () -> I,
  * @throws IOException On copying issue
  */
 @Throws(IOException::class)
-fun write(inputStream: InputStream, fileDestination: File)
+fun write(inputStream : InputStream, fileDestination : File)
 {
-    if (!fileDestination.createFile())
+    if (! fileDestination.createFile())
     {
         throw IOException("Can't create the file " + fileDestination.absolutePath)
     }
 
-    var exception: IOException? = null
+    var exception : IOException? = null
 
     treatOutputStream({ FileOutputStream(fileDestination) },
                       { write(inputStream, it) },
@@ -276,7 +285,7 @@ fun write(inputStream: InputStream, fileDestination: File)
 
     if (exception != null)
     {
-        throw exception!!
+        throw exception !!
     }
 }
 
@@ -288,9 +297,9 @@ fun write(inputStream: InputStream, fileDestination: File)
  * @throws IOException On copying issue
  */
 @Throws(IOException::class)
-fun write(fileSource: File, outputStream: OutputStream)
+fun write(fileSource : File, outputStream : OutputStream)
 {
-    var exception: IOException? = null
+    var exception : IOException? = null
 
     treatInputStream({ FileInputStream(fileSource) },
                      { write(it, outputStream) },
@@ -298,7 +307,7 @@ fun write(fileSource: File, outputStream: OutputStream)
 
     if (exception != null)
     {
-        throw exception!!
+        throw exception !!
     }
 }
 
@@ -310,7 +319,7 @@ fun write(fileSource: File, outputStream: OutputStream)
  * @throws IOException On copying issue
  */
 @Throws(IOException::class)
-fun write(inputStream: InputStream, outputStream: OutputStream)
+fun write(inputStream : InputStream, outputStream : OutputStream)
 {
     val buffer = ByteArray(BUFFER_SIZE)
     var read = inputStream.read(buffer)
@@ -319,6 +328,202 @@ fun write(inputStream: InputStream, outputStream: OutputStream)
     {
         outputStream.write(buffer, 0, read)
         read = inputStream.read(buffer)
+    }
+}
+
+/**
+ * Zip a file or directory inside a file
+ *
+ * @param source      File/directory to zip
+ * @param destination File destination
+ * @throws IOException On zipping issue
+ */
+@Throws(IOException::class)
+fun zip(source : File, destination : File, onlyContentIfDirectory : Boolean = false)
+{
+    if (! destination.createFile())
+    {
+        throw IOException("Can't create " + destination.absolutePath)
+    }
+
+    var fileOutputStream : FileOutputStream? = null
+
+    try
+    {
+        fileOutputStream = FileOutputStream(destination)
+
+        zip(source, fileOutputStream, onlyContentIfDirectory)
+    }
+    finally
+    {
+        if (fileOutputStream != null)
+        {
+            try
+            {
+                fileOutputStream.flush()
+            }
+            catch (ignored : Exception)
+            {
+                //Nothing to do
+            }
+
+            try
+            {
+                fileOutputStream.close()
+            }
+            catch (ignored : Exception)
+            {
+            }
+
+        }
+    }
+}
+
+/**
+ * Zip a file or directory inside a stream
+ *
+ * @param source          File/directory to zip
+ * @param outputStreamZip Where write the zip
+ * @throws IOException On zipping issue
+ */
+@Throws(IOException::class)
+fun zip(source : File, outputStreamZip : OutputStream, onlyContentIfDirectory : Boolean = false)
+{
+    var zipEntry : ZipEntry
+    val zipOutputStream = ZipOutputStream(outputStreamZip)
+    // For the best compression
+    zipOutputStream.setLevel(9)
+
+    var pair : Pair<String, File> = Pair(source.name, source)
+    val stack = Stack<Pair<String, File>>()
+
+    stack.push(pair)
+    var ignore = source.isDirectory && onlyContentIfDirectory
+
+    while (! stack.isEmpty())
+    {
+        pair = stack.pop()
+
+        if (! pair.second.isVirtualLink)
+        {
+            if (pair.second.isDirectory)
+            {
+                val content = pair.second.listFiles()
+
+                if (content != null)
+                {
+                    if (! ignore)
+                    {
+                        for (child in content)
+                        {
+                            stack.push(Pair(pair.first + "/" + child.name, child))
+                        }
+                    }
+                    else
+                    {
+                        for (child in content)
+                        {
+                            stack.push(Pair(child.name, child))
+                        }
+                    }
+                }
+            }
+            else if (! ignore)
+            {
+                zipEntry = ZipEntry(pair.first)
+                // For the best compression
+                zipEntry.method = ZipEntry.DEFLATED
+
+                zipOutputStream.putNextEntry(zipEntry)
+
+                write(pair.second, zipOutputStream)
+
+                zipOutputStream.closeEntry()
+            }
+        }
+
+        ignore = false
+    }
+
+    zipOutputStream.finish()
+    zipOutputStream.flush()
+}
+
+/**
+ * Unzip a file inside a directory
+ *
+ * @param directoryDestination Directory where unzip
+ * @param zip                  Zip file
+ * @throws IOException On extracting issue
+ */
+@Throws(IOException::class)
+fun unzip(directoryDestination : File, zip : File)
+{
+    var fileInputStream : FileInputStream? = null
+
+    try
+    {
+        fileInputStream = FileInputStream(zip)
+        unzip(directoryDestination, fileInputStream)
+    }
+    finally
+    {
+        if (fileInputStream != null)
+        {
+            try
+            {
+                fileInputStream.close()
+            }
+            catch (ignored : Exception)
+            {
+                //Nothing to do
+            }
+
+        }
+    }
+}
+
+/**
+ * Unzip a stream inside a directory
+ *
+ * @param directoryDestination Directory where unzip
+ * @param inputStreamZip       Stream to unzip
+ * @throws IOException On unzipping issue
+ */
+@Throws(IOException::class)
+fun unzip(directoryDestination : File, inputStreamZip : InputStream)
+{
+    var destination : File
+    val zipInputStream = ZipInputStream(inputStreamZip)
+
+    var zipEntry : ZipEntry? = zipInputStream.nextEntry
+    var name : String
+
+    while (zipEntry != null)
+    {
+        name = zipEntry.name
+        destination = obtainFile(directoryDestination, name)
+
+        if (name.endsWith("/"))
+        {
+            if (! destination.createDirectory())
+            {
+                throw IOException("Can't create the directory " + destination.absolutePath)
+            }
+        }
+        else
+        {
+            if (! destination.createFile())
+            {
+                throw IOException("Can't create the file " + destination.absolutePath)
+            }
+
+            write(zipInputStream, destination)
+        }
+
+        zipInputStream.closeEntry()
+
+        zipEntry = zipInputStream.nextEntry
     }
 }
 
