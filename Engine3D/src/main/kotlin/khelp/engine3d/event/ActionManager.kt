@@ -27,11 +27,14 @@ class ActionManager internal constructor(private val preferences : Preferences)
     /**Current active key codes*/
     private val activeKeys = HashSet<Int>()
 
+    private val axisLimits = Array<AxeLimits>(JoystickCode.MAX_AXIS_INDEX + 1) { AxeLimits(0f) }
+
     /**Current active joystick codes and their status*/
     private val currentJoystickCodes = HashMap<JoystickCode, JoystickStatus>()
 
     /**Copy of last current active joystick codes and their status*/
     private val currentJoystickCodesCopy = HashMap<JoystickCode, JoystickStatus>()
+
     private val mutexCapture = Mutex()
     private var nextKeyCode : Promise<Int>? = null
     private var nextJoystickCode : Promise<JoystickCode>? = null
@@ -42,7 +45,7 @@ class ActionManager internal constructor(private val preferences : Preferences)
 
     init
     {
-        for(joystickCode in JoystickCode.values())
+        for (joystickCode in JoystickCode.values())
         {
             this.currentJoystickCodes[joystickCode] = JoystickStatus.RELEASED
         }
@@ -225,6 +228,28 @@ class ActionManager internal constructor(private val preferences : Preferences)
         }
     }
 
+    internal fun computeAxisLimits()
+    {
+        if (GLFW.glfwJoystickPresent(GLFW.GLFW_JOYSTICK_1))
+        {
+            val axes = GLFW.glfwGetJoystickAxes(GLFW.GLFW_JOYSTICK_1)
+
+            if (axes != null)
+            {
+                val position = axes.position()
+                val axesValue = FloatArray(axes.limit() - position)
+                axes.get(axesValue)
+                axes.position(position)
+                val max = min(axesValue.size - 1, JoystickCode.MAX_AXIS_INDEX)
+
+                for (index in 0 .. max)
+                {
+                    this.axisLimits[index] = AxeLimits(axesValue[index])
+                }
+            }
+        }
+    }
+
     /**
      * Post action to listeners
      */
@@ -246,7 +271,9 @@ class ActionManager internal constructor(private val preferences : Preferences)
 
                 for (index in 0 .. max)
                 {
-                    if (axesValue[index] < - 0.25f)
+                    val axeWay = this.axisLimits[index].way(axesValue[index])
+
+                    if (axeWay == AxeWay.NEGATIVE)
                     {
                         this.currentJoystickCodes[JoystickCode.obtainAxis(index, true)] = JoystickStatus.RELEASED
 
@@ -255,7 +282,7 @@ class ActionManager internal constructor(private val preferences : Preferences)
                             return
                         }
                     }
-                    else if (axesValue[index] > 0.25f)
+                    else if (axeWay == AxeWay.POSITIVE)
                     {
                         this.currentJoystickCodes[JoystickCode.obtainAxis(index, false)] = JoystickStatus.RELEASED
 

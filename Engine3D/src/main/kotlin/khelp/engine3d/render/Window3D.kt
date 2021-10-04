@@ -225,6 +225,8 @@ class Window3D private constructor()
 
     private fun joystickConnected(joystickID : Int, event : Int)
     {
+        //GLFW_CONNECTED
+        //GLFW_DISCONNECTED
         // TODO
     }
 
@@ -340,6 +342,7 @@ class Window3D private constructor()
 
     private fun render3D()
     {
+        this.actionManager.computeAxisLimits()
         this.soundManager.init()
         this.initialize3D()
 
