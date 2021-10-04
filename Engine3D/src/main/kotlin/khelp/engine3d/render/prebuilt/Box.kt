@@ -8,8 +8,14 @@ class Box(id : String, boxUV : BoxUV = BoxUV()) : Object3D(id)
     init
     {
         this.twoSidedRule = TwoSidedRule.FORCE_ONE_SIDE
+        this.boxUV(boxUV)
+    }
 
+    fun boxUV(boxUV : BoxUV)
+    {
         mesh {
+            this.clear()
+
             // Face
             face {
                 add(- 0.5f, 0.5f, 0.5f,

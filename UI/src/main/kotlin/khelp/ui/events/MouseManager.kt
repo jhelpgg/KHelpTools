@@ -37,12 +37,19 @@ class MouseManager private constructor() : MouseListener,
     var rightButtonDown = false
         private set
 
+    private var startClickTime = 0L
     private var timeOut : FutureResult<Unit>? = null
     private val mouseStateObservableData =
-        ObservableData<MouseState>(MouseState(MouseStatus.OUTSIDE, Int.MIN_VALUE, Int.MIN_VALUE, false, false, false))
+        ObservableData<MouseState>(
+            MouseState(MouseStatus.OUTSIDE, Int.MIN_VALUE, Int.MIN_VALUE, false, false, false, false))
     val mouseStateObservable : Observable<MouseState> = this.mouseStateObservableData.observable
 
-    override fun mouseClicked(mouseEvent : MouseEvent) = Unit
+    override fun mouseClicked(mouseEvent : MouseEvent)
+    {
+        this.mouseStateObservableData.value(
+            MouseState(this.mouseStatus, this.x, this.y, this.leftButtonDown, this.middleButtonDown,
+                       this.rightButtonDown, true))
+    }
 
     private fun state(mouseStatus : MouseStatus, mousePress : MousePress, mouseEvent : MouseEvent)
     {
@@ -56,7 +63,7 @@ class MouseManager private constructor() : MouseListener,
         this.middleButtonDown = mousePress.press(this.middleButtonDown, SwingUtilities.isMiddleMouseButton(mouseEvent))
         this.rightButtonDown = mousePress.press(this.rightButtonDown, SwingUtilities.isRightMouseButton(mouseEvent))
         val mouseState = MouseState(this.mouseStatus, this.x, this.y,
-                                    this.leftButtonDown, this.middleButtonDown, this.rightButtonDown)
+                                    this.leftButtonDown, this.middleButtonDown, this.rightButtonDown, false)
 
         if (this.mouseStateObservableData.value() != mouseState)
         {
@@ -68,7 +75,7 @@ class MouseManager private constructor() : MouseListener,
             this.timeOut = delay(128) {
                 val mouseStateStay =
                     MouseState(MouseStatus.STAY, this.x, this.y,
-                               this.leftButtonDown, this.middleButtonDown, this.rightButtonDown)
+                               this.leftButtonDown, this.middleButtonDown, this.rightButtonDown, false)
 
                 if (this.mouseStateObservableData.value() != mouseStateStay)
                 {

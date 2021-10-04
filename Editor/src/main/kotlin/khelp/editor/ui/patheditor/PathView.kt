@@ -1,6 +1,7 @@
 package khelp.editor.ui.patheditor
 
 import fr.jhelp.utilities.random
+import khelp.editor.ui.VERY_LIGHT_GRAY
 import khelp.engine3d.geometry.path.Path
 import khelp.engine3d.geometry.path.PathClose
 import khelp.engine3d.geometry.path.PathCubic
@@ -31,6 +32,7 @@ class PathView : JPanel()
 {
     companion object
     {
+        private const val GRID_SIZE = 16
         private val dashStroke =
             BasicStroke(1.25f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_ROUND, 10.0f, floatArrayOf(10f, 5f), 0f)
     }
@@ -370,10 +372,26 @@ class PathView : JPanel()
         this.gameImage.clear(Color.WHITE)
 
         this.gameImage.draw { graphics2D ->
+            // Grid
+            graphics2D.color = VERY_LIGHT_GRAY
+            graphics2D.stroke = BasicStroke(0.5f)
+
+            for (y in PathView.GRID_SIZE .. 512 - PathView.GRID_SIZE step PathView.GRID_SIZE)
+            {
+                graphics2D.drawLine(0, y, 256, y)
+            }
+
+            for (x in PathView.GRID_SIZE .. 256 - PathView.GRID_SIZE step PathView.GRID_SIZE)
+            {
+                graphics2D.drawLine(x, 0, x, 512)
+            }
+
+            // Y = 0
             graphics2D.color = Color.LIGHT_GRAY
             graphics2D.stroke = PathView.dashStroke
             graphics2D.drawLine(0, 256, 256, 256)
 
+            // Path
             for (line in this.lines)
             {
                 if (line.pathElement == this.overElement)
@@ -392,6 +410,7 @@ class PathView : JPanel()
 
             }
 
+            // Control pints
             for ((index, pair) in this.controlPoints.withIndex())
             {
                 val (point, element) = pair

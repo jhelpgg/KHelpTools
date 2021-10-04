@@ -1,12 +1,13 @@
 package khelp.editor.ui
 
-import khelp.editor.ui.patheditor.PathEditor
+import khelp.editor.ui.materialeditor.MaterialEditor
 import khelp.engine3d.event.ActionCode
 import khelp.engine3d.render.Node
 import khelp.engine3d.render.Scene
 import khelp.engine3d.render.Window3D
 import khelp.engine3d.resource.TextureCache
 import khelp.io.ClassSource
+import khelp.preferences.Preferences
 import khelp.resources.Resources
 import khelp.thread.TaskContext
 import khelp.ui.components.JHelpFrame
@@ -35,8 +36,8 @@ object Editor
     private const val NUMBER_CELL_3D_HEIGHT = NUMBER_CELL_HEIGHT - 1 - NUMBER_CELL_BOTTOM
 
     private val allowToClose = AtomicBoolean(false)
-    private val resources = Resources(ClassSource(Editor::class.java))
-    private val resourcesText = this.resources.resourcesText("texts/texts")
+    val resources = Resources(ClassSource(Editor::class.java))
+    val resourcesText = this.resources.resourcesText("texts/texts")
     private val exitIcon = GameImage.loadThumbnail("images/exit.png", this.resources, 32, 32)
     private val frame : JHelpFrame
     private lateinit var panelMenuBar : JPanel
@@ -44,6 +45,9 @@ object Editor
     private lateinit var panelBottom : JPanel
     private lateinit var scene : Scene
     private var manipulatedNode : Node? = null
+
+    lateinit var preferences : Preferences
+
     val informationText = JTextArea()
 
     init
@@ -106,6 +110,8 @@ object Editor
 
     private fun manipulate3D(window3D : Window3D)
     {
+        this.preferences = window3D.preferences
+
         this.frame.canCloseNow = {
             if (this.allowToClose.get())
             {
@@ -123,12 +129,19 @@ object Editor
 
         window3D.actionManager.actionObservable.observedBy(TaskContext.INDEPENDENT, this::actionOn3D)
 
-        val pathEditor = PathEditor()
-        pathEditor.applyInside(this.panelToolLeft)
-        val revolution = pathEditor.revolution
-        this.manipulatedNode = revolution
-        this.scene.root.addChild(revolution)
+        this.changeScreen(MaterialEditor())
+    }
 
+    private fun changeScreen(screenEditor : ScreenEditor)
+    {
+        this.panelToolLeft.removeAll()
+        screenEditor.applyInside(this.panelToolLeft)
+        this.scene.root.removeAllChildren()
+        this.scene.root.addChild(screenEditor.manipulatedNode)
+        this.manipulatedNode = screenEditor.manipulatedNode
+        this.panelToolLeft.invalidate()
+        this.panelToolLeft.doLayout()
+        this.panelToolLeft.repaint()
         this.frame.isVisible = false
         this.frame.isVisible = true
     }

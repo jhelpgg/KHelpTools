@@ -32,9 +32,6 @@ class Material
     /**Spherical texture influence*/
     var sphericRate = 1f
 
-    /**Cube map influence*/
-    var cubeMapRate = 1f
-
     /**Diffuse texture*/
     var textureDiffuse : Texture? = null
 
@@ -55,7 +52,6 @@ class Material
         this.transparency = 1f
         this.twoSided = false
         this.sphericRate = 1f
-        this.cubeMapRate = 1f
         this.textureSpheric = null
         this.textureDiffuse = null
     }

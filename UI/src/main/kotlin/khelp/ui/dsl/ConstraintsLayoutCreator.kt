@@ -24,6 +24,7 @@ import khelp.ui.layout.constraints.TopToCenterOf
 import khelp.ui.layout.constraints.TopToTopOf
 import java.awt.Component
 import java.awt.Container
+import javax.swing.JComponent
 import javax.swing.JPanel
 
 
@@ -42,6 +43,14 @@ class ConstraintsLayoutCreator internal constructor(private val container : Cont
         val constraintsLayoutConstraintCreator = ConstraintsLayoutConstraintCreator()
         creator(constraintsLayoutConstraintCreator)
         this@ConstraintsLayoutCreator.components[componentId] = Pair(this, constraintsLayoutConstraintCreator)
+    }
+
+    fun add(component : JComponent, componentId : String, creator : ConstraintsLayoutConstraintCreator.() -> Unit)
+    {
+        component.name = componentId
+        val constraintsLayoutConstraintCreator = ConstraintsLayoutConstraintCreator()
+        creator(constraintsLayoutConstraintCreator)
+        this.components[componentId] = Pair(component, constraintsLayoutConstraintCreator)
     }
 
     fun panel(panelId : String,

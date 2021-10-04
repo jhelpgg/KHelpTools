@@ -8,11 +8,15 @@ import khelp.ui.utilities.FONT_RENDER_CONTEXT
 import khelp.ui.utilities.PercentGraphics
 import khelp.ui.utilities.TRANSPARENT
 import khelp.utilities.extensions.bounds
+import khelp.utilities.log.exception
 import java.awt.Color
 import java.awt.Component
 import java.awt.Graphics
 import java.awt.Graphics2D
+import java.awt.Paint
 import java.awt.RenderingHints
+import java.awt.TexturePaint
+import java.awt.geom.Rectangle2D
 import java.awt.image.BufferedImage
 import java.io.InputStream
 import javax.imageio.ImageIO
@@ -25,6 +29,22 @@ class GameImage(val width : Int, val height : Int) : Icon
     companion object
     {
         val DUMMY = GameImage(1, 1)
+        val DARK_LIGHT : GameImage by lazy {
+            val gameImage = GameImage(32, 32)
+            gameImage.clear(Color.LIGHT_GRAY)
+            gameImage.drawPercent { percentGraphics ->
+                percentGraphics.color = Color.DARK_GRAY
+                percentGraphics.fillRectangle(0.0, 0.0, 0.5, 0.5)
+                percentGraphics.fillRectangle(0.5, 0.5, 0.5, 0.5)
+            }
+            gameImage
+        }
+        val DARK_LIGHT_PAINT : Paint by lazy {
+            TexturePaint(GameImage.DARK_LIGHT.image,
+                         Rectangle2D.Double(0.0, 0.0,
+                                            GameImage.DARK_LIGHT.width.toDouble(),
+                                            GameImage.DARK_LIGHT.height.toDouble()))
+        }
 
         fun load(inputStream : InputStream) =
             this.load(inputStream, - 1, - 1)
@@ -64,8 +84,9 @@ class GameImage(val width : Int, val height : Int) : Icon
                     gameImage
                 }
             }
-            catch (_ : Exception)
+            catch (exception : Exception)
             {
+                exception(exception, "Failed to load stream")
                 GameImage.DUMMY
             }
 

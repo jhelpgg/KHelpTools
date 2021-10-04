@@ -43,6 +43,20 @@ fun Container.constraintLayout(creator : ConstraintsLayoutCreator.() -> Unit)
     constraintsLayoutCreator.create()
 }
 
+fun Container.verticalLayout(creator : VerticalLayoutCreator.() -> Unit)
+{
+    val constraintsLayoutCreator = ConstraintsLayoutCreator(this)
+    creator(VerticalLayoutCreator(constraintsLayoutCreator))
+    constraintsLayoutCreator.create()
+}
+
+fun Container.horizontalLayout(creator : HorizontalLayoutCreator.() -> Unit)
+{
+    val constraintsLayoutCreator = ConstraintsLayoutCreator(this)
+    creator(HorizontalLayoutCreator(constraintsLayoutCreator))
+    constraintsLayoutCreator.create()
+}
+
 fun button(text : String, buttonCreator : JButtonCreator.() -> Unit) : JButton
 {
     val jButtonCreator = JButtonCreator(text)

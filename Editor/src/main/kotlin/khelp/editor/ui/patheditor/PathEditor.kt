@@ -1,7 +1,9 @@
 package khelp.editor.ui.patheditor
 
+import khelp.editor.ui.Editor
+import khelp.editor.ui.ScreenEditor
+import khelp.engine3d.render.Node
 import khelp.engine3d.render.Texture
-import khelp.engine3d.render.prebuilt.Revolution
 import khelp.engine3d.resource.TextureCache
 import khelp.ui.dsl.borderLayout
 import khelp.ui.dsl.tableLayout
@@ -12,7 +14,7 @@ import javax.swing.JSpinner
 import javax.swing.JToggleButton
 import javax.swing.SpinnerNumberModel
 
-class PathEditor
+class PathEditor : ScreenEditor
 {
     companion object
     {
@@ -23,9 +25,10 @@ class PathEditor
     private val pathPrecisionSpinner = JSpinner(SpinnerNumberModel(7, 2, 12, 1))
     private val rotationPrecisionSpinner = JSpinner(SpinnerNumberModel(12, 3, 32, 1))
     private val buttonMore = JButton(" + ")
-    private val toggleTexture = JToggleButton(GameImage.loadThumbnail("images/image.png", TextureCache.resources,32,32))
+    private val toggleTexture =
+        JToggleButton(GameImage.loadThumbnail("images/image.png", Editor.resources, 32, 32))
     private val pathView = PathView()
-    val revolution : Revolution = this.pathView.revolution
+    override val manipulatedNode : Node get() = this.pathView.revolution
 
     init
     {
@@ -49,7 +52,7 @@ class PathEditor
         }
     }
 
-    fun applyInside(panel : JPanel)
+    override fun applyInside(panel : JPanel)
     {
         panel.borderLayout {
 
@@ -67,15 +70,17 @@ class PathEditor
 
     private fun showTexture()
     {
-        this.revolution.showWire = false
-        this.revolution.material.textureDiffuse = PathEditor.rock
-        this.revolution.material.textureSpheric = PathEditor.spherical
-        this.revolution.material.sphericRate = 0.25f
+        val revolution = this.pathView.revolution
+        revolution.showWire = false
+        revolution.material.textureDiffuse = PathEditor.rock
+        revolution.material.textureSpheric = PathEditor.spherical
+        revolution.material.sphericRate = 0.25f
     }
 
     private fun hideTexture()
     {
-        this.revolution.showWire = true
-        this.revolution.material.originalSettings()
+        val revolution = this.pathView.revolution
+        revolution.showWire = true
+        revolution.material.originalSettings()
     }
 }

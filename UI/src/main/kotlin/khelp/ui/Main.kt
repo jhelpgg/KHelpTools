@@ -148,13 +148,15 @@ fun main()
                 tableLayout {
                     khelp.ui.components.JLabel("textExample", resourcesText)
                         .cell(1, 1)
-                    ColorComponent(Color.BLUE).cell(2, 2, 2, 2)
+                    ColorComponent(Color.BLUE, "color", resourcesText).cell(2, 2, 2, 2)
                     panel(1, 4, 3, 3) {
                         borderLayout {
-                            pageStart(ColorComponent(Color.BLACK).addTitle("black", resourcesText))
-                            lineStart(ColorComponent(Color.GREEN))
-                            center(ColorComponent(Color.YELLOW).addSubTitle("yellow", resourcesText))
-                            lineEnd(ColorComponent(Color.GREEN))
+                            pageStart(
+                                ColorComponent(Color.BLACK, "color", resourcesText).addTitle("black", resourcesText))
+                            lineStart(ColorComponent(Color.GREEN, "color", resourcesText))
+                            center(ColorComponent(Color.YELLOW, "color", resourcesText).addSubTitle("yellow",
+                                                                                                    resourcesText))
+                            lineEnd(ColorComponent(Color.GREEN, "color", resourcesText))
                             pageEnd(styledLabel)
                         }
                     }
@@ -169,9 +171,9 @@ fun main()
     }
 
 
-    val black = ColorComponent(Color.BLACK)
-    val red = ColorComponent(Color.RED)
-    val green = ColorComponent(Color.GREEN)
+    val black = ColorComponent(Color.BLACK, "color", resourcesText)
+    val red = ColorComponent(Color.RED, "color", resourcesText)
+    val green = ColorComponent(Color.GREEN, "color", resourcesText)
 
     frame {
         constraintLayout {
@@ -193,7 +195,7 @@ fun main()
                 bottomAtTop = "middle"
             }
 
-            ColorComponent(Color.BLUE)("blue") {
+            ColorComponent(Color.BLUE, "color", resourcesText)("blue") {
                 horizontalSize = ConstraintsSize.EXPANDED
                 verticalSize = ConstraintsSize.WRAPPED
                 leftAtRight = "quart"
@@ -211,7 +213,7 @@ fun main()
                 bottomAtTop = "yellow"
             }
 
-            ColorComponent(Color.YELLOW)("yellow") {
+            ColorComponent(Color.YELLOW, "color", resourcesText)("yellow") {
                 horizontalSize = ConstraintsSize.EXPANDED
                 verticalSize = ConstraintsSize.WRAPPED
                 leftAtParent

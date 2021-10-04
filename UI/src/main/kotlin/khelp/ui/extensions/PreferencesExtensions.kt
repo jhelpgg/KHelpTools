@@ -4,6 +4,7 @@ import khelp.preferences.Preferences
 import khelp.preferences.PreferencesEditor
 import khelp.ui.font.JHelpFont
 import java.awt.Color
+import java.io.File
 
 operator fun Preferences.get(key : String, defaultValue : Color) : Color =
     Color(this[key, defaultValue.rgb], true)
@@ -18,9 +19,12 @@ operator fun Preferences.get(key : String, defaultValue : JHelpFont) : JHelpFont
     return JHelpFont(family, size, bold, italic, underline)
 }
 
+operator fun Preferences.get(key : String, defaultValue : File) : File =
+    File(this[key, defaultValue.absolutePath])
+
 fun PreferencesEditor.color(key : String, value : Color)
 {
-     key IS value.rgb
+    key IS value.rgb
 }
 
 fun PreferencesEditor.font(key : String, value : JHelpFont)
@@ -30,4 +34,9 @@ fun PreferencesEditor.font(key : String, value : JHelpFont)
     "$key.bold" IS value.bold
     "$key.italic" IS value.italic
     "$key.underline" IS value.underline
+}
+
+fun PreferencesEditor.file(key : String, file : File)
+{
+    key IS file.absolutePath
 }

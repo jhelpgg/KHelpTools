@@ -7,7 +7,6 @@ import khelp.engine3d.extensions.red
 import khelp.engine3d.utils.TEMPORARY_FLOAT_BUFFER
 import khelp.engine3d.utils.ThreadOpenGL
 import khelp.utilities.extensions.bounds
-import khelp.utilities.log.debug
 import org.lwjgl.opengl.GL11
 import java.awt.Color
 import java.nio.FloatBuffer
@@ -25,6 +24,8 @@ class Color4f(red : Float, green : Float = red, blue : Float = red, alpha : Floa
     val green = green.bounds(0f, 1f)
     val blue = blue.bounds(0f, 1f)
     val alpha = alpha.bounds(0f, 1f)
+
+    val color : Color get() = Color(this.red, this.green, this.blue, this.alpha)
 
     constructor(color : Int) : this(color.red / 255f, color.green / 255f, color.blue / 255f, color.alpha / 255f)
     constructor(color : Color) : this(color.red / 255f, color.green / 255f, color.blue / 255f, color.alpha / 255f)

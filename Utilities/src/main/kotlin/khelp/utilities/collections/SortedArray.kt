@@ -151,6 +151,8 @@ class SortedArray<T>(private val comparator : Comparator<T>, val unique : Boolea
         }
     }
 
+    fun remove(index : Int) : T = this.list.removeAt(index)
+
     /**
      * Make array empty on removing all
      */
@@ -292,7 +294,7 @@ class SortedArray<T>(private val comparator : Comparator<T>, val unique : Boolea
      * @param L Array result type
      * @return The array where the copy done (**subPart**)
      */
-    fun <L : SortedArray<T>> subPart(index: Int = 0, length: Int = this.size - index, subPart: L): L
+    fun <L : SortedArray<T>> subPart(index : Int = 0, length : Int = this.size - index, subPart : L) : L
     {
         var offset = index
         var size = length

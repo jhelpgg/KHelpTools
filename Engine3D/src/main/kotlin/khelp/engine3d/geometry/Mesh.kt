@@ -45,6 +45,8 @@ class Mesh : ParsableSerializable
 
     fun clear()
     {
+        this.virtualBox.reset()
+        this.barycenter.reset()
         this.faces.clear()
     }
 
