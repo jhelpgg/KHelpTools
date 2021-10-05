@@ -3,24 +3,18 @@ package khelp.editor.ui.components
 import khelp.editor.ui.Editor
 import khelp.engine3d.render.Texture
 import khelp.engine3d.resource.TextureCache
-import khelp.io.outsideDirectory
 import khelp.thread.TaskContext
 import khelp.thread.observable.Observable
 import khelp.thread.observable.ObservableData
-import khelp.thread.parallel
 import khelp.ui.dsl.borderLayout
 import khelp.ui.events.MouseManager
 import khelp.ui.events.MouseState
 import khelp.ui.extensions.drawImage
-import khelp.ui.extensions.file
-import khelp.ui.extensions.get
 import khelp.ui.game.GameComponent
 import khelp.ui.game.GameImage
 import khelp.ui.utilities.TRANSPARENT
 import java.awt.Color
-import javax.swing.JFileChooser
 import javax.swing.JPanel
-import javax.swing.filechooser.FileNameExtensionFilter
 
 class TextureSelector : JPanel()
 {
@@ -47,8 +41,6 @@ class TextureSelector : JPanel()
 
     private val gameComponent = GameComponent(TextureSelector.IMAGE_SIZE, TextureSelector.IMAGE_SIZE)
     private val mouseManager : MouseManager
-    private val fileChooser =
-        JFileChooser(Editor.preferences[TextureSelector.LAST_DIRECTORY_PREFERENCE_KEY, outsideDirectory])
 
     init
     {
@@ -56,8 +48,6 @@ class TextureSelector : JPanel()
         this.refreshImage()
         this.mouseManager = MouseManager.attachTo(this.gameComponent)
         this.mouseManager.mouseStateObservable.observedBy(TaskContext.INDEPENDENT, this::mouseState)
-        this.fileChooser.isMultiSelectionEnabled = false
-        this.fileChooser.fileFilter = FileNameExtensionFilter("Image", "jpg", "jpeg", "png")
     }
 
     fun setTexture(texture : Texture?)
@@ -70,17 +60,11 @@ class TextureSelector : JPanel()
     {
         if (mouseState.clicked)
         {
-            parallel {
-                if (this.fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION)
-                {
-                    val imageFile = this.fileChooser.selectedFile
-                    Editor.preferences.edit {
-                        file(TextureSelector.LAST_DIRECTORY_PREFERENCE_KEY, imageFile.parentFile)
-                    }
+            Editor.chooseImageFile()
+                .and { imageFile ->
                     this.textureObservableData.value(TextureCache[imageFile])
                     this.refreshImage()
                 }
-            }
         }
     }
 

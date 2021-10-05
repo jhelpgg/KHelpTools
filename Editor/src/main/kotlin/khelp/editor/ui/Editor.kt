@@ -10,8 +10,9 @@ import khelp.io.ClassSource
 import khelp.preferences.Preferences
 import khelp.resources.Resources
 import khelp.thread.TaskContext
+import khelp.thread.future.FutureResult
 import khelp.ui.components.JHelpFrame
-import khelp.ui.dsl.borderLayout
+import khelp.ui.components.imgechooser.ImageChooser
 import khelp.ui.dsl.constraintLayout
 import khelp.ui.dsl.frame
 import khelp.ui.dsl.tableLayout
@@ -20,11 +21,10 @@ import khelp.ui.layout.constraints.ConstraintsSize
 import khelp.ui.utilities.CHARACTER_ESCAPE
 import khelp.ui.utilities.createKeyStroke
 import java.awt.BorderLayout
+import java.io.File
 import java.util.concurrent.atomic.AtomicBoolean
 import javax.swing.JButton
 import javax.swing.JPanel
-import javax.swing.JScrollPane
-import javax.swing.JTextArea
 
 object Editor
 {
@@ -34,6 +34,8 @@ object Editor
     private const val NUMBER_CELL_BOTTOM = 3
     private const val NUMBER_CELL_3D_WIDTH = NUMBER_CELL_WIDTH - NUMBER_CELL_LEFT
     private const val NUMBER_CELL_3D_HEIGHT = NUMBER_CELL_HEIGHT - 1 - NUMBER_CELL_BOTTOM
+
+    private const val LAST_IMAGE_DIRECTORY_KEY = "LastImageDirectory"
 
     private val allowToClose = AtomicBoolean(false)
     val resources = Resources(ClassSource(Editor::class.java))
@@ -47,8 +49,9 @@ object Editor
     private var manipulatedNode : Node? = null
 
     lateinit var preferences : Preferences
+    private lateinit var imageChooser : ImageChooser
 
-    val informationText = JTextArea()
+    private var bottomTool = BottomTool.NONE
 
     init
     {
@@ -95,11 +98,7 @@ object Editor
                 }
                 panel(0, 1 + NUMBER_CELL_3D_HEIGHT, NUMBER_CELL_WIDTH, NUMBER_CELL_BOTTOM) {
                     panelBottom = this
-                    borderLayout {
-                        center(JScrollPane(informationText,
-                                           JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-                                           JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS))
-                    }
+                    layout = BorderLayout()
                 }
                 Component3D.cell(NUMBER_CELL_LEFT, 1, NUMBER_CELL_3D_WIDTH, NUMBER_CELL_3D_HEIGHT)
             }
@@ -108,9 +107,19 @@ object Editor
         Component3D.window3D.and { window3D -> this.manipulate3D(window3D) }
     }
 
+    fun chooseImageFile() : FutureResult<File>
+    {
+        val previousTool = this.bottomTool
+        val futureResult = this.imageChooser.selectImage()
+        this.showBottom(BottomTool.IMAGE_CHOOSER)
+        futureResult.then { this.showBottom(previousTool) }
+        return futureResult
+    }
+
     private fun manipulate3D(window3D : Window3D)
     {
         this.preferences = window3D.preferences
+        this.imageChooser = ImageChooser(LAST_IMAGE_DIRECTORY_KEY, this.preferences)
 
         this.frame.canCloseNow = {
             if (this.allowToClose.get())
@@ -164,5 +173,28 @@ object Editor
                 else                    -> Unit
             }
         }
+    }
+
+    private fun showBottom(bottomTool : BottomTool)
+    {
+        if (bottomTool == this.bottomTool)
+        {
+            return
+        }
+
+        this.bottomTool = bottomTool
+        this.panelBottom.removeAll()
+
+        when (bottomTool)
+        {
+            BottomTool.NONE          -> Unit
+            BottomTool.IMAGE_CHOOSER -> this.panelBottom.add(this.imageChooser)
+        }
+
+        this.panelBottom.invalidate()
+        this.panelBottom.doLayout()
+        this.panelBottom.repaint()
+        this.frame.isVisible = false
+        this.frame.isVisible = true
     }
 }

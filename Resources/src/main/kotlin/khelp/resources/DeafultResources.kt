@@ -19,3 +19,5 @@ const val SAVE_AS = "saveAs"
 const val LOAD = "load"
 
 const val OTHER = "other"
+
+const val OPEN = "open"
