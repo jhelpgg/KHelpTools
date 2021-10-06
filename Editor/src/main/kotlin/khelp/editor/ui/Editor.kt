@@ -1,7 +1,9 @@
 package khelp.editor.ui
 
+import khelp.editor.ui.components.color.Color4fChooser
 import khelp.editor.ui.materialeditor.MaterialEditor
 import khelp.engine3d.event.ActionCode
+import khelp.engine3d.render.Color4f
 import khelp.engine3d.render.Node
 import khelp.engine3d.render.Scene
 import khelp.engine3d.render.Window3D
@@ -10,6 +12,7 @@ import khelp.io.ClassSource
 import khelp.preferences.Preferences
 import khelp.resources.Resources
 import khelp.thread.TaskContext
+import khelp.thread.extensions.futureFail
 import khelp.thread.future.FutureResult
 import khelp.ui.components.JHelpFrame
 import khelp.ui.components.imgechooser.ImageChooser
@@ -50,7 +53,9 @@ object Editor
 
     lateinit var preferences : Preferences
     private lateinit var imageChooser : ImageChooser
+    private val color4fChooser = Color4fChooser()
 
+    private var bottomCanChange = true
     private var bottomTool = BottomTool.NONE
 
     init
@@ -109,10 +114,37 @@ object Editor
 
     fun chooseImageFile() : FutureResult<File>
     {
+        if (! this.bottomCanChange)
+        {
+            return Exception().futureFail()
+        }
+
+        this.bottomCanChange = false
         val previousTool = this.bottomTool
         val futureResult = this.imageChooser.selectImage()
         this.showBottom(BottomTool.IMAGE_CHOOSER)
-        futureResult.then { this.showBottom(previousTool) }
+        futureResult.then {
+            this.bottomCanChange = true
+            this.showBottom(previousTool)
+        }
+        return futureResult
+    }
+
+    fun chooseColor(color : Color4f) : FutureResult<Color4f>
+    {
+        if (! this.bottomCanChange)
+        {
+            return Exception().futureFail()
+        }
+
+        this.bottomCanChange = false
+        val previousTool = this.bottomTool
+        val futureResult = this.color4fChooser.chooseColor(color)
+        this.showBottom(BottomTool.COLOR_CHOOSER)
+        futureResult.then {
+            this.bottomCanChange = true
+            this.showBottom(previousTool)
+        }
         return futureResult
     }
 
@@ -189,6 +221,7 @@ object Editor
         {
             BottomTool.NONE          -> Unit
             BottomTool.IMAGE_CHOOSER -> this.panelBottom.add(this.imageChooser)
+            BottomTool.COLOR_CHOOSER -> this.panelBottom.add(this.color4fChooser)
         }
 
         this.panelBottom.invalidate()

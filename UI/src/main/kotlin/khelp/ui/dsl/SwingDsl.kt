@@ -43,10 +43,11 @@ fun Container.constraintLayout(creator : ConstraintsLayoutCreator.() -> Unit)
     constraintsLayoutCreator.create()
 }
 
-fun Container.verticalLayout(creator : VerticalLayoutCreator.() -> Unit)
+fun Container.verticalLayout(marginHorizontal : Int = 4, marginLeft : Int = 0,
+                             creator : VerticalLayoutCreator.() -> Unit)
 {
     val constraintsLayoutCreator = ConstraintsLayoutCreator(this)
-    creator(VerticalLayoutCreator(constraintsLayoutCreator))
+    creator(VerticalLayoutCreator(constraintsLayoutCreator, marginHorizontal, marginLeft))
     constraintsLayoutCreator.create()
 }
 

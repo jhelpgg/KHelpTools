@@ -4,11 +4,11 @@ import java.awt.Dimension
 import java.awt.Graphics
 import javax.swing.JComponent
 
-class EmptyComponent : JComponent()
+class EmptyComponent(width:Int=1,height:Int=1) : JComponent()
 {
     init
     {
-        val size = Dimension(1, 1)
+        val size = Dimension(width, height)
         this.size = size
         this.preferredSize = size
         this.minimumSize = size

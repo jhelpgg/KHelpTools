@@ -2,6 +2,14 @@ exit
 Exit
 -<=-=>-
 
+choose
+Choose
+-<=-=>-
+
+cancel
+Cancel
+-<=-=>-
+
 exitToolTip
 Exit from editor
 -<=-=>-
@@ -42,3 +50,30 @@ rate
 Rate
 -<=-=>-
 
+alpha
+Alpha
+-<=-=>-
+
+red
+Red
+-<=-=>-
+
+green
+Green
+-<=-=>-
+
+blue
+Blue
+-<=-=>-
+
+sphere
+Sphere
+-<=-=>-
+
+box
+Box
+-<=-=>-
+
+cross
+Cross
+-<=-=>-

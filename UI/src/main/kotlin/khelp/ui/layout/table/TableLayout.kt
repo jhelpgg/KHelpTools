@@ -52,6 +52,17 @@ class TableLayout(var tableAspect : Boolean = false) : LayoutManager2
      */
     private var minimumY = 0
 
+    constructor(margin : Int, tableAspect : Boolean = false) : this(tableAspect)
+    {
+        val inset = max(0, margin)
+        this.setMargins(inset, inset, inset, inset)
+    }
+
+    constructor(top : Int, left : Int, bottom : Int, right : Int, tableAspect : Boolean = false) : this(tableAspect)
+    {
+        this.setMargins(max(0, top), max(0, left), max(0, bottom), max(0, right))
+    }
+
     /**
      * Let the number of cells and the minimums computed by the components and their constraints
      */

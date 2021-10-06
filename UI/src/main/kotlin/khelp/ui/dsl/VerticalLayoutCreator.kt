@@ -3,9 +3,14 @@ package khelp.ui.dsl
 import khelp.ui.layout.constraints.ConstraintsSize
 import java.util.concurrent.atomic.AtomicInteger
 import javax.swing.JComponent
+import kotlin.math.max
 
-class VerticalLayoutCreator(private val constraintsLayoutCreator : ConstraintsLayoutCreator)
+class VerticalLayoutCreator(private val constraintsLayoutCreator : ConstraintsLayoutCreator,
+                            marginVertical : Int, marginLeft : Int)
 {
+    private val marginVertical = max(0, marginVertical)
+    private val marginHorizontal = max(0, marginLeft)
+
     companion object
     {
         private const val BASE = "VerticalLayoutCreator_"
@@ -20,6 +25,9 @@ class VerticalLayoutCreator(private val constraintsLayoutCreator : ConstraintsLa
         val name = VerticalLayoutCreator.nextName
 
         constraintsLayoutCreator.add(this, name) {
+            marginTop = marginVertical
+            marginBottom = marginVertical
+            marginLeft = marginHorizontal
             horizontalSize = ConstraintsSize.WRAPPED
             verticalSize = ConstraintsSize.WRAPPED
 
