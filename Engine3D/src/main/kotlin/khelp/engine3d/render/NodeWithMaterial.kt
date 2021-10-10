@@ -1,5 +1,7 @@
 package khelp.engine3d.render
 
+import khelp.utilities.log.debug
+
 abstract class NodeWithMaterial(id : String) : Node(id)
 {
     init

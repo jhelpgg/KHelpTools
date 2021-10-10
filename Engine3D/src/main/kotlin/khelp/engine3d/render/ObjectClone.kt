@@ -19,4 +19,10 @@ class ObjectClone(id : String, internal val reference : Object3D) : NodeWithMate
     {
         this.material { material -> material.renderMaterial(this.reference) }
     }
+
+    @ThreadOpenGL
+    override fun renderSpecificPicking()
+    {
+        this.reference.drawObject()
+    }
 }

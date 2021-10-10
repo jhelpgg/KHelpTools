@@ -383,7 +383,7 @@ fun computePreferredDimension(component : Component) : Dimension
             dimension = layoutManager.preferredLayoutSize(component)
         }
 
-        if (component.getComponentCount() < 1 || dimension == null)
+        if (component.componentCount < 1 || dimension == null)
         {
             dimension = component.getPreferredSize()
 

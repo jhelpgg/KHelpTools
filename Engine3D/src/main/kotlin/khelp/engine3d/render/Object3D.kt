@@ -8,7 +8,7 @@ import org.lwjgl.opengl.GL11
 
 open class Object3D(id : String) : NodeWithMaterial(id)
 {
-    private val mesh : Mesh = Mesh()
+    val mesh : Mesh = Mesh()
     var showWire : Boolean = false
     var wireColor : Color4f = DEFAULT_WIRE_FRAME_COLOR
     override val center : Point3D get() = this.mesh.center
@@ -20,6 +20,23 @@ open class Object3D(id : String) : NodeWithMaterial(id)
     /**Indicates if the polygons list have to be reconstruct in OpenGL memory*/
     private var needReconstructTheList = true
 
+    constructor(id : String, mesh : Mesh) : this(id)
+    {
+        this.mesh {
+            for (face in mesh)
+            {
+                face {
+                    for (vertex in face)
+                    {
+                        add(vertex.copy())
+                    }
+                }
+            }
+        }
+    }
+
+    constructor(id : String, object3D : Object3D) : this(id, object3D.mesh)
+
     @MeshDSL
     fun mesh(creator : Mesh.() -> Unit)
     {
@@ -27,10 +44,21 @@ open class Object3D(id : String) : NodeWithMaterial(id)
         this.needReconstructTheList = true
     }
 
+    fun refresh()
+    {
+        this.needReconstructTheList = true
+    }
+
     @ThreadOpenGL
     override fun renderSpecific()
     {
         this.material { material -> material.renderMaterial(this) }
+    }
+
+    @ThreadOpenGL
+    override fun renderSpecificPicking()
+    {
+        this.drawObject()
     }
 
     @ThreadOpenGL

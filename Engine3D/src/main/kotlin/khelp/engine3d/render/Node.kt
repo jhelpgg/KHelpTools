@@ -1,8 +1,11 @@
 package khelp.engine3d.render
 
 import khelp.engine3d.animation.NodePosition
+import khelp.engine3d.extensions.blue
 import khelp.engine3d.extensions.degreeToRadian
+import khelp.engine3d.extensions.green
 import khelp.engine3d.extensions.position
+import khelp.engine3d.extensions.red
 import khelp.engine3d.geometry.Point3D
 import khelp.engine3d.geometry.Rotf
 import khelp.engine3d.geometry.Vec3f
@@ -17,14 +20,16 @@ import khelp.engine3d.render.prebuilt.FaceUV
 import khelp.engine3d.render.prebuilt.Plane
 import khelp.engine3d.render.prebuilt.Revolution
 import khelp.engine3d.render.prebuilt.Sphere
+import khelp.engine3d.utils.PICKING_PRECISION
 import khelp.engine3d.utils.ThreadOpenGL
+import khelp.engine3d.utils.pickSame
 import khelp.thread.observable.Observable
 import khelp.thread.observable.ObservableData
 import khelp.utilities.collections.queue.Queue
 import khelp.utilities.extensions.bounds
 import org.lwjgl.opengl.GL11
 import java.util.Stack
-import java.util.Vector
+import java.util.concurrent.atomic.AtomicInteger
 import kotlin.math.max
 import kotlin.math.min
 
@@ -33,6 +38,11 @@ open class Node(val id : String) : Iterable<Node>
     companion object
     {
         private const val MIN_SCALE = 0.001f
+
+        /**
+         * Next color picking ID
+         */
+        private var ID_PICKING = AtomicInteger(0)
     }
 
     private var limitMinX = Float.NEGATIVE_INFINITY
@@ -165,9 +175,10 @@ open class Node(val id : String) : Iterable<Node>
     var parent : Node? = null
         protected set
     var visible : Boolean = true
+    var canBePick : Boolean = true
     open val center : Point3D get() = Point3D(this.x, this.y, this.z)
     open val virtualBox : VirtualBox get() = VirtualBox()
-    private val children = Vector<Node>(8)
+    private val children = ArrayList<Node>(8)
     val root : Node by lazy {
         var root = this
 
@@ -178,6 +189,27 @@ open class Node(val id : String) : Iterable<Node>
 
         root
     }
+
+    /**Red part of picking color*/
+    private val redPicking : Float
+
+    /**Green part of picking color*/
+    private val greenPicking : Float
+
+    /**Blue part of picking color*/
+    private val bluePicking : Float
+
+    /**Color picking ID*/
+    val colorPickingId : Int
+
+    init
+    {
+        this.colorPickingId = Node.ID_PICKING.getAndAccumulate(PICKING_PRECISION) { i1, i2 -> i1 + i2 }
+        this.redPicking = this.colorPickingId.red / 255f
+        this.greenPicking = this.colorPickingId.green / 255f
+        this.bluePicking = this.colorPickingId.blue / 255f
+    }
+
 
     fun totalBox() : VirtualBox
     {
@@ -190,9 +222,12 @@ open class Node(val id : String) : Iterable<Node>
             val node = stack.pop()
             virtualBox.add(node.projectedBox())
 
-            for (child in node.children)
+            synchronized(node.children)
             {
-                stack.push(child)
+                for (child in node.children)
+                {
+                    stack.push(child)
+                }
             }
         }
 
@@ -244,7 +279,12 @@ open class Node(val id : String) : Iterable<Node>
         val child = Node(id)
         child.parent = this
         nodeCreator(child)
-        this.children.add(child)
+
+        synchronized(this.children)
+        {
+            this.children.add(child)
+        }
+
         return child
     }
 
@@ -254,7 +294,12 @@ open class Node(val id : String) : Iterable<Node>
         val child = Object3D(id)
         child.parent = this
         objectCreator(child)
-        this.children.add(child)
+
+        synchronized(this.children)
+        {
+            this.children.add(child)
+        }
+
         return child
     }
 
@@ -264,7 +309,12 @@ open class Node(val id : String) : Iterable<Node>
         val child = Plane(id, faceUV)
         child.parent = this
         planeCreator(child)
-        this.children.add(child)
+
+        synchronized(this.children)
+        {
+            this.children.add(child)
+        }
+
         return child
     }
 
@@ -274,7 +324,12 @@ open class Node(val id : String) : Iterable<Node>
         val child = Box(id, boxUV)
         child.parent = this
         boxCreator(child)
-        this.children.add(child)
+
+        synchronized(this.children)
+        {
+            this.children.add(child)
+        }
+
         return child
     }
 
@@ -285,7 +340,12 @@ open class Node(val id : String) : Iterable<Node>
         val child = Sphere(id, slice, stack, multiplierU, multiplierV)
         child.parent = this
         sphereCreator(child)
-        this.children.add(child)
+
+        synchronized(this.children)
+        {
+            this.children.add(child)
+        }
+
         return child
     }
 
@@ -307,7 +367,12 @@ open class Node(val id : String) : Iterable<Node>
 
         child.parent = this
         objectCloneCreator(child)
-        this.children.add(child)
+
+        synchronized(this.children)
+        {
+            this.children.add(child)
+        }
+
         return child
     }
 
@@ -317,7 +382,12 @@ open class Node(val id : String) : Iterable<Node>
         val child = Revolution(id)
         revolutionCreator(child)
         child.parent = this
-        this.children.add(child)
+
+        synchronized(this.children)
+        {
+            this.children.add(child)
+        }
+
         return child
     }
 
@@ -328,7 +398,12 @@ open class Node(val id : String) : Iterable<Node>
             .computeText(id, text)
         textCreator(child)
         child.parent = this
-        this.children.add(child)
+
+        synchronized(this.children)
+        {
+            this.children.add(child)
+        }
+
         return child
     }
 
@@ -338,7 +413,12 @@ open class Node(val id : String) : Iterable<Node>
         val child = Dice(id)
         diceCreator(child)
         child.parent = this
-        this.children.add(child)
+
+        synchronized(this.children)
+        {
+            this.children.add(child)
+        }
+
         return child
     }
 
@@ -348,7 +428,12 @@ open class Node(val id : String) : Iterable<Node>
         val child = Sword(id)
         swordCreator(child)
         child.parent = this
-        this.children.add(child)
+
+        synchronized(this.children)
+        {
+            this.children.add(child)
+        }
+
         return child
     }
 
@@ -358,7 +443,12 @@ open class Node(val id : String) : Iterable<Node>
         val child = Robot(id)
         robotCreator(child)
         child.parent = this
-        this.children.add(child)
+
+        synchronized(this.children)
+        {
+            this.children.add(child)
+        }
+
         return child
     }
 
@@ -377,9 +467,13 @@ open class Node(val id : String) : Iterable<Node>
                 return node as N
             }
 
-            for (child in node.children)
+
+            synchronized(node.children)
             {
-                queue.inQueue(child)
+                for (child in node.children)
+                {
+                    queue.inQueue(child)
+                }
             }
         }
 
@@ -413,13 +507,15 @@ open class Node(val id : String) : Iterable<Node>
             clone.twoSidedRule = this.twoSidedRule
         }
 
-        for (child in this.children)
+        synchronized(this.children)
         {
-            val childClone = child.cloneHierarchy()
-            childClone.parent = clone
-            clone.children.add(childClone)
+            for (child in this.children)
+            {
+                val childClone = child.cloneHierarchy()
+                childClone.parent = clone
+                clone.children.add(childClone)
+            }
         }
-
         return clone
     }
 
@@ -667,37 +763,59 @@ open class Node(val id : String) : Iterable<Node>
         return Point3D(vect.x - this.x, vect.y - this.y, vect.z - this.z)
     }
 
-    override fun iterator() : Iterator<Node> = this.children.iterator()
+    override fun iterator() : Iterator<Node> =
+        synchronized(this.children)
+        {
+            this.children.iterator()
+        }
 
     fun addChild(node : Node)
     {
         node.parent?.removeChild(node)
         node.parent = this
-        this.children.add(node)
+
+        synchronized(this.children)
+        {
+            this.children.add(node)
+        }
     }
 
     fun removeChild(node : Node)
     {
-        if (this.children.remove(node))
+        synchronized(this.children)
         {
-            node.parent = null
-            this.root.addChild(node)
+            if (this.children.remove(node))
+            {
+                node.parent = null
+                this.root.addChild(node)
+            }
         }
     }
 
     fun removeAllChildren()
     {
-        for (child in this.children)
+        synchronized(this.children)
         {
-            child.parent = null
-        }
+            for (child in this.children)
+            {
+                child.parent = null
+            }
 
-        this.children.clear()
+            this.children.clear()
+        }
     }
 
-    val numberOfChild : Int = this.children.size
+    val numberOfChild : Int =
+        synchronized(this.children)
+        {
+            this.children.size
+        }
 
-    fun child(index : Int) : Node = this.children[index]
+    fun child(index : Int) : Node =
+        synchronized(this.children)
+        {
+            this.children[index]
+        }
 
     /**
      * Locate the node in the scene
@@ -741,6 +859,88 @@ open class Node(val id : String) : Iterable<Node>
     internal open fun renderSpecific()
     {
     }
+
+    /**
+     * Render the node for color picking
+     *
+     * @param window Window where the scene draw
+     */
+    @ThreadOpenGL
+    @Synchronized
+    internal fun renderTheNodePicking()
+    {
+        GL11.glPushMatrix()
+        this.matrix()
+
+        if (this.visible && this.canBePick)
+        {
+            GL11.glDisable(GL11.GL_TEXTURE_2D)
+            GL11.glColor4f(this.redPicking, this.greenPicking, this.bluePicking, 1f)
+            this.renderSpecificPicking()
+        }
+
+        synchronized(this.children)
+        {
+            for (child in this.children)
+            {
+                child.renderTheNodePicking()
+            }
+        }
+
+        GL11.glPopMatrix()
+    }
+
+    /**
+     * Render specific for color picking, used by sub-classes
+     */
+    @ThreadOpenGL
+    internal open fun renderSpecificPicking()
+    {
+    }
+
+    /**
+     * Looking for a child pick
+     *
+     * @param color Picking color
+     * @return Node pick
+     */
+    internal fun pickingNode(color : Color4f) : Node?
+    {
+        val red = color.red
+        val green = color.green
+        val blue = color.blue
+
+        if (this.itIsMePick(red, green, blue))
+        {
+            return this
+        }
+
+        var node = this
+        val stackNodes = Stack<Node>()
+        stackNodes.push(node)
+
+        while (! stackNodes.isEmpty())
+        {
+            node = stackNodes.pop()
+            if (node.itIsMePick(red, green, blue))
+            {
+                return node
+            }
+
+            synchronized(node.children)
+            {
+                for (child in node.children)
+                {
+                    stackNodes.push(child)
+                }
+            }
+        }
+
+        return null
+    }
+
+    private fun itIsMePick(pickRed : Float, pickGreen : Float, pickBlue : Float) : Boolean =
+        pickSame(this.redPicking, this.greenPicking, this.bluePicking, pickRed, pickGreen, pickBlue)
 
     override fun toString() : String =
         "${this.javaClass.name} : ${this.id} : ${this.hashCode()}"

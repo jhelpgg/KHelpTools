@@ -11,7 +11,6 @@ import khelp.engine3d.render.prebuilt.BoxUV
 import khelp.engine3d.render.prebuilt.CrossUV
 import khelp.engine3d.render.prebuilt.Sphere
 import khelp.thread.TaskContext
-import khelp.thread.delay
 import khelp.thread.observable.Observable
 import khelp.thread.observable.ObservableData
 import khelp.ui.GenericAction
@@ -20,7 +19,6 @@ import khelp.ui.dsl.borderLayout
 import khelp.ui.dsl.tableLayout
 import khelp.ui.events.MouseManager
 import khelp.ui.extensions.addTitle
-import khelp.utilities.log.debug
 import java.awt.FlowLayout
 import javax.swing.JButton
 import javax.swing.JCheckBox
@@ -81,9 +79,10 @@ class MaterialEditor : ScreenEditor
 
     init
     {
-        val actionSphere = GenericAction(Editor.resourcesText, "sphere", TaskContext.INDEPENDENT) {this.showSphere()}
-        val actionBox = GenericAction(Editor.resourcesText, "box", TaskContext.INDEPENDENT) {this.showBoxRepeatOnFace()}
-        val actionCross = GenericAction(Editor.resourcesText, "cross", TaskContext.INDEPENDENT) {this.showBoxCross()}
+        val actionSphere = GenericAction(Editor.resourcesText, "sphere", TaskContext.INDEPENDENT) { this.showSphere() }
+        val actionBox =
+            GenericAction(Editor.resourcesText, "box", TaskContext.INDEPENDENT) { this.showBoxRepeatOnFace() }
+        val actionCross = GenericAction(Editor.resourcesText, "cross", TaskContext.INDEPENDENT) { this.showBoxCross() }
 
         this.objectsPanel.layout = FlowLayout()
         this.objectsPanel.add(JButton(actionSphere))
@@ -185,13 +184,13 @@ class MaterialEditor : ScreenEditor
 
         val panel = JPanel()
         panel.tableLayout {
-            diffusePanel.cell(0, 0, 3, 3)
-            transparencyPanel.cell(0, 3, 3, 2)
-            ambientPanel.cell(0, 5, 3, 1)
-            emissivePanel.cell(0, 5, 3, 1)
-            specularPanel.cell(0, 6, 3, 2)
-            shininessPanel.cell(0, 8, 3, 2)
-            sphericPanel.cell(0, 10, 3, 3)
+            diffusePanel.cell(0, 0, 1, 3)
+            transparencyPanel.cell(0, 3, 1, 2)
+            ambientPanel.cell(0, 5, 1, 1)
+            emissivePanel.cell(0, 5, 1, 1)
+            specularPanel.cell(0, 6, 1, 2)
+            shininessPanel.cell(0, 8, 1, 2)
+            sphericPanel.cell(0, 10, 1, 3)
         }
 
         this.scrollPane =
@@ -205,10 +204,6 @@ class MaterialEditor : ScreenEditor
         panel.borderLayout {
             pageStart(objectsPanel)
             center(scrollPane)
-        }
-
-        delay(1024) {
-            debug(this.scrollPane.bounds, " | ", this.scrollPane.viewport.bounds, " | ", this.scrollPane.visibleRect)
         }
     }
 

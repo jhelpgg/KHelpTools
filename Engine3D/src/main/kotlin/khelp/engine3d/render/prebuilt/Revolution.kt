@@ -13,6 +13,17 @@ import kotlin.math.sqrt
 class Revolution(id : String) : Object3D(id)
 {
     @MeshDSL
+    constructor(id : String,
+                precision : Int = 5,
+                angle : Float = 360f, rotationPrecision : Int = 12,
+                start : Float = 0f, end : Float = 1f,
+                multiplierU : Float = 1f,
+                pathCreator : Path.() -> Unit) : this(id)
+    {
+        this.path(precision, angle, rotationPrecision, start, end, multiplierU, pathCreator)
+    }
+
+    @MeshDSL
     fun path(precision : Int = 5,
              angle : Float = 360f, rotationPrecision : Int = 12,
              start : Float = 0f, end : Float = 1f,

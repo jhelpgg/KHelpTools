@@ -21,6 +21,9 @@ class Constant private constructor(val real: Double) : Function()
 {
     companion object
     {
+        /**Constants cache*/
+        private val constants = Cache<Double, Constant>(128) { Constant(it) }
+
         /**
          * e
          */
@@ -74,9 +77,6 @@ class Constant private constructor(val real: Double) : Function()
                 {
                     Constant.MINUS_ONE
                 }
-
-        /**Constants cache*/
-        private val constants = Cache<Double, Constant>(128) { Constant(it) }
 
         /**
          * Create constant from a value

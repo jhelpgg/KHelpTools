@@ -1,7 +1,7 @@
 package khelp.editor.ui
 
 import khelp.editor.ui.components.color.Color4fChooser
-import khelp.editor.ui.materialeditor.MaterialEditor
+import khelp.editor.ui.mesheditor.MeshEditor
 import khelp.engine3d.event.ActionCode
 import khelp.engine3d.render.Color4f
 import khelp.engine3d.render.Node
@@ -170,7 +170,7 @@ object Editor
 
         window3D.actionManager.actionObservable.observedBy(TaskContext.INDEPENDENT, this::actionOn3D)
 
-        this.changeScreen(MaterialEditor())
+        this.changeScreen(MeshEditor(window3D.mouseManager, window3D.nodePickedFlow))
     }
 
     private fun changeScreen(screenEditor : ScreenEditor)

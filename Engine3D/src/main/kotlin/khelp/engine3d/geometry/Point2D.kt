@@ -54,6 +54,11 @@ class Point2D(x : Float = 0f, y : Float = 0f) : ParsableSerializable
         return khelp.utilities.math.equals(this.x, other.x) && khelp.utilities.math.equals(this.y, other.y)
     }
 
+    fun copy() : Point2D = Point2D(this.x, this.y)
+
+    fun middle(point2D : Point2D) : Point2D = Point2D((this.x + point2D.x) / 2f,
+                                                      (this.y + point2D.y) / 2f)
+
     /**
      * Apply like UV in OpenGL
      */

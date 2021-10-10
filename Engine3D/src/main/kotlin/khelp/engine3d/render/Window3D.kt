@@ -1,13 +1,19 @@
 package khelp.engine3d.render
 
 import khelp.engine3d.event.ActionManager
+import khelp.engine3d.event.MouseManager3D
 import khelp.engine3d.sound3d.SoundManager
+import khelp.engine3d.utils.TEMPORARY_FLOAT_BUFFER
+import khelp.engine3d.utils.ThreadOpenGL
 import khelp.engine3d.utils.gluPerspective
 import khelp.io.ExternalSource
 import khelp.preferences.Preferences
 import khelp.resources.Resources
 import khelp.thread.Locker
+import khelp.thread.flow.Flow
+import khelp.thread.flow.FlowData
 import khelp.thread.parallel
+import khelp.ui.events.MouseStatus
 import khelp.utilities.log.verbose
 import khelp.utilities.log.warning
 import org.lwjgl.glfw.Callbacks
@@ -92,15 +98,15 @@ class Window3D private constructor()
                 GLFW.glfwSetKeyCallback(window) { _, key, _, action, _ ->
                     window3D.keyEvent(key, action)
                 }
-                GLFW.glfwSetCursorEnterCallback(window) { windowId, entered ->
-                    window3D.mouseEntered(windowId, entered)
+                GLFW.glfwSetCursorEnterCallback(window) { _, entered ->
+                    window3D.mouseEntered(entered)
                 }
                 GLFW.glfwSetJoystickCallback { joystickID, event -> window3D.joystickConnected(joystickID, event) }
-                GLFW.glfwSetMouseButtonCallback(window) { windowId, button, action, modifiers ->
-                    window3D.mouseButton(windowId, button, action, modifiers)
+                GLFW.glfwSetMouseButtonCallback(window) { _, button, action, modifiers ->
+                    window3D.mouseButton(button, action, modifiers)
                 }
-                GLFW.glfwSetCursorPosCallback(window) { windowId, cursorX, cursorY ->
-                    window3D.mousePosition(windowId, cursorX, cursorY)
+                GLFW.glfwSetCursorPosCallback(window) { _, cursorX, cursorY ->
+                    window3D.mousePosition(cursorX, cursorY)
                 }
                 GLFW.glfwSetWindowCloseCallback(window) { window3D.closeWindow() }
 
@@ -170,6 +176,12 @@ class Window3D private constructor()
     val preferences : Preferences = Preferences("game/preferences.pref")
     val resources : Resources = Resources(ExternalSource("game/resources"))
     val actionManager = ActionManager(this.preferences)
+    lateinit var mouseManager : MouseManager3D
+        private set
+    private var ready = false
+    private var nodeDetect : Node? = null
+    private val nodePickedFlowData = FlowData<Node?>()
+    val nodePickedFlow : Flow<Node?> = this.nodePickedFlowData.flow
 
     /**
      * Sound manager
@@ -208,19 +220,28 @@ class Window3D private constructor()
         this.actionManager.keyEvent(key, action)
     }
 
-    private fun mouseEntered(window : Long, entered : Boolean)
+    private fun mouseEntered(entered : Boolean)
     {
-        // TODO
+        if (this.ready)
+        {
+            this.mouseManager.mouseEntered(entered)
+        }
     }
 
-    private fun mouseButton(window : Long, button : Int, action : Int, modifiers : Int)
+    private fun mouseButton(button : Int, action : Int, modifiers : Int)
     {
-        // TODO
+        if (this.ready)
+        {
+            this.mouseManager.mouseButton(button, action, modifiers)
+        }
     }
 
-    private fun mousePosition(window : Long, cursorX : Double, cursorY : Double)
+    private fun mousePosition(cursorX : Double, cursorY : Double)
     {
-        // TODO
+        if (this.ready)
+        {
+            this.mouseManager.mousePosition(cursorX, cursorY)
+        }
     }
 
     private fun joystickConnected(joystickID : Int, event : Int)
@@ -230,6 +251,7 @@ class Window3D private constructor()
         // TODO
     }
 
+    @ThreadOpenGL
     private fun initialize3D()
     {
         // Make the OpenGL context current
@@ -303,6 +325,7 @@ class Window3D private constructor()
         GL11.glEnable(GL11.GL_LIGHTING)
     }
 
+    @ThreadOpenGL
     private fun renderScene()
     {
         try
@@ -334,16 +357,72 @@ class Window3D private constructor()
         }
     }
 
+    /**
+     * Render the scene on picking mode
+     */
+    @ThreadOpenGL
+    private fun renderPicking()
+    {
+        // Prepare for "picking rendering"
+        GL11.glDisable(GL11.GL_LIGHTING)
+        GL11.glDisable(GL11.GL_CULL_FACE)
+        GL11.glClearColor(1f, 1f, 1f, 1f)
+        GL11.glClear(GL11.GL_COLOR_BUFFER_BIT or GL11.GL_DEPTH_BUFFER_BIT)
+        GL11.glPushMatrix()
+
+        // Render the scene in picking mode
+        this.scene.root.renderTheNodePicking()
+        GL11.glPopMatrix()
+        GL11.glEnable(GL11.GL_LIGHTING)
+
+        val previousNode = this.nodeDetect
+
+        // If detection point is on the screen
+        if (this.mouseManager.mouseStatus != MouseStatus.OUTSIDE
+            && this.mouseManager.mouseX >= 0 && this.mouseManager.mouseX < this.width
+            && this.mouseManager.mouseY >= 0 && this.mouseManager.mouseY < this.height)
+        {
+            // Compute pick color and node pick
+            this.nodeDetect = this.scene.root
+                .pickingNode(this.pickColor(this.mouseManager.mouseX, this.mouseManager.mouseY))
+        }
+        else
+        {
+            this.nodeDetect = null
+        }
+
+        val actualNode = this.nodeDetect
+
+        if (previousNode != actualNode)
+        {
+            if (previousNode is NodeWithMaterial)
+            {
+                previousNode.selected = false
+            }
+
+            if (actualNode is NodeWithMaterial)
+            {
+                actualNode.selected = true
+            }
+
+            this.nodePickedFlowData.publish(actualNode)
+        }
+    }
+
+    @ThreadOpenGL
     private fun renderLoop()
     {
-        // TODO
+        this.renderPicking()
         this.renderScene()
     }
 
+    @ThreadOpenGL
     private fun render3D()
     {
         this.actionManager.computeAxisLimits()
         this.soundManager.init()
+        this.mouseManager = MouseManager3D(this.width, this.height)
+        this.ready = true
         this.initialize3D()
 
         this.readyLocker.unlock()
@@ -375,5 +454,22 @@ class Window3D private constructor()
         GLFW.glfwSetErrorCallback(null)
             ?.free()
         verbose("Good bye !")
+    }
+
+    @ThreadOpenGL
+    private fun pickColor(x : Int, y : Int) : Color4f
+    {
+        // Get picking color
+        TEMPORARY_FLOAT_BUFFER.rewind()
+        GL11.glReadPixels(x, this.height - y, 1, 1, GL11.GL_RGBA, GL11.GL_FLOAT, TEMPORARY_FLOAT_BUFFER)
+        TEMPORARY_FLOAT_BUFFER.rewind()
+
+        // Convert in RGB value
+        val red = TEMPORARY_FLOAT_BUFFER.get()
+        val green = TEMPORARY_FLOAT_BUFFER.get()
+        val blue = TEMPORARY_FLOAT_BUFFER.get()
+        TEMPORARY_FLOAT_BUFFER.rewind()
+
+        return Color4f(red, green, blue)
     }
 }

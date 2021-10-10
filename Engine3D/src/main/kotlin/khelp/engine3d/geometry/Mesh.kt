@@ -8,7 +8,8 @@ import khelp.utilities.serialization.ParsableSerializable
 import khelp.utilities.serialization.Parser
 import khelp.utilities.serialization.Serializer
 
-class Mesh : ParsableSerializable
+class Mesh : ParsableSerializable,
+             Iterable<Face>
 {
     companion object
     {
@@ -19,6 +20,7 @@ class Mesh : ParsableSerializable
     private val barycenter = BarycenterPoint3D()
     val center : Point3D get() = this.barycenter.barycenter()
     val virtualBox : VirtualBox = VirtualBox()
+    val size : Int get() = this.faces.size
 
     @MeshDSL
     fun face(faceCreator : Face.() -> Unit)
@@ -43,12 +45,52 @@ class Mesh : ParsableSerializable
         }
     }
 
+    fun removeLastFace()
+    {
+        if (this.faces.isNotEmpty())
+        {
+            this.faces.removeAt(this.faces.size - 1)
+            this.barycenter.reset()
+            this.virtualBox.reset()
+
+            for (face in this.faces)
+            {
+                face.refillBarycenterAndVirtualBox()
+            }
+        }
+    }
+
+    fun removeFace(index : Int)
+    {
+        this.faces.removeAt(index)
+        this.barycenter.reset()
+        this.virtualBox.reset()
+
+        for (face in this.faces)
+        {
+            face.refillBarycenterAndVirtualBox()
+        }
+    }
+
+    fun refresh()
+    {
+        this.barycenter.reset()
+        this.virtualBox.reset()
+
+        for (face in this.faces)
+        {
+            face.refillBarycenterAndVirtualBox()
+        }
+    }
+
     fun clear()
     {
         this.virtualBox.reset()
         this.barycenter.reset()
         this.faces.clear()
     }
+
+    operator fun get(index : Int) : Face = this.faces[index]
 
     @ThreadOpenGL
     internal fun render()
@@ -79,4 +121,6 @@ class Mesh : ParsableSerializable
             face.refillBarycenterAndVirtualBox()
         }
     }
+
+    override fun iterator() : Iterator<Face> = this.faces.iterator()
 }

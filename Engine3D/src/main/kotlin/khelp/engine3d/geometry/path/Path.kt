@@ -6,7 +6,9 @@ import khelp.utilities.math.isNul
 import khelp.utilities.serialization.ParsableSerializable
 import khelp.utilities.serialization.Parser
 import khelp.utilities.serialization.Serializer
+import java.awt.geom.Rectangle2D
 import kotlin.math.max
+import kotlin.math.min
 
 class Path : ParsableSerializable
 {
@@ -161,7 +163,55 @@ class Path : ParsableSerializable
 
         return lines
     }
+    /**
+     * Compute current bounding box
+     * @return Current bounding box
+     */
+    fun border(): Rectangle2D
+    {
+        var minX = java.lang.Float.MAX_VALUE
+        var minY = java.lang.Float.MAX_VALUE
+        var maxX = java.lang.Float.MIN_VALUE
+        var maxY = java.lang.Float.MIN_VALUE
 
+        for (pathElement in this.pathElements)
+        {
+            when(pathElement)
+            {
+                is PathMove ->
+                {
+                    minX = min(minX, pathElement.x)
+                    minY = min(minY, pathElement.y)
+                    maxX = max(maxX, pathElement.x)
+                    maxY = max(maxY, pathElement.y)
+                }
+                is PathLineTo ->
+                {
+                    minX = min(minX, pathElement.x)
+                    minY = min(minY, pathElement.y)
+                    maxX = max(maxX, pathElement.x)
+                    maxY = max(maxY, pathElement.y)
+                }
+                is PathQuadratic ->
+                {
+                    minX = minOf(minX, pathElement.x, pathElement.controlX)
+                    minY = minOf(minY, pathElement.y, pathElement.controlY)
+                    maxX = maxOf(maxX, pathElement.x, pathElement.controlX)
+                    maxY = maxOf(maxY, pathElement.y, pathElement.controlY)
+                }
+                is PathCubic ->
+                {
+                    minX = minOf(minX, pathElement.x, pathElement.control1X, pathElement.control2X)
+                    minY = minOf(minY, pathElement.y, pathElement.control1Y, pathElement.control2Y)
+                    maxX = maxOf(maxX, pathElement.x, pathElement.control1X, pathElement.control2X)
+                    maxY = maxOf(maxY, pathElement.y, pathElement.control1Y, pathElement.control2Y)
+                }
+                else -> Unit
+            }
+        }
+
+        return Rectangle2D.Float(minX, minY, maxX - minX, maxY - minY)
+    }
     override fun serialize(serializer : Serializer)
     {
         serializer.setParsableSerializableList("elements",

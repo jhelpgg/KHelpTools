@@ -12,6 +12,7 @@ val Z_AXIS = Vec3f(0.0f, 0.0f, 1.0f)
 class Vec3f(var x: Float = 0f, var y: Float = 0f, var z: Float = 0f)
 {
     constructor(vec3f: Vec3f) : this(vec3f.x, vec3f.y, vec3f.z)
+    constructor(point3D: Point3D) : this(point3D.x, point3D.y, point3D.z)
 
     fun add(var1: Vec3f)
     {
@@ -91,7 +92,7 @@ class Vec3f(var x: Float = 0f, var y: Float = 0f, var z: Float = 0f)
         return this.dot(this)
     }
 
-    fun minus(var1: Vec3f): Vec3f
+    operator fun minus(var1: Vec3f): Vec3f
     {
         var var2 = Vec3f()
         var2.sub(this, var1)

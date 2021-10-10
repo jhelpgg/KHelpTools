@@ -71,19 +71,19 @@ fun isNul(value : Double) = abs(value) <= EPSILON
  */
 fun isNul(value : Float) = abs(value) <= EPSILON_FLOAT
 
-fun compare(value1:Float,value2:Float) : Int
+fun compare(value1 : Float, value2 : Float) : Int
 {
     val diff = value1 - value2
 
     return when
     {
         isNul(diff) -> 0
-        diff > 0f  -> 1
-        else -> -1
+        diff > 0f   -> 1
+        else        -> - 1
     }
 }
 
-fun compare(value1:Double,value2:Double) : Int
+fun compare(value1 : Double, value2 : Double) : Int
 {
     val diff = value1 - value2
 
@@ -91,7 +91,7 @@ fun compare(value1:Double,value2:Double) : Int
     {
         isNul(diff) -> 0
         diff > 0.0  -> 1
-        else -> -1
+        else        -> - 1
     }
 }
 
@@ -167,9 +167,9 @@ fun sign(double : Double) : Int =
         else          -> 1
     }
 
-fun square(number:Float):Float = number*number
+fun square(number : Float) : Float = number * number
 
-fun square(number:Double):Double = number*number
+fun square(number : Double) : Double = number * number
 
 fun computeIntersectedArea(rectangle1 : Rectangle, rectangle2 : Rectangle) : Int
 {
@@ -420,7 +420,7 @@ fun pointToCentimeter(point : Double) : Double = point / CENTIMETER_IN_POINT
  * Point to convert
  * @return Converted inch
  */
-fun pointToInch(point : Double) : Double =  point / INCH_IN_POINT
+fun pointToInch(point : Double) : Double = point / INCH_IN_POINT
 
 /**
  * Convert point to millimeter
@@ -449,6 +449,7 @@ fun pointToPica(point : Double) : Double = point / PICA_IN_POINT
  * @return Converted degree
  */
 fun radianToDegree(radian : Double) : Double = radian * 180.0 / Math.PI
+fun radianToDegree(radian : Float) : Float = radian * 180.0f / Math.PI.toFloat()
 
 
 /**

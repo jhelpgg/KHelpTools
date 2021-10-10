@@ -1,14 +1,35 @@
 package khelp.engine3d.utils
 
 import khelp.engine3d.geometry.Point2D
+import khelp.engine3d.geometry.Point3D
 import khelp.math.matrix.Matrix
 import khelp.utilities.math.equals
 import khelp.utilities.math.sign
+import khelp.utilities.math.square
 import java.util.concurrent.atomic.AtomicReference
+import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.pow
+import kotlin.math.sqrt
 
+/**
+ * Difference between two succeed picking color number
+ */
+val PICKING_PRECISION = 8
+
+/**
+ * Maximum number of objects (If memory support it)
+ */
+val MAXIMUM_NUMBER_OF_OBJECTS = (256 * 256 * 256) / PICKING_PRECISION
+
+/**
+ * Epsilon to say if two color for picking are the same
+ */
+val PICK_EPSILON = 1e-5f
+
+fun pickSame(red1 : Float, green1 : Float, blue1 : Float, red2 : Float, green2 : Float, blue2 : Float) : Boolean =
+    abs(red1 - red2) <= PICK_EPSILON && abs(green1 - green2) <= PICK_EPSILON && abs(blue1 - blue2) <= PICK_EPSILON
 
 /**
  * 2! / (index! * (2 - index)!)
@@ -284,3 +305,6 @@ fun convex(vararg points : Point2D) : Boolean
     return counterClockWise == counterClockWise(points[size - 2], points[size - 1], points[0]) &&
            counterClockWise == counterClockWise(points[size - 1], points[0], points[1])
 }
+
+fun distance(point1 : Point3D, point2 : Point3D) : Float =
+    sqrt(square(point2.x - point1.x) + square(point2.y - point1.y) + square(point2.z - point1.z))

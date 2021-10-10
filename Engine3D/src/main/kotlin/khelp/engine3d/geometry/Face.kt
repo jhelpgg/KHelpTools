@@ -7,8 +7,10 @@ import khelp.utilities.serialization.ParsableSerializable
 import khelp.utilities.serialization.Parser
 import khelp.utilities.serialization.Serializer
 import org.lwjgl.opengl.GL11
+import kotlin.math.max
 
-class Face internal constructor() : ParsableSerializable
+class Face internal constructor() : ParsableSerializable,
+                                    Iterable<Vertex>
 {
     companion object
     {
@@ -18,6 +20,7 @@ class Face internal constructor() : ParsableSerializable
     internal var barycenter : BarycenterPoint3D = BarycenterPoint3D()
     internal var virtualBox : VirtualBox = VirtualBox()
     private val vertices = ArrayList<Vertex>()
+    val size : Int get() = this.vertices.size
 
     fun add(x : Float, y : Float, z : Float,
             uvU : Float, uvV : Float,
@@ -43,6 +46,24 @@ class Face internal constructor() : ParsableSerializable
         this.virtualBox.add(vertex.position.x, vertex.position.y, vertex.position.z)
         this.vertices.add(vertex)
     }
+
+    fun insert(index : Int, vertex : Vertex)
+    {
+        this.barycenter.add(vertex.position.x.toDouble(), vertex.position.y.toDouble(), vertex.position.z.toDouble())
+        this.virtualBox.add(vertex.position.x, vertex.position.y, vertex.position.z)
+        val indexInsert = max(0, index)
+
+        if (indexInsert >= this.size)
+        {
+            this.vertices.add(vertex)
+        }
+        else
+        {
+            this.vertices.add(indexInsert, vertex)
+        }
+    }
+
+    operator fun get(index : Int) : Vertex = this.vertices[index]
 
     @ThreadOpenGL
     internal fun render()
@@ -126,4 +147,6 @@ class Face internal constructor() : ParsableSerializable
         this.vertices.clear()
         parser.appendParsableSerializableList("vertices", this.vertices, Vertex::provider)
     }
+
+    override fun iterator() : Iterator<Vertex> = this.vertices.iterator()
 }

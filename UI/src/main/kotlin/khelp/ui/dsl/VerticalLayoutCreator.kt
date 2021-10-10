@@ -1,75 +1,31 @@
 package khelp.ui.dsl
 
-import khelp.ui.layout.constraints.ConstraintsSize
-import java.util.concurrent.atomic.AtomicInteger
+import khelp.ui.utilities.computePreferredDimension
 import javax.swing.JComponent
 import kotlin.math.max
 
-class VerticalLayoutCreator(private val constraintsLayoutCreator : ConstraintsLayoutCreator,
+class VerticalLayoutCreator(private val tableLayoutCreator : TableLayoutCreator,
                             marginVertical : Int, marginLeft : Int)
 {
-    private val marginVertical = max(0, marginVertical)
-    private val marginHorizontal = max(0, marginLeft)
+    private var y = 0
 
-    companion object
+    init
     {
-        private const val BASE = "VerticalLayoutCreator_"
-        private val nextID = AtomicInteger(0)
-        private val nextName : String get() = VerticalLayoutCreator.BASE + VerticalLayoutCreator.nextID.getAndIncrement()
+        this.tableLayoutCreator.marginLeft = max(0, marginLeft)
+        this.tableLayoutCreator.marginBottom = max(0, marginVertical)
     }
-
-    private var previousName = ""
 
     operator fun JComponent.unaryPlus()
     {
-        val name = VerticalLayoutCreator.nextName
-
-        constraintsLayoutCreator.add(this, name) {
-            marginTop = marginVertical
-            marginBottom = marginVertical
-            marginLeft = marginHorizontal
-            horizontalSize = ConstraintsSize.WRAPPED
-            verticalSize = ConstraintsSize.WRAPPED
-
-            if (previousName.isEmpty())
-            {
-                topAtParent
-            }
-            else
-            {
-                topAtBottom = previousName
-            }
-
-            bottomFree
-            leftAtParent
-            rightFree
+        this@VerticalLayoutCreator.addComponent {
+            val size = computePreferredDimension(this@unaryPlus)
+            this@unaryPlus.cell(0, this@VerticalLayoutCreator.y, 1, size.height)
+            this@VerticalLayoutCreator.y += size.height
         }
-
-        previousName = name
     }
 
-    operator fun JComponent.unaryMinus()
+    private fun addComponent(tableLayoutCreator : TableLayoutCreator.() -> Unit)
     {
-        val name = VerticalLayoutCreator.nextName
-
-        constraintsLayoutCreator.add(this, name) {
-            horizontalSize = ConstraintsSize.WRAPPED
-            verticalSize = ConstraintsSize.WRAPPED
-
-            if (previousName.isEmpty())
-            {
-                topAtParent
-            }
-            else
-            {
-                topAtBottom = previousName
-            }
-
-            bottomFree
-            leftAtLeft = previousName
-            rightAtRight = previousName
-        }
-
-        previousName = name
+        tableLayoutCreator(this.tableLayoutCreator)
     }
 }

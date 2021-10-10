@@ -19,6 +19,12 @@ class Vertex(position : Point3D, uv : Point2D, normal : Point3D) : ParsableSeria
     var normal = normal
         private set
 
+    fun copy() : Vertex = Vertex(this.position.copy(), this.uv.copy(), this.normal.copy())
+
+    fun middle(vertex : Vertex) : Vertex = Vertex(this.position.middle(vertex.position),
+                                                  this.uv.middle(vertex.uv),
+                                                  this.normal.middle(vertex.normal))
+
     @ThreadOpenGL
     internal fun render()
     {
