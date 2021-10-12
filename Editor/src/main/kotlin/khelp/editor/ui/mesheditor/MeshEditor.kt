@@ -27,14 +27,9 @@ import khelp.ui.dsl.verticalLayout
 import khelp.ui.events.MouseState
 import khelp.ui.events.MouseStatus
 import khelp.utilities.extensions.int
-import khelp.utilities.extensions.select
-import khelp.utilities.extensions.transform
-import khelp.utilities.log.debug
 import khelp.utilities.math.isNul
 import javax.swing.JButton
 import javax.swing.JPanel
-import kotlin.math.max
-import kotlin.math.min
 
 class MeshEditor(mouseManager3D : MouseManager3D, nodeSelection : Flow<Node?>) : ScreenEditor
 {
@@ -334,8 +329,6 @@ class MeshEditor(mouseManager3D : MouseManager3D, nodeSelection : Flow<Node?>) :
 
     private fun joinNodes(nodeVertex1 : String, nodeVertex2 : String)
     {
-        // TODO Change ajoin algorithm
-        debug(nodeVertex1, "|",nodeVertex2)
         val vertex1 =
             nodeVertex1
                 .substring(MeshEditor.VERTEX_HEADER.length)
@@ -370,9 +363,6 @@ class MeshEditor(mouseManager3D : MouseManager3D, nodeSelection : Flow<Node?>) :
             }
         }
 
-        debug(edgeIndices1)
-        debug(edgeIndices2)
-
         if (edgeIndices1.isEmpty() || edgeIndices2.isEmpty())
         {
             return
@@ -380,7 +370,6 @@ class MeshEditor(mouseManager3D : MouseManager3D, nodeSelection : Flow<Node?>) :
 
         val faceIndices1 = ArrayList<Pair<Int, Int>>()
         val faceIndices2 = ArrayList<Pair<Int, Int>>()
-        var hasChanged = false
 
         for ((indexFace, face) in this.editableObject.faces.withIndex())
         {
@@ -390,8 +379,7 @@ class MeshEditor(mouseManager3D : MouseManager3D, nodeSelection : Flow<Node?>) :
 
                 if (index >= 0)
                 {
-                    faceIndices1.add(Pair(indexFace, index))
-                    break
+                    faceIndices1.add(Pair(indexFace, edgeIndex))
                 }
             }
 
@@ -401,73 +389,88 @@ class MeshEditor(mouseManager3D : MouseManager3D, nodeSelection : Flow<Node?>) :
 
                 if (index >= 0)
                 {
-                    faceIndices2.add(Pair(indexFace, index))
-                    break
+                    faceIndices2.add(Pair(indexFace, edgeIndex))
                 }
             }
         }
 
-        debug(faceIndices1)
-        debug(faceIndices2)
-
-        for ((face, edgeIndex1) in faceIndices1)
+        for (index in faceIndices1.size - 1 downTo 0)
         {
-            for (edgeIndex2 in faceIndices2
-                .select { (face2, _) -> face2 == face }
-                .transform { (_, edgeIndex) -> edgeIndex })
+            val faceIndex = faceIndices1[index].first
+
+            if (faceIndices2.none { (faceIndex2, _) -> faceIndex2 == faceIndex })
             {
-                val edge1 = this.editableObject.edges[edgeIndex1]
-                val edge2 = this.editableObject.edges[edgeIndex2]
-                debug("edge1 = ", edge1.startIndex," => ",edge1.endIndex)
-                debug("edge2 = ", edge2.startIndex," => ",edge2.endIndex)
-                val newEdge = this.editableObject.addEdge(edge1.endIndex,edge2.startIndex)
-                val newEdge2 = this.editableObject.addEdge(edge2.startIndex, edge1.endIndex)
-                debug(edge1.endIndex," ; ",edge2.startIndex, " => ",newEdge)
-                debug(edge2.startIndex," ; ",edge1.endIndex, " => ",newEdge2)
-                val minEdge = min(edgeIndex1, edgeIndex2)
-                val maxEdge = max(edgeIndex1, edgeIndex2)
-                val faceRemovedEdges = this.editableObject.faces[face].edges
-                debug(minEdge, " | ",maxEdge, " |=> ",faceRemovedEdges)
-                val faceEditableSize = faceRemovedEdges.size
-                this.editableObject.faces.removeAt(face)
-                var newFace = EditableFace()
-
-                for (edge in minEdge .. maxEdge)
-                {
-                    newFace.edges.add(faceRemovedEdges[edge])
-                }
-
-                newFace.edges.add(newEdge2)
-
-                debug(newFace.edges)
-                this.editableObject.faces.add(face, newFace)
-                newFace = EditableFace()
-
-                for (edge in 0 until   minEdge)
-                {
-                    newFace.edges.add(faceRemovedEdges[edge])
-                }
-
-                newFace.edges.add(newEdge)
-
-                for (edge in maxEdge+1 until faceEditableSize)
-                {
-                    newFace.edges.add(faceRemovedEdges[edge])
-                }
-
-                debug(newFace.edges)
-                this.editableObject.faces.add(face, newFace)
-                hasChanged = true
+                faceIndices1.removeAt(index)
             }
         }
 
-        if (hasChanged)
+        for (index in faceIndices2.size - 1 downTo 0)
         {
-            this.meshHasMoved = false
-            this.lastSelectedNode = null
-            this.actionCutEdge.isEnabled = false
-            this.editableObject.refreshObject()
-            this.updateGrid()
+            val faceIndex = faceIndices2[index].first
+
+            if (faceIndices1.none { (faceIndex2, _) -> faceIndex2 == faceIndex })
+            {
+                faceIndices2.removeAt(index)
+            }
         }
+
+        if (faceIndices1.isEmpty() || faceIndices2.isEmpty())
+        {
+            return
+        }
+
+        val faceIndex = faceIndices1[0].first
+
+        if (faceIndices1.any { (faceIndex2, _) -> faceIndex2 != faceIndex }
+            || faceIndices2.any { (faceIndex2, _) -> faceIndex2 != faceIndex }
+            || faceIndices1.size != 2 || faceIndices2.size != 2)
+        {
+            return
+        }
+
+        val edgeIndex1Start = faceIndices1[0].second
+        val edgeIndex2Start = faceIndices2[0].second
+
+        val editableFace = this.editableObject.faces[faceIndex]
+        this.editableObject.faces.removeAt(faceIndex)
+
+        val newEdgeIndex1 = this.editableObject.addEdge(vertex1, vertex2)
+        val newEdgeIndex2 = this.editableObject.addEdge(vertex2, vertex1)
+        val newFace1 = EditableFace()
+        val newFace2 = EditableFace()
+        var inside1 = editableFace.edges.indexOf(edgeIndex1Start) <= editableFace.edges.indexOf(edgeIndex2Start)
+
+        for (edgeIndex in editableFace.edges)
+        {
+            if (edgeIndex == edgeIndex2Start)
+            {
+                newFace2.edges.add(edgeIndex)
+                newFace2.edges.add(newEdgeIndex2)
+                inside1 = true
+            }
+            else if (edgeIndex == edgeIndex1Start)
+            {
+                newFace1.edges.add(edgeIndex)
+                newFace1.edges.add(newEdgeIndex1)
+                inside1 = false
+            }
+            else if (inside1)
+            {
+                newFace1.edges.add(edgeIndex)
+            }
+            else
+            {
+                newFace2.edges.add(edgeIndex)
+            }
+        }
+
+        this.editableObject.faces.add(newFace1)
+        this.editableObject.faces.add(newFace2)
+
+        this.meshHasMoved = false
+        this.lastSelectedNode = null
+        this.actionCutEdge.isEnabled = false
+        this.editableObject.refreshObject()
+        this.updateGrid()
     }
 }

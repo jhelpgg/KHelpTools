@@ -54,6 +54,27 @@ class EditableObject(id : String)
         return this.edges.size - 1
     }
 
+    fun removeEdge(edgeIndex : Int)
+    {
+        if (edgeIndex < 0 || edgeIndex >= this.edges.size)
+        {
+            return
+        }
+
+        this.edges.removeAt(edgeIndex)
+
+        for (face in this.faces)
+        {
+            for (index in 0 until face.edges.size)
+            {
+                if (face.edges[index] >= edgeIndex)
+                {
+                    face.edges[index] = (face.edges[index] + this.edges.size - 1) % this.edges.size
+                }
+            }
+        }
+    }
+
     fun append(object3D : Object3D)
     {
         for (face in object3D.mesh)
