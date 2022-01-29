@@ -12,4 +12,7 @@ class Percent(percent : Double)
     constructor(number : Long, total : Long) : this(number.toDouble() / total.toDouble())
 
     val percent = percent.bounds(0.0, 1.0)
+
+    operator fun plus(percent : Percent) : Percent = Percent(this.percent * percent.percent)
+
 }

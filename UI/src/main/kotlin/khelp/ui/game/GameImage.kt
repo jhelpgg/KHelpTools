@@ -8,7 +8,6 @@ import khelp.ui.utilities.FONT_RENDER_CONTEXT
 import khelp.ui.utilities.PercentGraphics
 import khelp.ui.utilities.TRANSPARENT
 import khelp.utilities.extensions.bounds
-import khelp.utilities.log.exception
 import java.awt.Color
 import java.awt.Component
 import java.awt.Graphics
@@ -86,7 +85,6 @@ class GameImage(val width : Int, val height : Int) : Icon
             }
             catch (exception : Exception)
             {
-                exception(exception, "Failed to load stream")
                 GameImage.DUMMY
             }
 
@@ -159,6 +157,14 @@ class GameImage(val width : Int, val height : Int) : Icon
     fun drawOn(graphics : Graphics, x : Int, y : Int, width : Int, height : Int)
     {
         graphics.drawImage(this.image, x, y, width, height, null)
+    }
+
+    fun drawOnPart(graphics : Graphics, x : Int, y : Int, imageX : Int, imageY : Int, width : Int, height : Int)
+    {
+        graphics.drawImage(this.image,
+                           x, y, x + width, y + height,
+                           imageX, imageY, imageX + width, imageY + height,
+                           null)
     }
 
     override fun paintIcon(ignored : Component?, graphics : Graphics, x : Int, y : Int)

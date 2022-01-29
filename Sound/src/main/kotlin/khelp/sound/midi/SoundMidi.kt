@@ -28,7 +28,7 @@ class SoundMidi(file : File) : SoundInterface
             this.soundProgressObservableData.value(SoundProgress(position, this.totalSize))
         }
 
-    private val soundStateObservableData = ObservableData<SoundState>(SoundState.STOPPED)
+    private val soundStateObservableData = ObservableData<SoundState>(SoundState.NOT_LAUNCHED)
     private val soundProgressObservableData : ObservableData<SoundProgress>
 
     override val soundStateObservable : Observable<SoundState>

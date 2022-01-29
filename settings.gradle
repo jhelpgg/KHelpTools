@@ -14,4 +14,8 @@ include ':Sound'
 include ':Preferences'
 include ':Engine3D'
 include ':Editor'
+include ':Game'
+include ':musicPlayer'
+include ':Bot'
+include ':Match3'
 

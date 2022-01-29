@@ -15,6 +15,8 @@ import kotlin.math.min
 
 private val RANDOM = Random()
 
+fun random() : Boolean = RANDOM.nextBoolean()
+
 /**
  * Give a number randomly choose in given bounds.
  *

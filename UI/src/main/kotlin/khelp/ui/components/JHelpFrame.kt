@@ -11,8 +11,10 @@ import khelp.ui.utilities.packedSize
 import khelp.ui.utilities.takeAllScreen
 import java.awt.BorderLayout
 import java.awt.event.WindowEvent
+import javax.swing.JComponent
 import javax.swing.JDialog
 import javax.swing.JFrame
+import javax.swing.KeyStroke
 import kotlin.system.exitProcess
 
 class JHelpFrame internal constructor(title : String = "JHelpFrame",
@@ -44,6 +46,21 @@ class JHelpFrame internal constructor(title : String = "JHelpFrame",
         val dialog = JDialog(this)
         dialogCreator(dialog)
         this.dialogs[dialogId] = dialog
+    }
+
+    fun globalAction(actionId : String, keyName : String, resourcesText : ResourcesText, shortcut : KeyStroke,
+                     creator : ActionCreator.() -> Unit)
+    {
+        val actionCreator = ActionCreator(keyName, resourcesText)
+        creator(actionCreator)
+        val action = actionCreator.create()
+        action.shortCut(shortcut)
+        val root = this.rootPane
+        val actionMap = root.actionMap
+        val inputMap = root.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+        actionMap.put(action.keyName(), action)
+        inputMap.put(shortcut, action.keyName())
+        this.actions[actionId] = action
     }
 
     fun action(actionId : String, keyName : String, resourcesText : ResourcesText, creator : ActionCreator.() -> Unit)

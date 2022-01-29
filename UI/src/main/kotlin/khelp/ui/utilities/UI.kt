@@ -1,7 +1,6 @@
 package khelp.ui.utilities
 
 import khelp.resources.defaultResources
-import khelp.ui.font.JHelpFont
 import khelp.ui.game.GameImage
 import khelp.utilities.math.computeIntersectedArea
 import java.awt.Component
@@ -45,6 +44,7 @@ const val CHARACTER_ESCAPE = (0x1B).toChar()
  * Character unicode for the smiley :)
  */
 val SMILEY_HAPPY = 0x263A.toChar()
+
 /**
  * Character unicode for the smiley :(
  */
@@ -255,6 +255,8 @@ fun computeScreenRectangle(window : Window) : Rectangle
 
     return screenRectangle
 }
+
+fun screenRectangle(screenIndex : Int) : Rectangle = GRAPHICS_DEVICES[screenIndex].defaultConfiguration.bounds
 
 /**
  * Change a window of screen
@@ -486,6 +488,7 @@ fun charToKeyCodeForShortCut(character : Char) : Int =
         CHARACTER_ESCAPE -> KeyEvent.VK_ESCAPE
         CHARACTER_DELETE -> KeyEvent.VK_BACK_SPACE
         '\n'             -> KeyEvent.VK_ENTER
+        '\t'             -> KeyEvent.VK_TAB
         else             -> KeyEvent.getExtendedKeyCodeForChar(character.toInt())
     }
 

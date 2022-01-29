@@ -1,5 +1,6 @@
 package khelp.utilities.extensions
 
+import khelp.utilities.Time
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
@@ -62,3 +63,12 @@ val Int.red : Int get() = (this shr 16) and 0xFF
 val Int.green : Int get() = (this shr 8) and 0xFF
 
 val Int.blue : Int get() = this and 0xFF
+
+operator fun Int.plus(time: Time): Time = Time(this + time.milliseconds)
+operator fun Int.minus(time: Time): Time = Time(this - time.milliseconds)
+
+val Int.milliseconds get() = Time(this)
+val Int.seconds get() = Time(this * 1000L)
+val Int.minutes get() = Time(this * 1000L * 60L)
+val Int.hours get() = Time(this * 1000L * 60L * 60L)
+val Int.days get() = Time(this * 1000L * 60L * 60L * 24L)

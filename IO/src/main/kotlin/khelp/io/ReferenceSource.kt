@@ -34,7 +34,7 @@ sealed class ReferenceSource
 
     override fun hashCode() : Int = this.javaClass.name.hashCode() + 31 * this.internalHashcode()
 
-    override fun toString() : String = "${this.javaClass.name} : ${this.internalHashcode()}"
+    override fun toString() : String = "${this.javaClass.name} : ${this.internalDescription()}"
 
     protected abstract fun internalEquals(referenceSource : ReferenceSource) : Boolean
     protected abstract fun internalHashcode() : Int

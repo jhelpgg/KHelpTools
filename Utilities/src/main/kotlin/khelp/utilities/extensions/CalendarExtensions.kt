@@ -84,3 +84,17 @@ var Calendar.millisecond : Int
         this[Calendar.MILLISECOND] = value
     }
 
+val Calendar.age : Int
+    get()
+    {
+        val today = Calendar.getInstance()
+        val age = today.year - this.year
+        val monthDiff = today.month - this.month
+
+        if (monthDiff < 0 || (monthDiff == 0 && today.day < this.day))
+        {
+            return age - 1
+        }
+
+        return age
+    }

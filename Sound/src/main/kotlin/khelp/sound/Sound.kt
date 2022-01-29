@@ -2,6 +2,7 @@ package khelp.sound
 
 import khelp.thread.TaskContext
 import khelp.thread.observable.Observable
+import khelp.utilities.log.debug
 
 class Sound internal constructor(private val soundInterface : SoundInterface)
 {
@@ -17,6 +18,7 @@ class Sound internal constructor(private val soundInterface : SoundInterface)
     private val observerState = this.soundStateObservable.observedBy(TaskContext.INDEPENDENT, this::soundSateChanged)
     var destroyOnEnd = false
     private var loop = - 1
+    private var wasPlaying = false
 
     fun play()
     {
@@ -50,8 +52,21 @@ class Sound internal constructor(private val soundInterface : SoundInterface)
     {
         when (soundState)
         {
-            SoundState.PAUSED, SoundState.DESTROYED, SoundState.PLAYING -> return
-            SoundState.STOPPED                                          -> Unit
+            SoundState.PAUSED, SoundState.DESTROYED, SoundState.ERROR, SoundState.NOT_LAUNCHED -> return
+            SoundState.PLAYING                                                                 ->
+            {
+                this.wasPlaying = true
+                return
+            }
+            SoundState.STOPPED                                                                 ->
+                if (! this.wasPlaying)
+                {
+                    return
+                }
+                else
+                {
+                    this.wasPlaying = false
+                }
         }
 
         if (this.loop > 0)

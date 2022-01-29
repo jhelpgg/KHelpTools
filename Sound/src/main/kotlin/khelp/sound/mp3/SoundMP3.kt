@@ -14,7 +14,7 @@ import java.io.File
 internal class SoundMP3(file : File) : SoundInterface
 {
     private val controlInputStream = ControlInputStream(file)
-    private val soundStateObservableData = ObservableData<SoundState>(SoundState.STOPPED)
+    private val soundStateObservableData = ObservableData<SoundState>(SoundState.NOT_LAUNCHED)
     private var alive = false
     private val lock = Object()
     private var player : Player? = null
@@ -78,8 +78,8 @@ internal class SoundMP3(file : File) : SoundInterface
                     throw SoundException("Playing start failed", exception)
                 }
 
-                parallel { this.taskPlayTheSound() }
                 this.soundStateObservableData.value(SoundState.PLAYING)
+                parallel { this.taskPlayTheSound() }
             }
         }
     }
@@ -116,7 +116,11 @@ internal class SoundMP3(file : File) : SoundInterface
         }
         catch (exception : Exception)
         {
+            this.soundStateObservableData.value(SoundState.ERROR)
             exception(exception)
+            this.controlInputStream.pause = true
+            this.destroy()
+            return
         }
 
         this.playEnd()

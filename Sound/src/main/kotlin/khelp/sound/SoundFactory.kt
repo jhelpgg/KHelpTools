@@ -21,7 +21,7 @@ val DIRECTORY_SOUNDS : File by lazy {
 fun soundFromFile(file : File) : Sound
 {
     val sound =
-        when (file.extension.toLowerCase())
+        when (file.extension.lowercase())
         {
             "mp3"  -> SoundMP3(file)
             "mid"  -> SoundMidi(file)

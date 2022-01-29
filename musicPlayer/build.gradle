@@ -1,0 +1,21 @@
+plugins {
+    id 'org.jetbrains.kotlin.jvm'
+}
+
+group 'khelp.musicPlayer'
+version '1.0-SNAPSHOT'
+
+dependencies {
+    implementation project(":Utilities")
+    implementation project(":Thread")
+    implementation project(":UI")
+    implementation project(":Sound")
+    implementation project(":IO")
+    implementation project(":Resources")
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.2'
+}
+
+tasks.test {
+    useJUnitPlatform()
+}

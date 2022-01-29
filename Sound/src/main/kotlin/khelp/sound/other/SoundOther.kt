@@ -21,7 +21,7 @@ class SoundOther(file : File) : SoundInterface
             this.clip.microsecondPosition = value
             this.soundProgressObservableData.value(SoundProgress(value, this.totalSize))
         }
-    private val soundStateObservableData = ObservableData<SoundState>(SoundState.STOPPED)
+    private val soundStateObservableData = ObservableData<SoundState>(SoundState.NOT_LAUNCHED)
     private val soundProgressObservableData : ObservableData<SoundProgress>
     override val soundStateObservable : Observable<SoundState>
         get() = this.soundStateObservableData.observable

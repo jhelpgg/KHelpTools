@@ -34,31 +34,32 @@ object SoundCache
         }
     }
 
-    fun sound(key : String) : Sound? =
+    fun sound(key : String) : Sound?
+    {
+        var sound : Sound? = null
+
         this.mutex {
-            val soundCacheElement = this.cache[key] ?: return@mutex null
-            var sound = soundCacheElement.sound
+            val soundCacheElement = this.cache[key] ?: return@mutex
+            sound = soundCacheElement.sound
 
-            if (sound != null)
+            if (sound == null)
             {
-                return@mutex sound
-            }
-
-            sound = soundCacheElement.soundSource.sound
-            soundCacheElement.sound = sound
-            soundCacheElement.stateObserver =
-                sound
-                    .soundStateObservable
-                    .observedBy(TaskContext.INDEPENDENT)
-                    { soundState ->
-                        if (soundState == SoundState.DESTROYED)
-                        {
-                            this.remove(key)
+                sound = soundCacheElement.soundSource.sound
+                soundCacheElement.sound = sound
+                soundCacheElement.stateObserver =
+                    sound?.soundStateObservable
+                        ?.observedBy(TaskContext.INDEPENDENT)
+                        { soundState ->
+                            if (soundState == SoundState.DESTROYED)
+                            {
+                                this.remove(key)
+                            }
                         }
-                    }
-
-            sound
+            }
         }
+
+        return sound
+    }
 
 
     fun remove(key : String)

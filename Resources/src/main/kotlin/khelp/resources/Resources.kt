@@ -67,4 +67,6 @@ class Resources(private val source : ReferenceSource)
     }
 
     override fun hashCode() : Int = this.source.hashCode()
+
+    override fun toString() : String = "Resources : ${this.source}"
 }
