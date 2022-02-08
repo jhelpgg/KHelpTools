@@ -70,6 +70,7 @@ object MusicPlayerFrame
         val width = this.image.width
         val height = this.image.height
         Thread.sleep(16L * sqrt(square(width.toDouble()) + square(height.toDouble())).toLong())
+        val imagesSeen = ThrowSet<File>()
 
         while (hasNext)
         {
@@ -96,6 +97,7 @@ object MusicPlayerFrame
                 val y = random(0, height - imageHeight)
                 this.image.draw { graphics2D -> graphics2D.drawImage(x, y, image) }
 
+                imagesSeen.throwIn(file)
                 wait = sqrt(square(imageWidth.toDouble()) + square(imageHeight.toDouble())).toLong()
             }
             catch (_ : Exception)
@@ -104,7 +106,16 @@ object MusicPlayerFrame
 
             Thread.sleep(wait)
 
-            synchronized(this.images) { hasNext = this.images.notEmpty }
+            synchronized(this.images)
+            {
+                if (this.images.empty)
+                {
+                    this.images.add(imagesSeen)
+                    imagesSeen.clear()
+                }
+
+                hasNext = this.images.notEmpty
+            }
         }
 
         this.launched.set(false)
