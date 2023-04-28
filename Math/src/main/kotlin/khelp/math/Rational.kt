@@ -1,6 +1,5 @@
 package khelp.math
 
-import java.util.Objects
 import khelp.math.extensions.toRational
 import khelp.utilities.argumentCheck
 import khelp.utilities.extensions.GCD
@@ -8,29 +7,31 @@ import khelp.utilities.extensions.LCM
 import khelp.utilities.math.equals
 import khelp.utilities.math.isNul
 import khelp.utilities.math.sign
+import java.util.Objects
 
 /**
  * Represents a rational "numerator/denominator"
  */
-class Rational private constructor(private val numerator: Long, private val denominator: Long)
-    : Comparable<Rational>, Number()
+class Rational private constructor(private val numerator : Long, private val denominator : Long)
+    : Comparable<Rational>,
+      Number()
 {
     companion object
     {
         /**
-         * Invalid rational. The rational have non meaning (like divide by 0)
+         * Invalid rational. The rational have no meaning (like divide by 0)
          */
         val INVALID = Rational(0, 0)
 
         /**
          * Invalid rational key string. Returned from [Rational.toString] if the rational is invalid
          */
-        val INVALID_RATIONAL = "INVALID_RATIONAL"
+        const val INVALID_RATIONAL = "INVALID_RATIONAL"
 
         /**
          * -1 rational
          */
-        val MINUS_ONE = Rational(-1, 1)
+        val MINUS_ONE = Rational(- 1, 1)
 
         /**
          * 1 rational
@@ -49,7 +50,7 @@ class Rational private constructor(private val numerator: Long, private val deno
          * @param denominator Denominator
          * @return Created rational
          */
-        fun createRational(numerator: Long, denominator: Long = 1L): Rational
+        fun createRational(numerator : Long, denominator : Long = 1L) : Rational
         {
             var numeratorLocal = numerator
             var denominatorLocal = denominator
@@ -69,15 +70,15 @@ class Rational private constructor(private val numerator: Long, private val deno
                 return Rational.ONE
             }
 
-            if (numeratorLocal == -denominatorLocal)
+            if (numeratorLocal == - denominatorLocal)
             {
                 return Rational.MINUS_ONE
             }
 
             if (denominatorLocal < 0)
             {
-                numeratorLocal = -numeratorLocal
-                denominatorLocal = -denominatorLocal
+                numeratorLocal = - numeratorLocal
+                denominatorLocal = - denominatorLocal
             }
 
             val gcd = numeratorLocal GCD denominatorLocal
@@ -89,7 +90,7 @@ class Rational private constructor(private val numerator: Long, private val deno
          * @param double Value to be closest
          * @return Created rational
          */
-        fun createRational(double: Double): Rational
+        fun createRational(double : Double) : Rational
         {
             if (double.isNaN() || double.isInfinite())
             {
@@ -105,7 +106,7 @@ class Rational private constructor(private val numerator: Long, private val deno
             var factor = 1L
             var result = createRational(double.toLong(), factor)
 
-            while (factor < max && !equals(double, result()))
+            while (factor < max && ! equals(double, result()))
             {
                 factor *= 10L
                 result = createRational((double * factor.toDouble()).toLong(), factor)
@@ -130,7 +131,7 @@ class Rational private constructor(private val numerator: Long, private val deno
          * @throws IllegalArgumentException If string can't be parsed as a rational
          */
         @Throws(IllegalArgumentException::class)
-        fun parse(string: String): Rational
+        fun parse(string : String) : Rational
         {
             if (INVALID_RATIONAL == string)
             {
@@ -146,7 +147,7 @@ class Rational private constructor(private val numerator: Long, private val deno
                     return createRational(string.trim()
                                               .toLong(), 1L)
                 }
-                catch (exception: Exception)
+                catch (exception : Exception)
                 {
                     throw IllegalArgumentException("$string can't be parsed as a rational", exception)
                 }
@@ -161,7 +162,7 @@ class Rational private constructor(private val numerator: Long, private val deno
                                           .trim()
                                           .toLong())
             }
-            catch (exception: Exception)
+            catch (exception : Exception)
             {
                 throw IllegalArgumentException("$string can't be parsed as a rational", exception)
             }
@@ -177,9 +178,11 @@ class Rational private constructor(private val numerator: Long, private val deno
          * @return Computed proportion
          */
         @Throws(IllegalArgumentException::class)
-        fun proportion(numberPositive: Long, positiveSymbol: Char, numberNegative: Long, negativeSymbol: Char): String
+        fun proportion(numberPositive : Long, positiveSymbol : Char, numberNegative : Long,
+                       negativeSymbol : Char) : String
         {
-            argumentCheck(numberPositive >= 0 && numberNegative >= 0) { "Number of positive and negative can't be negative. Here we have numberPositive=$numberPositive and numberNegative=$numberNegative" }
+            argumentCheck(
+                numberPositive >= 0 && numberNegative >= 0) { "Number of positive and negative can't be negative. Here we have numberPositive=$numberPositive and numberNegative=$numberNegative" }
 
             val rational = Rational.createRational(numberPositive, numberPositive + numberNegative)
 
@@ -195,9 +198,9 @@ class Rational private constructor(private val numerator: Long, private val deno
             val proportion = CharArray(total.toInt())
             var index = 0
 
-            (0 until positive).forEach { proportion[index++] = positiveSymbol }
+            (0 until positive).forEach { proportion[index ++] = positiveSymbol }
 
-            (0 until negative).forEach { proportion[index++] = negativeSymbol }
+            (0 until negative).forEach { proportion[index ++] = negativeSymbol }
 
             return String(proportion)
         }
@@ -208,7 +211,7 @@ class Rational private constructor(private val numerator: Long, private val deno
      * @param other Object to compare with
      * @return **`true`** if given object to this
      */
-    override fun equals(other: Any?): Boolean
+    override fun equals(other : Any?) : Boolean
     {
         if (other === this)
         {
@@ -226,7 +229,7 @@ class Rational private constructor(private val numerator: Long, private val deno
     /**
      * Hash code
      */
-    override fun hashCode(): Int =
+    override fun hashCode() : Int =
         Objects.hash(this.numerator, this.denominator)
 
     /**
@@ -254,7 +257,7 @@ class Rational private constructor(private val numerator: Long, private val deno
      * @param number Number to add
      * @return Addition result
      */
-    operator fun plus(number: Number): Rational
+    operator fun plus(number : Number) : Rational
     {
         val rational = number.toRational()
 
@@ -282,7 +285,7 @@ class Rational private constructor(private val numerator: Long, private val deno
      * Opposite to this rational
      * @return This rational opposite
      */
-    operator fun unaryMinus(): Rational
+    operator fun unaryMinus() : Rational
     {
         if (this.invalid() || this.zero())
         {
@@ -299,7 +302,7 @@ class Rational private constructor(private val numerator: Long, private val deno
             return ONE
         }
 
-        return createRational(-this.numerator, this.denominator)
+        return createRational(- this.numerator, this.denominator)
     }
 
     /**
@@ -307,7 +310,7 @@ class Rational private constructor(private val numerator: Long, private val deno
      * @param number Number to subtract
      * @return Subtraction result
      */
-    operator fun minus(number: Number): Rational
+    operator fun minus(number : Number) : Rational
     {
         val rational = number.toRational()
 
@@ -318,7 +321,7 @@ class Rational private constructor(private val numerator: Long, private val deno
 
         if (this.zero())
         {
-            return -rational
+            return - rational
         }
 
         if (rational.zero())
@@ -341,7 +344,7 @@ class Rational private constructor(private val numerator: Long, private val deno
      * @param number Number to multiply
      * @return Multiplication result
      */
-    operator fun times(number: Number): Rational
+    operator fun times(number : Number) : Rational
     {
         val rational = number.toRational()
 
@@ -362,7 +365,7 @@ class Rational private constructor(private val numerator: Long, private val deno
 
         if (this.minusOne())
         {
-            return -rational
+            return - rational
         }
 
         if (rational.one())
@@ -372,7 +375,7 @@ class Rational private constructor(private val numerator: Long, private val deno
 
         if (rational.minusOne())
         {
-            return -this
+            return - this
         }
 
         val gcd1 = this.numerator GCD rational.denominator
@@ -384,14 +387,15 @@ class Rational private constructor(private val numerator: Long, private val deno
     /**
      * Indicates if given rational is opposite to this one
      */
-    fun opposite(rational: Rational) = this.numerator == -rational.numerator && this.denominator == rational.denominator
+    fun opposite(rational : Rational) =
+        this.numerator == - rational.numerator && this.denominator == rational.denominator
 
     /**
      * Divide this rational with given number
      * @param number Number to divide
      * @return Division result
      */
-    operator fun div(number: Number): Rational
+    operator fun div(number : Number) : Rational
     {
         val rational = number.toRational()
 
@@ -412,7 +416,7 @@ class Rational private constructor(private val numerator: Long, private val deno
 
         if (rational.minusOne())
         {
-            return -this
+            return - this
         }
 
         if (this == rational)
@@ -452,7 +456,7 @@ class Rational private constructor(private val numerator: Long, private val deno
      * to the specified [other] object, a negative number if it's less than [other], or a positive number
      * if it's greater than [other].
      */
-    override operator fun compareTo(other: Rational): Int
+    override operator fun compareTo(other : Rational) : Int
     {
         if (this.invalid())
         {
@@ -466,7 +470,7 @@ class Rational private constructor(private val numerator: Long, private val deno
 
         if (other.invalid())
         {
-            return -1
+            return - 1
         }
 
         return (this - other).sign()
@@ -480,7 +484,7 @@ class Rational private constructor(private val numerator: Long, private val deno
     /**
      * Compare this ration with a number
      */
-    operator fun compareTo(number: Number) = this.compareTo(number.toRational())
+    operator fun compareTo(number : Number) = this.compareTo(number.toRational())
 
     /**
      * Returns the value of this number as a [Byte], which may involve rounding or truncation.
@@ -496,12 +500,13 @@ class Rational private constructor(private val numerator: Long, private val deno
     override fun toChar() =
         if (this.invalid()) Char.MAX_SURROGATE
         else this.toLong()
+            .toInt()
             .toChar()
 
     /**
      * Returns the value of this number as a [Double], which may involve rounding.
      */
-    override fun toDouble(): Double =
+    override fun toDouble() : Double =
         if (this.invalid()) Double.NaN
         else this.numerator.toDouble() / this.denominator.toDouble()
 
@@ -529,8 +534,7 @@ class Rational private constructor(private val numerator: Long, private val deno
         {
             this.invalid()         -> Long.MAX_VALUE
             this.denominator == 1L -> this.numerator
-            else                   -> this.toDouble()
-                .toLong()
+            else                   -> this.numerator / this.denominator
         }
 
     /**
@@ -544,7 +548,7 @@ class Rational private constructor(private val numerator: Long, private val deno
     /**
      * String representation
      */
-    override fun toString(): String
+    override fun toString() : String
     {
         if (this.invalid())
         {
@@ -572,16 +576,16 @@ class Rational private constructor(private val numerator: Long, private val deno
     /**
      * Compute the middle of this rational and given number
      */
-    operator fun get(number: Number) = (this + number) / 2
+    operator fun get(number : Number) = (this + number) / 2
 
-    infix fun timePower2(power2: Int) =
+    infix fun timePower2(power2 : Int) =
         if (this.invalid() || this.zero()) this
         else createRational(this.numerator shl power2, this.denominator)
 
     /**
      * Divide by a power of 2
      */
-    infix fun divPower2(power2: Int) =
+    infix fun divPower2(power2 : Int) =
         if (this.invalid() || this.zero()) this
         else createRational(this.numerator, this.denominator shl power2)
 }

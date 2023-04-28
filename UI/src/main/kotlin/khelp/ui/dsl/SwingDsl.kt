@@ -3,6 +3,9 @@ package khelp.ui.dsl
 import khelp.resources.ResourcesText
 import khelp.thread.TaskContext
 import khelp.ui.components.JHelpFrame
+import khelp.ui.components.style.StyledButton
+import khelp.ui.components.style.StyledLabel
+import khelp.ui.style.StyleImageWithText
 import java.awt.Color
 import java.awt.Component
 import java.awt.Container
@@ -84,4 +87,20 @@ fun Component.back(color : Color) : Component
 {
     this.background = color
     return this
+}
+
+fun styledButton(keyText : String, resourcesText : ResourcesText,
+                 creator : StyledButtonCreator.() -> Unit) : StyledButton
+{
+    val styledButtonCreator = StyledButtonCreator(keyText, resourcesText)
+    creator(styledButtonCreator)
+    return styledButtonCreator.create()
+}
+
+fun styledLabel(keyText : String, resourcesText : ResourcesText,
+                 creator : StyledLabelCreator.() -> Unit) : StyledLabel<StyleImageWithText>
+{
+    val styledLabelCreator = StyledLabelCreator(keyText, resourcesText)
+    creator(styledLabelCreator)
+    return styledLabelCreator.create()
 }

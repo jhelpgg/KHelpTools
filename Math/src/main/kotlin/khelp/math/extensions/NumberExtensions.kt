@@ -1,6 +1,10 @@
 package khelp.math.extensions
 
 import khelp.math.Rational
+import khelp.math.formal.Division
+import khelp.math.formal.Function
+import khelp.math.formal.Subtraction
+import khelp.math.formal.constant
 
 /**
  * Transform this number to rational
@@ -40,3 +44,37 @@ operator fun Number.div(rational: Rational) = this.toRational() / rational
 operator fun Number.compareTo(rational: Rational) =
     this.toRational()
         .compareTo(rational)
+
+
+/**
+ * Transform this number to a function
+ */
+fun Number.toFunction() : Function = constant(this.toDouble())
+
+/**
+ * Add this number to a function
+ * @param function Function to add
+ * @return Addition result
+ */
+operator fun Number.plus(function : Function) = Function.createAddition(this.toFunction(), function)
+
+/**
+ * Subtract this number to a function
+ * @param function Function to subtract
+ * @return Subtraction result
+ */
+operator fun Number.minus(function : Function) = Subtraction(this.toFunction(), function)
+
+/**
+ * Multiply this number to a function
+ * @param function Function to multiply
+ * @return Multiplication result
+ */
+operator fun Number.times(function : Function) = Function.createMultiplication(this.toFunction(), function)
+
+/**
+ * Divide this number to a function
+ * @param function Function to divide
+ * @return Division result
+ */
+operator fun Number.div(function : Function) = Division(this.toFunction(), function)

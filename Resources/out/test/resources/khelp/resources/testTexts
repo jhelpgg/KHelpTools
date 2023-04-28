@@ -1,0 +1,17 @@
+#-<*
+ Some comment
+*>-#
+
+one line
+This is a value in one line
+-<=-=>-
+
+several lines
+First line
+Second line
+Third line
+   3 spaces at start
+    Tab at start
+
+Empty line just above
+-<=-=>-

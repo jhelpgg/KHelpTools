@@ -1,7 +1,7 @@
 package khelp.game.model
 
-import fr.jhelp.utilities.random
 import khelp.utilities.extensions.bounds
+import khelp.utilities.math.random
 import kotlin.math.ceil
 import kotlin.math.max
 import kotlin.math.min

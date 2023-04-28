@@ -1,7 +1,7 @@
 package khelp.utilities.collections
 
-import fr.jhelp.utilities.random
 import khelp.utilities.elementExistsCheck
+import khelp.utilities.math.random
 
 class ThrowSet<T>
 {

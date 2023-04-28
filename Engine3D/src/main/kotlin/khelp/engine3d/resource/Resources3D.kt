@@ -9,5 +9,5 @@ object Resources3D
     val resources = Resources(ClassSource(Resources3D::class.java))
 
     fun loadImage(path:String) : GameImage =
-        GameImage.Companion.load(path, this.resources)
+        GameImage.load(path, this.resources)
 }

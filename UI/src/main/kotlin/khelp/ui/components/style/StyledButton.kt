@@ -2,11 +2,13 @@ package khelp.ui.components.style
 
 import khelp.resources.ResourcesText
 import khelp.thread.TaskContext
+import khelp.thread.delay
 import khelp.thread.observable.Observable
 import khelp.thread.observable.ObservableData
+import khelp.thread.parallel
 import khelp.ui.style.ComponentHighLevel
 import khelp.ui.style.StyleImageWithTextClickable
-import khelp.utilities.log.verbose
+import khelp.utilities.log.mark
 import java.awt.event.MouseEvent
 
 class StyledButton(keyText : String, resourcesText : ResourcesText, style : StyleImageWithTextClickable)
@@ -42,6 +44,7 @@ class StyledButton(keyText : String, resourcesText : ResourcesText, style : Styl
             {
                 this.styledButtonStateObservableData.value(StyledButtonState.CLICK)
                 this.styleChanged()
+                delay(2048) { this.styledButtonStateObservableData.value(StyledButtonState.OUT_OF) }
                 this.taskContext.parallel { this.onClick(this) }
             }
             MouseEvent.MOUSE_ENTERED, MouseEvent.MOUSE_RELEASED ->

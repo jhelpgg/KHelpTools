@@ -17,7 +17,7 @@ class CrypterDES(password: String)
         {
             var hash: Long = 0
             string.toCharArray()
-                .forEach { hash = 31L * hash + it.toLong() }
+                .forEach { hash = 31L * hash + it.code.toLong() }
             val key = ByteArray(8)
 
             (0..7).forEach { index ->

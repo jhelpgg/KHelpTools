@@ -6,7 +6,7 @@
  *  The code is free for usage and modification, you can't change that fact.
  */
 
-package fr.jhelp.utilities
+package khelp.utilities.math
 
 import java.util.Random
 import kotlin.math.max
@@ -22,7 +22,7 @@ fun random() : Boolean = RANDOM.nextBoolean()
  *
  * Bounds are include
  */
-fun random(bound1: Int, bound2: Int): Int
+fun random(bound1 : Int, bound2 : Int) : Int
 {
     val min = min(bound1, bound2)
     val max = max(bound1, bound2)
@@ -34,7 +34,7 @@ fun random(bound1: Int, bound2: Int): Int
  *
  * Bounds are include
  */
-fun random(bound1: Long, bound2: Long): Long
+fun random(bound1 : Long, bound2 : Long) : Long
 {
     val min = min(bound1, bound2)
     val max = max(bound1, bound2)
@@ -52,7 +52,7 @@ fun random(bound1: Long, bound2: Long): Long
  * ````
  * The chosen number where in [min, max[
  */
-fun random(bound1: Float, bound2: Float): Float
+fun random(bound1 : Float, bound2 : Float) : Float
 {
     val min = min(bound1, bound2)
     val max = max(bound1, bound2)
@@ -70,7 +70,7 @@ fun random(bound1: Float, bound2: Float): Float
  * ````
  * The chosen number where in [min, max[
  */
-fun random(bound1: Double, bound2: Double): Double
+fun random(bound1 : Double, bound2 : Double) : Double
 {
     val min = min(bound1, bound2)
     val max = max(bound1, bound2)
@@ -80,19 +80,20 @@ fun random(bound1: Double, bound2: Double): Double
 /**
  * A random element from the list
  */
-fun <T> List<T>.random(): T =
+fun <T> List<T>.random() : T =
     this[random(0, this.size - 1)]
 
 /**
  * A random element from the array
  */
-fun <T> Array<T>.random(): T =
+fun <T> Array<T>.random() : T =
     this[random(0, this.size - 1)]
 
 /**
  * A random element from the enum
  */
 @Suppress("UNCHECKED_CAST")
-inline fun <reified E : Enum<E>> random(): E =
-    (E::class.java.getDeclaredMethod("values").invoke(null) as Array<E>).random()
+inline fun <reified E : Enum<E>> random() : E =
+    (E::class.java.getDeclaredMethod("values")
+        .invoke(null) as Array<E>).random()
 

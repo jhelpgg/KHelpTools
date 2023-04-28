@@ -1,14 +1,14 @@
 package khelp.security.rsa
 
+import khelp.utilities.collections.CycleByteArray
 import java.io.BufferedOutputStream
 import java.io.OutputStream
 import java.util.Objects
-import khelp.utilities.collections.CycleByteArray
 
-class RSAEncryptOutputStream(publicKey: RSAPublicKey, val encryptedStream: OutputStream) : OutputStream()
+class RSAEncryptOutputStream(publicKey : RSAPublicKey, val encryptedStream : OutputStream) : OutputStream()
 {
     private val cipher = publicKey.cipher()
-    private val bufferedOutputStream = BufferedOutputStream(encryptedStream)
+    private val bufferedOutputStream = BufferedOutputStream(this.encryptedStream)
     private val cycleByteArray = CycleByteArray()
 
     override fun close()
@@ -22,12 +22,12 @@ class RSAEncryptOutputStream(publicKey: RSAPublicKey, val encryptedStream: Outpu
         this.bufferedOutputStream.flush()
     }
 
-    override fun write(b: Int)
+    override fun write(b : Int)
     {
         this.write(byteArrayOf(b.toByte()), 0, 1)
     }
 
-    override fun write(b: ByteArray, off: Int, len: Int)
+    override fun write(b : ByteArray, off : Int, len : Int)
     {
         Objects.checkFromIndexSize(off, len, b.size)
 
@@ -40,7 +40,7 @@ class RSAEncryptOutputStream(publicKey: RSAPublicKey, val encryptedStream: Outpu
         this.doTransfer(false)
     }
 
-    private fun doTransfer(flush: Boolean)
+    private fun doTransfer(flush : Boolean)
     {
         while (this.cycleByteArray.notEmpty && (flush || this.cycleByteArray.size >= 245))
         {

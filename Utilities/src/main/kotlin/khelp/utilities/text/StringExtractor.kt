@@ -1,6 +1,5 @@
 package khelp.utilities.text
 
-import java.util.ArrayList
 import java.util.StringTokenizer
 
 /**
@@ -28,54 +27,69 @@ import java.util.StringTokenizer
  * @param escapeCharacters Escape characters
  * @param returnSeparators Indicates if return separators
  */
-class StringExtractor(string: String,
-                      separators: String = DEFAULT_SEPARATORS,
-                      stringLimiters: String = DEFAULT_STRING_LIMITERS,
-                      escapeCharacters: String = DEFAULT_ESCAPE_CHARACTERS,
-                      private val returnSeparators: Boolean = false)
+class StringExtractor(string : String,
+                      separators : String = DEFAULT_SEPARATORS,
+                      stringLimiters : String = DEFAULT_STRING_LIMITERS,
+                      escapeCharacters : String = DEFAULT_ESCAPE_CHARACTERS,
+                      private val returnSeparators : Boolean = false)
 {
     /**
      * Indicates if empty string result is allowed
      */
-    var isCanReturnEmptyString: Boolean = false
+    var isCanReturnEmptyString : Boolean = false
+
     /**
      * Current word start index
      */
-    private var currentWordStart: Int = 0
+    var currentWordStart : Int = 0
+        private set
+
+    /**
+     * Current word end index in original text
+     */
+    val currentWordEnd get(): Int = this.index
+
     /**
      * Escape characters
      */
-    private val escapeCharacters: CharArray
+    private val escapeCharacters : CharArray
+
     /**
      * Current read index
      */
-    private var index: Int = 0
+    private var index : Int = 0
+
     /**
      * String to parse length
      */
-    private val length: Int
+    private val length : Int
+
     /**
      * Open/close pairs, to consider like "normal" character something between an open and a close character
      */
-    private val openCloseIgnore: ArrayList<OpenCloseDelimiter>
+    private val openCloseIgnore : ArrayList<OpenCloseDelimiter>
+
     /**
      * Separators characters
      */
-    private val separators: CharArray
+    private val separators : CharArray
+
     /**
      * Indicates if have to stop parsing when meet "string" to treat them separately `true` OR treat them as a
      * part of
      * something : `false`
      */
-    var isStopAtString: Boolean = false
+    var isStopAtString : Boolean = false
+
     /**
      * String to parse
      */
-    private val string: CharArray
+    private val string : CharArray
+
     /**
      * String delimiters
      */
-    private val stringLimiters: CharArray
+    private val stringLimiters : CharArray
 
     /**
      * Indicates if last extracted part is considered as a String (Because inside String delimiters)
@@ -97,7 +111,7 @@ class StringExtractor(string: String,
         this.escapeCharacters = escapeCharacters.toCharArray()
 
         this.index = 0
-        this.currentWordStart = -1
+        this.currentWordStart = - 1
         this.length = string.length
 
         this.openCloseIgnore = ArrayList<OpenCloseDelimiter>()
@@ -122,7 +136,7 @@ class StringExtractor(string: String,
      * @param close Close character
      * @param countOpenClose Indicates if have to count open/close
      */
-    fun addOpenCloseIgnore(open: Char, close: Char, countOpenClose: Boolean = false)
+    fun addOpenCloseIgnore(open : Char, close : Char, countOpenClose : Boolean = false)
     {
         if (open == close)
         {
@@ -140,21 +154,6 @@ class StringExtractor(string: String,
         this.openCloseIgnore.add(OpenCloseDelimiter(open, close, countOpenClose))
     }
 
-    /**
-     * Current word end index in original text
-     */
-    fun currentWordEnd(): Int
-    {
-        return this.index
-    }
-
-    /**
-     * Current word start index in original text
-     */
-    fun currentWordStart(): Int
-    {
-        return this.currentWordStart
-    }
 
     /**
      * Next extracted string.
@@ -165,7 +164,7 @@ class StringExtractor(string: String,
      *
      * @return Next part or `null` if no more to extract
      */
-    operator fun next(): String?
+    operator fun next() : String?
     {
         this.isString = false
         this.isSeparator = false
@@ -180,7 +179,7 @@ class StringExtractor(string: String,
         var start = this.index
         var end = this.length
         var currentStringLimiter = ' '
-        var openClose: OpenCloseDelimiter? = null
+        var openClose : OpenCloseDelimiter? = null
         var character = this.string[this.index]
 
         do
@@ -215,7 +214,7 @@ class StringExtractor(string: String,
             {
                 if (this.escapeCharacters.contains(character))
                 {
-                    this.index++
+                    this.index ++
                 }
                 else if (insideString)
                 {
@@ -226,7 +225,7 @@ class StringExtractor(string: String,
                         if (this.isStopAtString)
                         {
                             end = this.index
-                            this.index++
+                            this.index ++
                             break
                         }
                     }
@@ -242,7 +241,7 @@ class StringExtractor(string: String,
 
                     if (this.isStopAtString)
                     {
-                        start++
+                        start ++
                     }
 
                     insideString = true
@@ -261,30 +260,30 @@ class StringExtractor(string: String,
                     if (this.returnSeparators)
                     {
                         end = start + 1
-                        this.index++
+                        this.index ++
                         this.isSeparator = true
 
                         break
                     }
 
-                    start++
+                    start ++
                 }
             }
             else if (character == openClose.open && openClose.countOpenClose)
             {
-                openClose.counter++
+                openClose.counter ++
             }
             else if (character == openClose.close)
             {
-                openClose.counter--
+                openClose.counter --
 
-                if (!openClose.countOpenClose || openClose.counter == 0)
+                if (! openClose.countOpenClose || openClose.counter == 0)
                 {
                     openClose = null
                 }
             }
 
-            this.index++
+            this.index ++
 
             if (this.index < this.length)
             {
@@ -293,7 +292,7 @@ class StringExtractor(string: String,
         }
         while (this.index < this.length)
 
-        return if (!this.isCanReturnEmptyString && end == start)
+        return if (! this.isCanReturnEmptyString && end == start)
         {
             this.next()
         }

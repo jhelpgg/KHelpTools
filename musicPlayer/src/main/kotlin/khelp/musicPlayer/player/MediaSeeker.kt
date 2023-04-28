@@ -2,6 +2,7 @@ package khelp.musicPlayer.player
 
 import khelp.thread.TaskContext
 import khelp.thread.flow.FlowData
+import khelp.thread.observable.ObservableData
 import khelp.thread.parallel
 import khelp.utilities.collections.ThrowSet
 import java.io.File
@@ -13,15 +14,17 @@ object MediaSeeker
     private val directoriesToExplore = ThrowSet<File>()
     private val musicFilesFlowData = FlowData<File>()
     private val imageFilesFlowData = FlowData<File>()
+    private val seekingObservableData = ObservableData<Boolean>(false)
 
     val musicFilesFlow = this.musicFilesFlowData.flow
     val imagesFilesFlow = this.imageFilesFlowData.flow
-    val seeking : Boolean get() = this.seekingLaunched.get()
+    val seekingObservable = this.seekingObservableData.observable
 
     fun startSeek()
     {
         if (this.seekingLaunched.compareAndSet(false, true))
         {
+            this.seekingObservableData.value(true)
             parallel(TaskContext.IO, this::seek)
         }
     }
@@ -58,5 +61,6 @@ object MediaSeeker
         }
 
         this.seekingLaunched.set(false)
+        this.seekingObservableData.value(false)
     }
 }

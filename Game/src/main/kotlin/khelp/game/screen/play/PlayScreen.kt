@@ -1,6 +1,6 @@
 package khelp.game.screen.play
 
-import fr.jhelp.utilities.random
+import khelp.utilities.math.random
 import khelp.game.event.KeyAction
 import khelp.game.event.KeyboardManager
 import khelp.game.resources.BackgroundImage

@@ -6,6 +6,9 @@ import khelp.engine3d.extensions.degreeToRadian
 import khelp.engine3d.extensions.green
 import khelp.engine3d.extensions.position
 import khelp.engine3d.extensions.red
+import khelp.engine3d.format.obj.objLoader
+import khelp.engine3d.format.obj.options.ObjAsIs
+import khelp.engine3d.format.obj.options.ObjOption
 import khelp.engine3d.geometry.Point3D
 import khelp.engine3d.geometry.Rotf
 import khelp.engine3d.geometry.Vec3f
@@ -23,6 +26,7 @@ import khelp.engine3d.render.prebuilt.Sphere
 import khelp.engine3d.utils.PICKING_PRECISION
 import khelp.engine3d.utils.ThreadOpenGL
 import khelp.engine3d.utils.pickSame
+import khelp.resources.Resources
 import khelp.thread.observable.Observable
 import khelp.thread.observable.ObservableData
 import khelp.utilities.collections.queue.Queue
@@ -452,6 +456,20 @@ open class Node(val id : String) : Iterable<Node>
         return child
     }
 
+    @NodeDSL
+    fun obj(id : String, path : String, resources : Resources, objOption : ObjOption = ObjAsIs) : Node
+    {
+        val child = objLoader(id, path, resources, objOption)
+        child.parent = this
+
+        synchronized(this.children)
+        {
+            this.children.add(child)
+        }
+
+        return child
+    }
+
     fun <N : Node> findById(id : String) : N?
     {
         val queue = Queue<Node>()
@@ -805,7 +823,7 @@ open class Node(val id : String) : Iterable<Node>
         }
     }
 
-    val numberOfChild : Int =
+    val numberOfChild : Int get() =
         synchronized(this.children)
         {
             this.children.size

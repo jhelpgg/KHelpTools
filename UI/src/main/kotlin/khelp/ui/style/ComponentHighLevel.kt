@@ -6,9 +6,9 @@ import kotlin.math.max
 enum class ComponentHighLevel(val level : Int)
 {
     AT_GROUND(0),
-    NEAR_GROUND(4),
-    FLY(8),
-    HIGHEST(16)
+    NEAR_GROUND(2),
+    FLY(4),
+    HIGHEST(8)
 }
 
 val COMPONENT_HIGHEST_LEVEL : Int by lazy {

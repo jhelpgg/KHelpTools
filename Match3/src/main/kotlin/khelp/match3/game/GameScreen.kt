@@ -1,6 +1,6 @@
 package khelp.match3.game
 
-import fr.jhelp.utilities.random
+import khelp.utilities.math.random
 import khelp.match3.CELL_SEPARATOR_MAIN_COLOR
 import khelp.match3.CELL_SEPARATOR_MIDDLE_COLOR
 import khelp.match3.FRAME_DURATION
@@ -33,7 +33,6 @@ import java.awt.Graphics2D
 import java.util.Stack
 import java.util.TreeSet
 import java.util.concurrent.atomic.AtomicBoolean
-import kotlin.math.max
 import kotlin.math.min
 
 object GameScreen
@@ -111,17 +110,17 @@ object GameScreen
                 while (toExplode.isNotEmpty())
                 {
                     val (cell, position) = toExplode.pop()
-                    val (x, y) = position
-                    val index = x + y * NUMBER_GRID_CELL_HORIZONTAL
+                    val (xx, yy) = position
+                    val index = xx + yy * NUMBER_GRID_CELL_HORIZONTAL
                     this.grid[index] = EmptyCell
-                    this.explosions += ExplodeCell(x, y, EmptyCell)
+                    this.explosions += ExplodeCell(xx, yy, EmptyCell)
                     this.points ++
 
                     when (cell)
                     {
-                        HorizontalArrow -> this.explodeHorizontal(y, toExplode)
-                        VerticalArrow   -> this.explodeVertical(x, toExplode)
-                        Bomb            -> this.explodeBomb(x, y, toExplode)
+                        HorizontalArrow -> this.explodeHorizontal(yy, toExplode)
+                        VerticalArrow   -> this.explodeVertical(xx, toExplode)
+                        Bomb            -> this.explodeBomb(xx, yy, toExplode)
                         SameColor       -> this.explodeBook()
                         else            -> Unit
                     }
@@ -355,6 +354,7 @@ object GameScreen
 
     private fun mostPresentGemType() : GemType
     {
+        var gemType = this.possibleGems.random().gemType
         val counters = HashMap<GemType, Int>()
         var maximum = 0
 
@@ -362,13 +362,19 @@ object GameScreen
         {
             if (cell is Gem)
             {
-                counters[cell.gemType] = (counters[cell.gemType] ?: 0) + 1
-                maximum = max(maximum, counters[cell.gemType] !!)
+                val cellGemType = cell.gemType
+                val value = (counters[cellGemType] ?: 0) + 1
+                counters[cellGemType] = value
+
+                if (value > maximum)
+                {
+                    maximum = value
+                    gemType = cellGemType
+                }
             }
         }
 
-        return counters.firstNotNullOfOrNull { (type, count) -> if (count == maximum) type else null }
-               ?: this.possibleGems.random().gemType
+        return gemType
     }
 
     fun canCloseNow() : Boolean

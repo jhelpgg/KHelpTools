@@ -1,6 +1,5 @@
 package khelp.engine3d.render.complex
 
-import fr.jhelp.utilities.random
 import khelp.engine3d.animation.Animation
 import khelp.engine3d.animation.AnimationList
 import khelp.engine3d.animation.NodePosition
@@ -14,6 +13,7 @@ import khelp.engine3d.resource.Textures
 import khelp.thread.observable.Observable
 import khelp.thread.observable.ObservableData
 import khelp.utilities.extensions.bounds
+import khelp.utilities.math.random
 import kotlin.math.max
 
 /**

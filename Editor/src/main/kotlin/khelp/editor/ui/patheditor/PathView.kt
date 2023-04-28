@@ -1,6 +1,5 @@
 package khelp.editor.ui.patheditor
 
-import fr.jhelp.utilities.random
 import khelp.editor.ui.VERY_LIGHT_GRAY
 import khelp.engine3d.geometry.path.Path
 import khelp.engine3d.geometry.path.PathClose
@@ -21,6 +20,7 @@ import khelp.ui.events.MouseState
 import khelp.ui.events.MouseStatus
 import khelp.ui.game.GameComponent
 import khelp.utilities.extensions.bounds
+import khelp.utilities.math.random
 import java.awt.BasicStroke
 import java.awt.Color
 import java.awt.Point

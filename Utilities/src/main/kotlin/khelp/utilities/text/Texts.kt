@@ -29,8 +29,7 @@ const val DEFAULT_STRING_LIMITERS = "\"'"
  * @param offset       Offset maximum for search
  * @param characters   Characters search
  * @return Index of the last character <= given offset found in char sequence that inside in the given list. -1 if
- * the char
- * sequence doesn't contain any of given characters before the given offset
+ * the char sequence doesn't contain any of given characters before the given offset
  */
 fun lastIndexOf(charSequence : CharSequence, offset : Int = charSequence.length, vararg characters : Char) : Int
 {

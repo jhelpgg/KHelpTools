@@ -15,6 +15,10 @@ import kotlin.math.min
 fun Int.bounds(bound1 : Int, bound2 : Int) =
     max(min(bound1, bound2), min(max(bound1, bound2), this))
 
+val Int.limit_0_255 : Int
+    get() =
+        max(0, min(255, this))
+
 /**
  * Compute the greater common divider of this number and given one
  * @param int Given number
@@ -64,11 +68,17 @@ val Int.green : Int get() = (this shr 8) and 0xFF
 
 val Int.blue : Int get() = this and 0xFF
 
-operator fun Int.plus(time: Time): Time = Time(this + time.milliseconds)
-operator fun Int.minus(time: Time): Time = Time(this - time.milliseconds)
+operator fun Int.plus(time : Time) : Time = Time(this + time.milliseconds)
+operator fun Int.minus(time : Time) : Time = Time(this - time.milliseconds)
 
 val Int.milliseconds get() = Time(this)
 val Int.seconds get() = Time(this * 1000L)
 val Int.minutes get() = Time(this * 1000L * 60L)
 val Int.hours get() = Time(this * 1000L * 60L * 60L)
 val Int.days get() = Time(this * 1000L * 60L * 60L * 24L)
+
+infix fun Int.and(value : Byte) : Int =
+    this and (value.toInt() and 0xFF)
+
+infix fun Int.or(value : Byte) : Int =
+    this or (value.toInt() and 0xFF)

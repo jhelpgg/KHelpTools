@@ -1,5 +1,6 @@
 package khelp.math.formal
 
+import khelp.math.extensions.toFunction
 import khelp.utilities.log.debug
 import khelp.utilities.log.todo
 import khelp.utilities.math.EPSILON
@@ -8,6 +9,14 @@ import org.junit.jupiter.api.Test
 
 class TestFunction
 {
+    @Test
+    fun testDerive() {
+        val function = "1/(1+1/exp(x))".toFunction()
+        println(function)
+        val derive  = function.derive("x")
+        println(derive)
+        println(derive.simplifyMaximum(System.out))
+    }
     @Test
     fun testParser()
     {
@@ -62,7 +71,7 @@ class TestFunction
         todo("Write more tests")
     }
 
-    private fun assertSimplify(expected: String, complex: String)
+    private fun assertSimplify(expected : String, complex : String)
     {
         Assertions.assertEquals(expected.toFunction(), complex.toFunction()(System.out))
     }

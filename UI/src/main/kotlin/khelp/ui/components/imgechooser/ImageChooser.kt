@@ -9,16 +9,16 @@ import khelp.thread.TaskContext
 import khelp.thread.future.FutureResult
 import khelp.thread.future.Promise
 import khelp.thread.parallel
-import khelp.ui.GenericAction
-import khelp.ui.dsl.borderLayout
+import khelp.ui.dsl.constraintLayout
+import khelp.ui.dsl.styledButton
 import khelp.ui.extensions.file
 import khelp.ui.extensions.get
 import khelp.ui.game.GameImage
-import java.awt.FlowLayout
+import khelp.ui.layout.constraints.ConstraintsSize
+import khelp.ui.style.shape.StyleShapeSausage
 import java.beans.PropertyChangeEvent
 import java.io.File
 import java.io.FileInputStream
-import javax.swing.JButton
 import javax.swing.JFileChooser
 import javax.swing.JPanel
 import javax.swing.filechooser.FileNameExtensionFilter
@@ -31,25 +31,35 @@ class ImageChooser(private val preferenceKey : String, private val preferences :
 
     init
     {
-        val actionOpen = GenericAction(defaultTexts, OPEN, null, OPEN, TaskContext.INDEPENDENT) {
-            val selectedFile = this.fileChooser.selectedFile
-
-            if (selectedFile != null)
-            {
-                this.preferences.edit { file(this@ImageChooser.preferenceKey, selectedFile) }
-                this.promise?.result(selectedFile)
+        val openButton = styledButton(OPEN, defaultTexts) {
+            style {
+                shape = StyleShapeSausage
             }
-            else
-            {
-                this.promise?.fail(Exception("No selection"))
-            }
+            onClick {
+                val selectedFile = this@ImageChooser.fileChooser.selectedFile
 
-            this.promise = null
+                if (selectedFile != null)
+                {
+                    this@ImageChooser.preferences.edit { file(this@ImageChooser.preferenceKey, selectedFile) }
+                    this@ImageChooser.promise?.result(selectedFile)
+                }
+                else
+                {
+                    this@ImageChooser.promise?.fail(Exception("No selection"))
+                }
+
+                this@ImageChooser.promise = null
+            }
         }
 
-        val actionCancel = GenericAction(defaultTexts, CANCEL, null, CANCEL, TaskContext.INDEPENDENT) {
-            this.promise?.fail(Exception("No selection"))
-            this.promise = null
+        val cancelButton = styledButton(CANCEL, defaultTexts) {
+            style {
+                shape = StyleShapeSausage
+            }
+            onClick {
+                this@ImageChooser.promise?.fail(Exception("No selection"))
+                this@ImageChooser.promise = null
+            }
         }
 
         this.fileChooser.isMultiSelectionEnabled = false
@@ -60,12 +70,34 @@ class ImageChooser(private val preferenceKey : String, private val preferences :
         }
         this.fileChooser.controlButtonsAreShown = false
 
-        borderLayout {
-            center(this@ImageChooser.fileChooser)
-            pageEnd {
-                layout = FlowLayout()
-                add(JButton(actionOpen))
-                add(JButton(actionCancel))
+        constraintLayout {
+            this@ImageChooser.fileChooser("fileChooser") {
+                horizontalSize = ConstraintsSize.EXPANDED
+                verticalSize = ConstraintsSize.EXPANDED
+                topAtParent
+                bottomAtTop = "openButton"
+                leftAtParent
+                rightAtParent
+            }
+
+            openButton("openButton") {
+                marginLeft = 8
+                horizontalSize = ConstraintsSize.WRAPPED
+                verticalSize = ConstraintsSize.WRAPPED
+                topFree
+                bottomAtParent
+                leftAtParent
+                rightFree
+            }
+
+            cancelButton("cancelButton") {
+                marginLeft = 32
+                horizontalSize = ConstraintsSize.WRAPPED
+                verticalSize = ConstraintsSize.WRAPPED
+                topFree
+                bottomAtParent
+                leftAtRight = "openButton"
+                rightFree
             }
         }
     }

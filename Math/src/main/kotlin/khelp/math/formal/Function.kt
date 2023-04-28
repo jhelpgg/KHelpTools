@@ -1,46 +1,12 @@
 package khelp.math.formal
 
+import khelp.math.extensions.toFunction
 import khelp.utilities.collections.SortedArray
+import khelp.utilities.collections.sortedArray
+import khelp.utilities.comparators.ComparableNaturalOrderComparator
 import khelp.utilities.extensions.removeWhiteCharacters
 import java.io.PrintStream
 import java.util.Arrays
-
-/**
- * Comparator of two functions
- */
-object FunctionComparator : Comparator<Function>
-{
-    /**
-     * Compare two function
-     * @param function1 First function
-     * @param function2 Second function
-     * @return Comparison result
-     */
-    override fun compare(function1 : Function?, function2 : Function?) : Int
-    {
-        if (function1 === function2)
-        {
-            return 0
-        }
-
-        if (function1 == null)
-        {
-            if (function2 == null)
-            {
-                return 0
-            }
-
-            return 1
-        }
-
-        if (function2 == null)
-        {
-            return - 1
-        }
-
-        return function1.compareTo(function2)
-    }
-}
 
 /**
  * Represents a formal function, example:
@@ -73,7 +39,7 @@ abstract class Function : Comparable<Function>
          */
         fun createAddition(vararg functions : Function) : Function
         {
-            Arrays.sort(functions, FunctionComparator)
+            Arrays.sort(functions, ComparableNaturalOrderComparator())
             val length = functions.size
 
             return when (length)
@@ -104,10 +70,10 @@ abstract class Function : Comparable<Function>
                 else ->
                     Addition(Function.createAddition(functions.subPart(0,
                                                                        functions.size / 2,
-                                                                       SortedArray<Function>(FunctionComparator,false))),
+                                                                       sortedArray<Function>(false))),
                              Function.createAddition(functions.subPart(functions.size / 2,
                                                                        functions.size,
-                                                                       SortedArray<Function>(FunctionComparator,false))))
+                                                                       sortedArray<Function>(false))))
             }
 
         /**
@@ -148,7 +114,7 @@ abstract class Function : Comparable<Function>
          */
         fun createMultiplication(vararg functions : Function) : Function
         {
-            Arrays.sort(functions, FunctionComparator)
+            Arrays.sort(functions, ComparableNaturalOrderComparator())
             val length = functions.size
 
             return when (length)
@@ -183,10 +149,10 @@ abstract class Function : Comparable<Function>
                 else ->
                     Addition(Function.createMultiplication(functions.subPart(0,
                                                                              functions.size / 2,
-                                                                             SortedArray<Function>(FunctionComparator,false))),
+                                                                             sortedArray<Function>(false))),
                              Function.createMultiplication(functions.subPart(functions.size / 2,
                                                                              functions.size,
-                                                                             SortedArray<Function>(FunctionComparator,false))))
+                                                                             sortedArray<Function>(false))))
             }
 
         /**Binary operators*/
@@ -501,7 +467,7 @@ abstract class Function : Comparable<Function>
      */
     override fun compareTo(function : Function) : Int
     {
-        if (this.functionIsEquals(function))
+        if (this === function || this.functionIsEquals(function))
         {
             return 0
         }
@@ -872,49 +838,11 @@ abstract class Function : Comparable<Function>
 }
 
 /**
- * Transform this number to a function
- */
-fun Number.toFunction() : Function = constant(this.toDouble())
-
-/**
- * Add this number to a function
- * @param function Function to add
- * @return Addition result
- */
-operator fun Number.plus(function : Function) = Function.createAddition(this.toFunction(), function)
-
-/**
- * Subtract this number to a function
- * @param function Function to subtract
- * @return Subtraction result
- */
-operator fun Number.minus(function : Function) = Subtraction(this.toFunction(), function)
-
-/**
- * Multiply this number to a function
- * @param function Function to multiply
- * @return Multiplication result
- */
-operator fun Number.times(function : Function) = Function.createMultiplication(this.toFunction(), function)
-
-/**
- * Divide this number to a function
- * @param function Function to divide
- * @return Division result
- */
-operator fun Number.div(function : Function) = Division(this.toFunction(), function)
-
-/**
- * Parse this String to a function
- */
-fun String.toFunction() = Function.parse(this)
-
-/**
  * Create a list of functions from several functions
  */
 fun functionListOf(vararg functions : Function) : SortedArray<Function>
 {
-    val list = SortedArray<Function>(FunctionComparator, false)
+    val list = sortedArray<Function>(unique = false)
     functions.forEach { function -> list += function }
     return list
 }

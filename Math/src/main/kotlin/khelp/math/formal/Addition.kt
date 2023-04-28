@@ -1,6 +1,9 @@
 package khelp.math.formal
 
+import khelp.math.extensions.plus
+import khelp.math.extensions.times
 import khelp.utilities.collections.SortedArray
+import khelp.utilities.collections.sortedArray
 import java.util.Stack
 
 /**
@@ -40,7 +43,7 @@ class Addition(parameter1 : Function, parameter2 : Function) : BinaryOperator("+
                 return functionListOf(constant(value))
             }
 
-            val result = SortedArray<Function>(FunctionComparator, false)
+            val result = sortedArray<Function>(false)
             result += constant(value)
 
             for (i in index until length)
@@ -63,7 +66,7 @@ class Addition(parameter1 : Function, parameter2 : Function) : BinaryOperator("+
          */
         internal fun extractAdditionParameters(addition : Addition) : SortedArray<Function>
         {
-            val list = SortedArray<Function>(FunctionComparator, false)
+            val list = sortedArray<Function>(false)
             val stack = Stack<Addition>()
             stack.push(addition)
             var addition : Addition
@@ -396,8 +399,7 @@ class Addition(parameter1 : Function, parameter2 : Function) : BinaryOperator("+
                             value = multiplications1[0].obtainRealValueNumber()
                             f1 = Function.createMultiplication(multiplications1.subPart(1,
                                                                                         multiplications1.size,
-                                                                                        SortedArray<Function>(
-                                                                                            FunctionComparator, false)))
+                                                                                        sortedArray<Function>(false)))
                         }
                         else
                         {
@@ -410,8 +412,7 @@ class Addition(parameter1 : Function, parameter2 : Function) : BinaryOperator("+
                             value += multiplications2[0].obtainRealValueNumber()
                             f2 = Function.createMultiplication(multiplications2.subPart(1,
                                                                                         multiplications2.size,
-                                                                                        SortedArray<Function>(
-                                                                                            FunctionComparator, false)))
+                                                                                        sortedArray<Function>(false)))
                         }
                         else
                         {

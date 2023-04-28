@@ -1,6 +1,6 @@
 package khelp.match3.model
 
-import fr.jhelp.utilities.random
+import khelp.utilities.math.random
 import khelp.match3.ui.obtainImage
 import khelp.ui.extensions.drawImageCenter
 import java.awt.Graphics2D
@@ -18,7 +18,7 @@ class Explosion
     private var index = 1
     private val baseName = Explosion.baseName()
 
-    fun drawExplosion(xCenter : Int, yCanter : Int, graphics : Graphics2D) : Boolean
+    fun drawExplosion(xCenter : Int, yCenter : Int, graphics : Graphics2D) : Boolean
     {
         if (this.index > Explosion.MAXIMUM_INDEX)
         {
@@ -26,7 +26,7 @@ class Explosion
         }
 
         val name = "${this.baseName}${this.index}${Explosion.NAME_TAIL}"
-        graphics.drawImageCenter(xCenter, yCanter, obtainImage(name))
+        graphics.drawImageCenter(xCenter, yCenter, obtainImage(name))
         this.index ++
         return this.index <= Explosion.MAXIMUM_INDEX
     }

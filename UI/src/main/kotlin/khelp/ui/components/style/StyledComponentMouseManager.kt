@@ -1,9 +1,7 @@
 package khelp.ui.components.style
 
-import khelp.ui.style.Style
 import java.awt.event.MouseEvent
 import java.awt.event.MouseListener
-import java.lang.ref.WeakReference
 
 internal class StyledComponentMouseManager : MouseListener
 {

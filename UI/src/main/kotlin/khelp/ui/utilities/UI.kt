@@ -404,30 +404,22 @@ fun computePreferredDimension(component : Component) : Dimension
 }
 
 /**
- * Create key stroke short cut for a character type without any special key like shift, control, ...
- *
- * @param character Character short cut
- * @return Created shortcut
- */
-fun createKeyStroke(character : Char) : KeyStroke
-{
-    return createKeyStroke(character, false, false, false, false, false)
-}
-
-/**
- * Create key stroke short cut for given key combination
+ * Create key-stroke short-cut for given key combination
  *
  * @param character Character
- * @param control   Indicates if control down
- * @param alt       Indicates if alt is down
- * @param shift     Indicates if shift is down
- * @param altGraph  Indicates if alt graph is down
- * @param meta      Indicates if meta is down
- * @return Creates key stroke short cut for given key combination
+ * @param control   Indicates if control should be down (default `false`)
+ * @param alt       Indicates if alt should be down (default `false`)
+ * @param shift     Indicates if shift should be down (default `false`)
+ * @param altGraph  Indicates if alt graph should be down (default `false`)
+ * @param meta      Indicates if meta should be down (default `false`)
+ * @return Created key-stroke short-cut for given key combination
  */
 fun createKeyStroke(character : Char,
-                    control : Boolean, alt : Boolean, shift : Boolean, altGraph : Boolean,
-                    meta : Boolean) : KeyStroke
+                    control : Boolean = false,
+                    alt : Boolean = false,
+                    shift : Boolean = false,
+                    altGraph : Boolean = false,
+                    meta : Boolean = false) : KeyStroke
 {
     var modifiers = 0
 
@@ -460,8 +452,9 @@ fun createKeyStroke(character : Char,
 }
 
 /**
- * Compute the key code to use for short cut that use a given character.<br>
- * It is possible to use {@link #CHARACTER_DELETE} or {@link #CHARACTER_ESCAPE} character if you want build short cut
+ * Compute the key code to use for short-cut that use a given character.
+ *
+ * It is possible to use [CHARACTER_DELETE] or [CHARACTER_ESCAPE] character if you want build short-cut
  * for respectively delete key, escape key
  *
  * @param character Character to compute the key code to use
@@ -491,61 +484,6 @@ fun charToKeyCodeForShortCut(character : Char) : Int =
         '\t'             -> KeyEvent.VK_TAB
         else             -> KeyEvent.getExtendedKeyCodeForChar(character.toInt())
     }
-
-/**
- * Create key stroke short cut for given key combination
- *
- * @param character Character
- * @param control   Indicates if control down
- * @return Creates key stroke short cut for given key combination
- */
-fun createKeyStroke(character : Char, control : Boolean) : KeyStroke
-{
-    return createKeyStroke(character, control, false, false, false, false)
-}
-
-/**
- * Create key stroke short cut for given key combination
- *
- * @param character Character
- * @param control   Indicates if control down
- * @param alt       Indicates if alt is down
- * @return Creates key stroke short cut for given key combination
- */
-fun createKeyStroke(character : Char, control : Boolean, alt : Boolean) : KeyStroke
-{
-    return createKeyStroke(character, control, alt, false, false, false)
-}
-
-/**
- * Create key stroke short cut for given key combination
- *
- * @param character Character
- * @param control   Indicates if control down
- * @param alt       Indicates if alt is down
- * @param shift     Indicates if shift is down
- * @return Creates key stroke short cut for given key combination
- */
-fun createKeyStroke(character : Char, control : Boolean, alt : Boolean, shift : Boolean) : KeyStroke
-{
-    return createKeyStroke(character, control, alt, shift, false, false)
-}
-
-/**
- * Create key stroke short cut for given key combination
- *
- * @param character Character
- * @param control   Indicates if control down
- * @param alt       Indicates if alt is down
- * @param shift     Indicates if shift is down
- * @param altGraph  Indicates if alt graph is down
- * @return Creates key stroke short cut for given key combination
- */
-fun createKeyStroke(character : Char, control : Boolean, alt : Boolean, shift : Boolean,
-                    altGraph : Boolean) : KeyStroke
-{
-    return createKeyStroke(character, control, alt, shift, altGraph, false)
-}
 
 /**
  * Obtain frame parent of a container

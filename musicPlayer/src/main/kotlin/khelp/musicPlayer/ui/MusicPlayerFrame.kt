@@ -1,6 +1,6 @@
 package khelp.musicPlayer.ui
 
-import fr.jhelp.utilities.random
+import khelp.utilities.math.random
 import khelp.io.ClassSource
 import khelp.musicPlayer.player.MediaSeeker
 import khelp.musicPlayer.player.MusicPlayer
@@ -32,11 +32,11 @@ object MusicPlayerFrame
 
     fun launchPlayer()
     {
-        val screeShot = screenShot()
-        val gameComponent = GameComponent(screeShot.width, screeShot.height)
+        val screenShot = screenShot()
+        val gameComponent = GameComponent(screenShot.width, screenShot.height)
         gameComponent.cursor = INVISIBLE_CURSOR
         this.image = gameComponent.gameImage
-        this.image.draw { graphics2D -> graphics2D.drawImage(screeShot, 0, 0, null) }
+        this.image.draw { graphics2D -> graphics2D.drawImage(screenShot, 0, 0, null) }
         val resources = Resources(ClassSource(MusicPlayerFrame::class.java))
         val resourcesText = resources.resourcesText("texts/texts")
 
@@ -117,7 +117,6 @@ object MusicPlayerFrame
                 hasNext = this.images.notEmpty
             }
         }
-
         this.launched.set(false)
     }
 }

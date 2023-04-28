@@ -460,3 +460,10 @@ fun radianToDegree(radian : Float) : Float = radian * 180.0f / Math.PI.toFloat()
  * @return Converted grade
  */
 fun radianToGrade(radian : Double) : Double = radian * 200.0 / Math.PI
+
+fun gauss(c00: Int, c10: Int, c20: Int,
+          c01: Int, c11: Int, c21: Int,
+          c02: Int, c12: Int, c22: Int) =
+    (c00 + (c10 shl 1) + c20 +
+     (c01 shl 1) + (c11 shl 2) + (c21 shl 1) +
+     c02 + (c12 shl 1) + c22) shr 4

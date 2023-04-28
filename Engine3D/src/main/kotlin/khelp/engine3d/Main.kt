@@ -4,6 +4,7 @@ import khelp.engine3d.animation.AccelerationInterpolation
 import khelp.engine3d.animation.AnimationGroup
 import khelp.engine3d.animation.AnimationManager
 import khelp.engine3d.event.ActionCode
+import khelp.engine3d.format.obj.options.ObjUseNormalMap
 import khelp.engine3d.render.Material
 import khelp.engine3d.render.Texture
 import khelp.engine3d.render.TwoSidedRule
@@ -19,6 +20,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 
 fun main()
 {
+    val toy = "sheep"
     val animationTime = 512L
     val animationDivideByZero =
         AnimatedImage(512, 512, GameImage.load("divideBy0/DivideBy0_0.png", Resources3D.resources))
@@ -75,6 +77,10 @@ fun main()
     AnimationManager.addAnimation("explode", animationGroup)
     animationDivideByZero.actionAtEnd = { AnimationManager.play("explode") }
     val running = AtomicBoolean(false)
+    val materialBear = Material()
+    materialBear.textureDiffuse = Texture(Resources3D.loadImage("textures/toy${toy}_Default_color.jpg"))
+    materialBear.colorDiffuse = WHITE
+    materialBear.twoSided = false
     window3D(800, 600, "Test") {
         scene.backgroundColor = WHITE
         scene.root {
@@ -83,11 +89,51 @@ fun main()
                 addChild(plane)
             }
 
+            val nodeBear = obj("bear", "obj/toy${toy}.obj", Resources3D.resources,
+                               ObjUseNormalMap("textures/toy${toy}_Default_nmap.jpg", Resources3D.resources))
+            nodeBear.applyMaterialHierarchically(materialBear)
+
+//            val colors = arrayOf(BLACK, BLUE, RED, GREEN, YELLOW, ORANGE)
+//
+//            for (childIndex in 0 until nodeGate.numberOfChild)
+//            {
+//                val materialChild = Material()
+//                materialChild.colorEmissive = GRAY
+//                materialChild.colorDiffuse = colors[childIndex % colors.size]
+//                materialChild.textureSpheric = Texture(Resources3D.loadImage("textures/emerald.jpg"))
+//                materialChild.sphericRate = 0.5f
+//                nodeGate.child(childIndex)
+//                    .applyMaterialHierarchically(materialChild)
+//            }
+
+            nodeBear.y = - 34.5f
+            nodeBear.z = - 275f
+
+            /*
+                bunny :
+                nodeBunny.y = -34.5f
+                nodeBunny.z = -275f
+
+                bear
+                nodeBear.y = -34.5f
+                nodeBear.z = -275f
+
+                gate :
+                nodeGate.y = 0f
+                nodeGate.z = -40f
+             */
+
+
             actionManager.actionObservable.observedBy(TaskContext.INDEPENDENT) { list ->
                 for (actionCode in list)
                 {
                     when (actionCode)
                     {
+                        ActionCode.ACTION_UP       -> nodeBear.z -= 0.1f
+                        ActionCode.ACTION_DOWN     -> nodeBear.z += 0.1f
+                        ActionCode.ACTION_LEFT     -> nodeBear.angleY -= 1f
+                        ActionCode.ACTION_RIGHT    -> nodeBear.angleY += 1f
+
                         ActionCode.ACTION_BUTTON_1 ->
                             if (running.compareAndSet(false, true))
                             {

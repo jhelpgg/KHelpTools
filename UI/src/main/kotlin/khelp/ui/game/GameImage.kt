@@ -7,7 +7,7 @@ import khelp.ui.extensions.y
 import khelp.ui.utilities.FONT_RENDER_CONTEXT
 import khelp.ui.utilities.PercentGraphics
 import khelp.ui.utilities.TRANSPARENT
-import khelp.utilities.extensions.bounds
+import khelp.utilities.extensions.limit_0_255
 import java.awt.Color
 import java.awt.Component
 import java.awt.Graphics
@@ -237,7 +237,7 @@ class GameImage(val width : Int, val height : Int) : Icon
             {
                 val color = pixels[index]
                 val y = color.y.toInt()
-                    .bounds(0, 255)
+                    .limit_0_255
                 pixels[index] = (color and 0xFF000000.toInt()) or (y shl 16) or (y shl 8) or y
             }
         }
@@ -254,7 +254,7 @@ class GameImage(val width : Int, val height : Int) : Icon
             {
                 val col = pixels[index]
                 val y = col.y.toInt()
-                    .bounds(0, 255)
+                    .limit_0_255
                 pixels[index] =
                     (col and 0xFF000000.toInt()) or (((red * y) shr 8) shl 16) or (((green * y) shr 8) shl 8) or ((blue * y) shr 8)
             }

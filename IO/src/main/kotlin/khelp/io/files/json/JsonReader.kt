@@ -110,7 +110,7 @@ class JsonReader(private val reader : BufferedReader,
             if (part.isNotEmpty())
             {
                 this.parsePart(part, stringExtractor.isString, stringExtractor.isSeparator,
-                               lineNumber, offset + stringExtractor.currentWordStart())
+                               lineNumber, offset + stringExtractor.currentWordStart)
             }
 
             part = stringExtractor.next()
@@ -127,159 +127,168 @@ class JsonReader(private val reader : BufferedReader,
             this.reportException("Found something after end of document", lineNumber, index)
         }
 
-        if (isSeparator)
+        when
         {
-            when (part)
-            {
-                "{" ->
-                    if (currentElement == JsonElementType.OBJECT)
-                    {
-                        if (this.key.isEmpty())
-                        {
-                            this.reportException("Start of value without a key inside an object", lineNumber, index)
-                        }
-
-                        this.callback.startObject(this.key)
-                        this.key = ""
-                        this.elementsStack.push(JsonElementType.OBJECT)
-                    }
-                    else
-                    {
-                        this.callback.startObject()
-                        this.elementsStack.push(JsonElementType.OBJECT)
-                    }
-                "}" ->
-                    if (currentElement == JsonElementType.OBJECT)
-                    {
-                        this.elementsStack.pop()
-
-                        if (this.elementsStack.peek() == JsonElementType.START_DOCUMENT)
-                        {
-                            this.elementsStack.pop()
-                            this.elementsStack.push(JsonElementType.END_DOCUMENT)
-                        }
-
-                        this.callback.endObject()
-                    }
-                    else
-                    {
-                        this.reportException("Unexpected close object", lineNumber, index)
-                    }
-                "[" ->
-                    if (currentElement == JsonElementType.OBJECT)
-                    {
-                        if (this.key.isEmpty())
-                        {
-                            this.reportException("Start of value without a key inside an object", lineNumber, index)
-                        }
-
-                        this.callback.startArray(this.key)
-                        this.key = ""
-                        this.elementsStack.push(JsonElementType.ARRAY)
-                    }
-                    else
-                    {
-                        this.callback.startArray()
-                        this.elementsStack.push(JsonElementType.ARRAY)
-                    }
-                "]" ->
-                    if (currentElement == JsonElementType.ARRAY)
-                    {
-                        this.elementsStack.pop()
-
-                        if (this.elementsStack.peek() == JsonElementType.START_DOCUMENT)
-                        {
-                            this.elementsStack.pop()
-                            this.elementsStack.push(JsonElementType.END_DOCUMENT)
-                        }
-
-                        this.callback.endArray()
-                    }
-                    else
-                    {
-                        this.reportException("Unexpected close array", lineNumber, index)
-                    }
-                ":" ->
-                    if (currentElement == JsonElementType.OBJECT)
-                    {
-                        if (this.key.isEmpty())
-                        {
-                            this.reportException("No key defined before key separator", lineNumber, index)
-                        }
-                    }
-                    else
-                    {
-                        this.reportException("Find key separator outside of object", lineNumber, index)
-                    }
-            }
+            isSeparator -> this.parseSeparator(part, currentElement, lineNumber, index)
+            isString    -> this.parseString(part, currentElement, lineNumber, index)
+            else        -> this.parseValue(part, currentElement, lineNumber, index)
         }
-        else if (isString)
+    }
+
+    private fun parseSeparator(separator : String, currentElement : JsonElementType, lineNumber : Int, index : Int)
+    {
+        when (separator)
         {
-            when (currentElement)
-            {
-                JsonElementType.OBJECT ->
+            "{" ->
+                if (currentElement == JsonElementType.OBJECT)
+                {
                     if (this.key.isEmpty())
                     {
-                        this.key = part
+                        this.reportException("Start of value without a key inside an object", lineNumber, index)
                     }
-                    else
+
+                    this.callback.startObject(this.key)
+                    this.key = ""
+                    this.elementsStack.push(JsonElementType.OBJECT)
+                }
+                else
+                {
+                    this.callback.startObject()
+                    this.elementsStack.push(JsonElementType.OBJECT)
+                }
+            "}" ->
+                if (currentElement == JsonElementType.OBJECT)
+                {
+                    this.elementsStack.pop()
+
+                    if (this.elementsStack.peek() == JsonElementType.START_DOCUMENT)
                     {
-                        this.callback.string(this.key, part)
-                        this.key = ""
+                        this.elementsStack.pop()
+                        this.elementsStack.push(JsonElementType.END_DOCUMENT)
                     }
-                JsonElementType.ARRAY  -> this.callback.string(part)
-                else                   -> this.reportException("Value or key defined outside of Object or Array",
-                                                                lineNumber, index)
-            }
-        }
-        else
-        {
-            when (currentElement)
-            {
-                JsonElementType.OBJECT ->
+
+                    this.callback.endObject()
+                }
+                else
+                {
+                    this.reportException("Unexpected close object", lineNumber, index)
+                }
+            "[" ->
+                if (currentElement == JsonElementType.OBJECT)
+                {
                     if (this.key.isEmpty())
                     {
-                        this.reportException("No key defined for the value", lineNumber, index)
+                        this.reportException("Start of value without a key inside an object", lineNumber, index)
                     }
-                    else
-                    {
-                        when
-                        {
-                            "null".equals(part, true)  -> this.callback.nullValue(this.key)
-                            "true".equals(part, true)  -> this.callback.boolean(this.key, true)
-                            "false".equals(part, true) -> this.callback.boolean(this.key, false)
-                            else                       ->
-                                try
-                                {
-                                    this.callback.number(this.key, part.toDouble())
-                                }
-                                catch (exception : Exception)
-                                {
-                                    this.reportException("Not a valid number value", lineNumber, index, exception)
-                                }
-                        }
 
-                        this.key = ""
+                    this.callback.startArray(this.key)
+                    this.key = ""
+                    this.elementsStack.push(JsonElementType.ARRAY)
+                }
+                else
+                {
+                    this.callback.startArray()
+                    this.elementsStack.push(JsonElementType.ARRAY)
+                }
+            "]" ->
+                if (currentElement == JsonElementType.ARRAY)
+                {
+                    this.elementsStack.pop()
+
+                    if (this.elementsStack.peek() == JsonElementType.START_DOCUMENT)
+                    {
+                        this.elementsStack.pop()
+                        this.elementsStack.push(JsonElementType.END_DOCUMENT)
                     }
-                JsonElementType.ARRAY  ->
+
+                    this.callback.endArray()
+                }
+                else
+                {
+                    this.reportException("Unexpected close array", lineNumber, index)
+                }
+            ":" ->
+                if (currentElement == JsonElementType.OBJECT)
+                {
+                    if (this.key.isEmpty())
+                    {
+                        this.reportException("No key defined before key separator", lineNumber, index)
+                    }
+                }
+                else
+                {
+                    this.reportException("Find key separator outside of object", lineNumber, index)
+                }
+        }
+    }
+
+    private fun parseString(string : String, currentElement : JsonElementType, lineNumber : Int, index : Int)
+    {
+        when (currentElement)
+        {
+            JsonElementType.OBJECT ->
+                if (this.key.isEmpty())
+                {
+                    this.key = string
+                }
+                else
+                {
+                    this.callback.string(this.key, string)
+                    this.key = ""
+                }
+            JsonElementType.ARRAY  -> this.callback.string(string)
+            else                   -> this.reportException("Value or key defined outside of Object or Array",
+                                                           lineNumber, index)
+        }
+    }
+
+    private fun parseValue(value : String, currentElement : JsonElementType, lineNumber : Int, index : Int)
+    {
+        when (currentElement)
+        {
+            JsonElementType.OBJECT ->
+                if (this.key.isEmpty())
+                {
+                    this.reportException("No key defined for the value", lineNumber, index)
+                }
+                else
+                {
                     when
                     {
-                        "null".equals(part, true)  -> this.callback.nullValue()
-                        "true".equals(part, true)  -> this.callback.boolean(true)
-                        "false".equals(part, true) -> this.callback.boolean(false)
-                        else                       ->
+                        "null".equals(value, true)  -> this.callback.nullValue(this.key)
+                        "true".equals(value, true)  -> this.callback.boolean(this.key, true)
+                        "false".equals(value, true) -> this.callback.boolean(this.key, false)
+                        else                        ->
                             try
                             {
-                                this.callback.number(part.toDouble())
+                                this.callback.number(this.key, value.toDouble())
                             }
                             catch (exception : Exception)
                             {
                                 this.reportException("Not a valid number value", lineNumber, index, exception)
                             }
                     }
-                else                    -> this.reportException("Value defined outside of Object or Array",
-                                                                lineNumber, index)
-            }
+
+                    this.key = ""
+                }
+            JsonElementType.ARRAY  ->
+                when
+                {
+                    "null".equals(value, true)  -> this.callback.nullValue()
+                    "true".equals(value, true)  -> this.callback.boolean(true)
+                    "false".equals(value, true) -> this.callback.boolean(false)
+                    else                        ->
+                        try
+                        {
+                            this.callback.number(value.toDouble())
+                        }
+                        catch (exception : Exception)
+                        {
+                            this.reportException("Not a valid number value", lineNumber, index, exception)
+                        }
+                }
+            else                   -> this.reportException("Value defined outside of Object or Array",
+                                                           lineNumber, index)
         }
     }
 

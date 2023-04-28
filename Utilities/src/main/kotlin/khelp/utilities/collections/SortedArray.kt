@@ -34,7 +34,7 @@ class SortedArray<T>(private val comparator : Comparator<T>, val unique : Boolea
     /**
      * Add an element in the array.
      *
-     * If array is on unique mode and the [Comparator] indicates that given element is same than an other one already inside the array, the element is not added
+     * If array is on unique mode and the [Comparator] indicates that given element is same than another one already inside the array, the element is not added
      */
     operator fun plusAssign(element : T)
     {
@@ -105,7 +105,7 @@ class SortedArray<T>(private val comparator : Comparator<T>, val unique : Boolea
     /**
      * Keep elements of the list inside the given iterable
      *
-     * It will left only the intersection
+     * It will leave only the intersection
      */
     operator fun remAssign(iterable : Iterable<T>)
     {
@@ -134,7 +134,7 @@ class SortedArray<T>(private val comparator : Comparator<T>, val unique : Boolea
     }
 
     /**
-     * Remove all elements that match given conditon
+     * Remove all elements that match given condition
      *
      * Only case of remove on O(N)
      */
@@ -312,5 +312,61 @@ class SortedArray<T>(private val comparator : Comparator<T>, val unique : Boolea
 
         (offset until offset + size).forEach { subPart += this[it] }
         return subPart
+    }
+
+    /**
+     * Compute interval index where should be inserted a given element.
+     *
+     * The couple **(min, max)** returned can be interpreted like that (where `size` is the size of the list) :
+     * * **(-1, 0)** means that the element is before the first element of the list
+     * * **(size, -1)** means that the element is after the last element of the list
+     * * **(index, index)** in other word **min==max**, means that the element is at exactly the index **min**
+     * * **Other case (min ,max), min < max** means that the element is after the element at **min** index and
+     * before the element at **max** index
+     *
+     * @param element Element search
+     * @return Couple (min, max)
+     */
+    fun intervalOf(element : T) : Pair<Int, Int>
+    {
+        if (this.list.isEmpty())
+        {
+            return Pair<Int, Int>(0, - 1)
+        }
+
+        var comparison = this.comparator.compare(element, this.list[0])
+
+        if (comparison < 0)
+        {
+            return Pair<Int, Int>(- 1, 0)
+        }
+
+        if (comparison == 0)
+        {
+            return Pair<Int, Int>(0, 0)
+        }
+
+        val max = this.list.size - 1
+        comparison = this.comparator.compare(element, this.list[max])
+
+        if (comparison > 0)
+        {
+            return Pair<Int, Int>(this.list.size, - 1)
+        }
+
+        if (comparison == 0)
+        {
+            return Pair<Int, Int>(max, max)
+        }
+
+        var index = this.indexFor(false, element)
+
+        if (index >= 0)
+        {
+            return Pair<Int, Int>(index, index)
+        }
+
+        index = this.indexFor(true, element)
+        return Pair<Int, Int>(index - 1, index)
     }
 }

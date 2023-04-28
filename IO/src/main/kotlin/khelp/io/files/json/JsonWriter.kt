@@ -69,6 +69,7 @@ class JsonWriter(private val writer : BufferedWriter, compact : Boolean = false,
         this.write("{")
         this.elementsStack.push(JsonElementType.OBJECT)
         this.headerSize += JsonWriter.SPACE
+        this.needComma = false
     }
 
     @Throws(JsonWriterException::class)
@@ -319,7 +320,7 @@ class JsonWriter(private val writer : BufferedWriter, compact : Boolean = false,
 
         while (element != JsonElementType.START_DOCUMENT)
         {
-            this.headerSize --
+            this.headerSize -= JsonWriter.SPACE
             this.writeHeader(false)
 
             if (element == JsonElementType.OBJECT)

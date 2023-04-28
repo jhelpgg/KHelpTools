@@ -18,4 +18,7 @@ include ':Game'
 include ':musicPlayer'
 include ':Bot'
 include ':Match3'
+include ':Image'
+include ':Art'
+include ':Neural'
 

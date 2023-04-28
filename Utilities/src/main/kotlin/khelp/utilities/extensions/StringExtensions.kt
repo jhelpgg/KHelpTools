@@ -198,15 +198,15 @@ fun String.toLocale() : Locale
  *
  * Else, the result will be, first part of the string, follow by `...` and end part of the string. The result will have the exact requested size.
  *
- * For exemples
+ * For examples
  *
- *      +-----------------------------------------------------+-----------------+
- *      |                         Call                        |      Result     |
- *      +-----------------------------------------------------+-----------------+
- *      | "The end of the world!".ellipseIfMoreThan(9)        | "The...ld!"     |
- *      | "The beginning of the start.".ellipseIfMoreThan(12) | "The b...art."  |
- *      | "Touch to much".ellipseIfMoreThan(23)               | "Touch to much" |
- *      +-----------------------------------------------------+-----------------+
+ *      +-----------------------------------------------------+------------------+
+ *      |                         Call                        |      Result      |
+ *      +-----------------------------------------------------+------------------+
+ *      | "The end of the world!".ellipseIfMoreThan(9)        | "The...ld!"      |
+ *      | "The beginning of the start.".ellipseIfMoreThan(12) | "The b...art."   |
+ *      | "Touch too much".ellipseIfMoreThan(23)              | "Touch too much" |
+ *      +-----------------------------------------------------+------------------+
  *
  */
 fun String.ellipseIfMoreThan(maximumNumberCharacters : Int) : String
@@ -230,15 +230,15 @@ fun String.ellipseIfMoreThan(maximumNumberCharacters : Int) : String
  *
  * Else, the result will be, first part of the string, follow by `...`. The result will have the exact requested size.
  *
- * For exemples
+ * For examples
  *
- *      +---------------------------------------------+-----------------+
- *      |                     Call                    |      Result     |
- *      +---------------------------------------------+-----------------+
- *      | "The end of the world!".onlyFirst(9)        | "The en..."     |
- *      | "The beginning of the start.".onlyFirst(12) | "The begin..."  |
- *      | "Touch to much".onlyFirst(23)               | "Touch to much" |
- *      +---------------------------------------------+-----------------+
+ *      +---------------------------------------------+------------------+
+ *      |                     Call                    |      Result      |
+ *      +---------------------------------------------+------------------+
+ *      | "The end of the world!".onlyFirst(9)        | "The en..."      |
+ *      | "The beginning of the start.".onlyFirst(12) | "The begin..."   |
+ *      | "Touch too much".onlyFirst(23)              | "Touch too much" |
+ *      +---------------------------------------------+------------------+
  *
  */
 fun String.onlyFirst(maximumNumberCharacters : Int) : String
@@ -260,15 +260,15 @@ fun String.onlyFirst(maximumNumberCharacters : Int) : String
  *
  * Else, the result will be, `...` follow by last part of the string. The result will have the exact requested size.
  *
- * For exemples
+ * For examples
  *
- *      +--------------------------------------------+-----------------+
- *      |                    Call                    |      Result     |
- *      +--------------------------------------------+-----------------+
- *      | "The end of the world!".onlyLast(9)        | "...world!"     |
- *      | "The beginning of the start.".onlyLast(12) | "...he start."  |
- *      | "Touch to much".onlyLast(23)               | "Touch to much" |
- *      +--------------------------------------------+-----------------+
+ *      +--------------------------------------------+------------------+
+ *      |                    Call                    |      Result      |
+ *      +--------------------------------------------+------------------+
+ *      | "The end of the world!".onlyLast(9)        | "...world!"      |
+ *      | "The beginning of the start.".onlyLast(12) | "...he start."   |
+ *      | "Touch too much".onlyLast(23)              | "Touch too much" |
+ *      +--------------------------------------------+------------------+
  *
  */
 fun String.onlyLast(maximumNumberCharacters : Int) : String

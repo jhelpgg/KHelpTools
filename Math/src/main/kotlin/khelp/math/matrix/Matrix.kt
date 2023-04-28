@@ -1,6 +1,5 @@
 package khelp.math.matrix
 
-import java.text.NumberFormat
 import khelp.thread.TaskContext
 import khelp.thread.extensions.futureResult
 import khelp.thread.future.FutureResult
@@ -8,6 +7,7 @@ import khelp.thread.parallel
 import khelp.utilities.argumentCheck
 import khelp.utilities.extensions.hash
 import khelp.utilities.stateCheck
+import java.text.NumberFormat
 
 
 /**
@@ -15,7 +15,7 @@ import khelp.utilities.stateCheck
  *
  * For determinant, the used algorithm is already fast
  */
-class Matrix(val width: Int, val height: Int)
+class Matrix(val width : Int, val height : Int, random : Boolean = false)
 {
     companion object
     {
@@ -31,7 +31,7 @@ class Matrix(val width: Int, val height: Int)
          * @param real2 Second
          * @return `true` if equals
          */
-        fun equals(real1: Double, real2: Double) = Math.abs(real1 - real2) <= Matrix.PRECISION
+        fun equals(real1 : Double, real2 : Double) = Math.abs(real1 - real2) <= Matrix.PRECISION
 
         /**
          * Indicates if a real is enough small to be consider as zero
@@ -39,27 +39,28 @@ class Matrix(val width: Int, val height: Int)
          * @param real Real to test
          * @return `true` if consider as zero
          */
-        fun isNul(real: Double) = Math.abs(real) <= Matrix.PRECISION
+        fun isNul(real : Double) = Math.abs(real) <= Matrix.PRECISION
     }
 
     /**Matrix size*/
-    private val size: Int
+    private val size : Int
 
     /**Matrix data*/
-    private val matrix: DoubleArray
+    private val matrix : DoubleArray
 
     /**Indicates if determinant is known*/
-    private var determinantKnown: Boolean
+    private var determinantKnown : Boolean
 
     /**Matrix determinant, have meaning only if [determinantKnown] is **`true`** */
-    private var determinant: Double
+    private var determinant : Double
 
     init
     {
-        argumentCheck(this.width > 0 && this.height > 0) { "Width and height must be >0, not ${this.width}x${this.height}" }
+        argumentCheck(
+            this.width > 0 && this.height > 0) { "Width and height must be >0, not ${this.width}x${this.height}" }
 
         this.size = this.width * this.height
-        this.matrix = DoubleArray(this.size)
+        this.matrix = if (random) DoubleArray(this.size) { Math.random() } else DoubleArray(this.size)
         this.determinantKnown = this.width == this.height
         this.determinant = 0.0
     }
@@ -70,7 +71,7 @@ class Matrix(val width: Int, val height: Int)
      *
      * @return Determinant
      */
-    private fun determinantInternal(): Double
+    private fun determinantInternal() : Double
     {
         if (this.width == 1)
         {
@@ -94,14 +95,14 @@ class Matrix(val width: Int, val height: Int)
      *
      * @return Computed determinant
      */
-    private fun determinantInternalMore2(): Double
+    private fun determinantInternalMore2() : Double
     {
         val work = this.copy()
         var determinant = 1.0
-        var y2: Int
+        var y2 : Int
         var diagonal = 0
         val more = this.width + 1
-        var diagonalValue: Double
+        var diagonalValue : Double
 
         for (y in 0 until this.height)
         {
@@ -110,7 +111,7 @@ class Matrix(val width: Int, val height: Int)
 
             while (Matrix.isNul(diagonalValue))
             {
-                y2++
+                y2 ++
 
                 if (y2 >= this.height)
                 {
@@ -119,7 +120,7 @@ class Matrix(val width: Int, val height: Int)
                     return 0.0
                 }
 
-                determinant *= -1.0
+                determinant *= - 1.0
                 work.interExchangeRowInternal(y, y2)
                 diagonalValue = work.matrix[diagonal]
             }
@@ -142,7 +143,7 @@ class Matrix(val width: Int, val height: Int)
      * @param y1 First row
      * @param y2 Second row
      */
-    private fun interExchangeRowInternal(y1: Int, y2: Int)
+    private fun interExchangeRowInternal(y1 : Int, y2 : Int)
     {
         val line1 = y1 * this.width
         val line2 = y2 * this.width
@@ -150,7 +151,7 @@ class Matrix(val width: Int, val height: Int)
         System.arraycopy(this.matrix, line1, temp, 0, this.width)
         System.arraycopy(this.matrix, line2, this.matrix, line1, this.width)
         System.arraycopy(temp, 0, this.matrix, line2, this.width)
-        this.determinant *= -1.0
+        this.determinant *= - 1.0
     }
 
     /**
@@ -158,13 +159,13 @@ class Matrix(val width: Int, val height: Int)
      *
      * @param xy X and Y coordinate of diagonal point
      */
-    private fun pivotInternal(xy: Int)
+    private fun pivotInternal(xy : Int)
     {
         val startY = xy * this.width
         var y = startY + this.width
-        var destination: Int
-        var source: Int
-        var coefficient: Double
+        var destination : Int
+        var source : Int
+        var coefficient : Double
         val div = this.matrix[startY + xy]
 
         if (Matrix.isNul(div))
@@ -176,7 +177,7 @@ class Matrix(val width: Int, val height: Int)
         {
             coefficient = this.matrix[y + xy]
 
-            if (!Matrix.isNul(coefficient))
+            if (! Matrix.isNul(coefficient))
             {
                 destination = y
                 source = startY
@@ -184,7 +185,7 @@ class Matrix(val width: Int, val height: Int)
 
                 for (xx in 0 until this.width)
                 {
-                    this.matrix[destination++] -= coefficient * this.matrix[source++]
+                    this.matrix[destination ++] -= coefficient * this.matrix[source ++]
                 }
             }
 
@@ -201,7 +202,7 @@ class Matrix(val width: Int, val height: Int)
      * @param removedRow    Row to remove
      * @return Extracted matrix
      */
-    private fun subMatrix(removedColumn: Int, removedRow: Int): Matrix
+    private fun subMatrix(removedColumn : Int, removedRow : Int) : Matrix
     {
         val w = this.width - 1
         val result = Matrix(w, this.height - 1)
@@ -239,7 +240,7 @@ class Matrix(val width: Int, val height: Int)
      * @param y Row to remove
      * @return Determinant computed
      */
-    private fun determinantSubMatrix(x: Int, y: Int): Double
+    private fun determinantSubMatrix(x : Int, y : Int) : Double
     {
         if (this.width == 2)
         {
@@ -284,7 +285,7 @@ class Matrix(val width: Int, val height: Int)
      * @param matrix Matrix to add
      * @throws IllegalArgumentException If given matrix haven't same width and same height as this matrix
      */
-    operator fun plusAssign(matrix: Matrix)
+    operator fun plusAssign(matrix : Matrix)
     {
         if (this.width != matrix.width || this.height != matrix.height)
         {
@@ -306,7 +307,7 @@ class Matrix(val width: Int, val height: Int)
      * @return result matrix
      * @throws IllegalArgumentException If given matrix haven't same width and same height as this matrix
      */
-    operator fun plus(matrix: Matrix): Matrix
+    operator fun plus(matrix : Matrix) : Matrix
     {
         val copy = this.copy()
         copy += matrix
@@ -319,7 +320,7 @@ class Matrix(val width: Int, val height: Int)
      * @return Adjacent matrix
      * @throws IllegalStateException If matrix is not square
      */
-    fun adjacent(): FutureResult<Matrix>
+    fun adjacent() : FutureResult<Matrix>
     {
         stateCheck(this.width == this.height) { "Adjacent only for square matrix" }
 
@@ -332,8 +333,8 @@ class Matrix(val width: Int, val height: Int)
         {
             val adjacent = Matrix(2, 2)
             adjacent.matrix[0] = this.matrix[3]
-            adjacent.matrix[1] = -this.matrix[1]
-            adjacent.matrix[2] = -this.matrix[2]
+            adjacent.matrix[1] = - this.matrix[1]
+            adjacent.matrix[2] = - this.matrix[2]
             adjacent.matrix[3] = this.matrix[0]
             adjacent.determinantKnown = this.determinantKnown
             adjacent.determinant = this.determinant
@@ -350,7 +351,7 @@ class Matrix(val width: Int, val height: Int)
             futures.add(parallel(TaskContext.INDEPENDENT,
                                  TaskAdjacent(adjacent.matrix, signMain, index, x),
                                  this.taskAdjacent))
-            signMain *= -1.0
+            signMain *= - 1.0
             index += this.width
         }
 
@@ -367,9 +368,9 @@ class Matrix(val width: Int, val height: Int)
      *
      * @return `true` If matrix can be invert
      */
-    fun canBeInvert(): Boolean
+    fun canBeInvert() : Boolean
     {
-        return this.isSquare() && !Matrix.isNul(this.determinant())
+        return this.isSquare() && ! Matrix.isNul(this.determinant())
     }
 
     /**
@@ -377,7 +378,7 @@ class Matrix(val width: Int, val height: Int)
      *
      * @return Matrix copy
      */
-    fun copy(): Matrix
+    fun copy() : Matrix
     {
         val matrix = Matrix(this.width, this.height)
         System.arraycopy(this.matrix, 0, matrix.matrix, 0, this.size)
@@ -392,7 +393,7 @@ class Matrix(val width: Int, val height: Int)
      * @return Matrix determinant
      * @throws IllegalStateException If matrix is not square
      */
-    fun determinant(): Double
+    fun determinant() : Double
     {
         stateCheck(this.width == this.height) { "Matrix must be square" }
 
@@ -413,7 +414,7 @@ class Matrix(val width: Int, val height: Int)
      * @return Cell value
      * @throws IllegalArgumentException If coordinate outside the matrix
      */
-    operator fun get(x: Int, y: Int): Double
+    operator fun get(x : Int, y : Int) : Double
     {
         this.check(x, y)
         return this.matrix[x + y * this.width]
@@ -426,9 +427,10 @@ class Matrix(val width: Int, val height: Int)
      * @param y2 Second row
      * @throws IllegalArgumentException If at least one specified rows is outside the matrix
      */
-    fun interExchangeRow(y1: Int, y2: Int)
+    fun interExchangeRow(y1 : Int, y2 : Int)
     {
-        argumentCheck((y1 in 0 until this.height) && (y2 in 0 until this.height)) { "It is a ${this.width}x${this.height} matrix, but y1=$y1 and y2=$y2" }
+        argumentCheck(
+            (y1 in 0 until this.height) && (y2 in 0 until this.height)) { "It is a ${this.width}x${this.height} matrix, but y1=$y1 and y2=$y2" }
 
         if (y1 == y2)
         {
@@ -445,12 +447,12 @@ class Matrix(val width: Int, val height: Int)
      * @throws IllegalStateException    If the matrix is not square
      * @throws IllegalArgumentException If the matrix determinant is zero
      */
-    fun invert(): FutureResult<Matrix>
+    fun invert() : FutureResult<Matrix>
     {
         stateCheck(this.width == this.height) { "Only square matrix can be invert" }
 
         val determinant = this.determinant()
-        argumentCheck(!Matrix.isNul(determinant)) { "Matrix determinant is zero, so have no invert" }
+        argumentCheck(! Matrix.isNul(determinant)) { "Matrix determinant is zero, so have no invert" }
 
         return this.adjacent()
             .and { invert ->
@@ -472,7 +474,7 @@ class Matrix(val width: Int, val height: Int)
      *
      * @return `true` if matrix is the identity one
      */
-    fun isIdentity(): Boolean
+    fun isIdentity() : Boolean
     {
         val diagonal = this.width + 1
         val max = this.width * this.width
@@ -481,12 +483,12 @@ class Matrix(val width: Int, val height: Int)
         {
             if (i < max && i % diagonal == 0)
             {
-                if (!Matrix.equals(1.0, this.matrix[i]))
+                if (! Matrix.equals(1.0, this.matrix[i]))
                 {
                     return false
                 }
             }
-            else if (!Matrix.isNul(this.matrix[i]))
+            else if (! Matrix.isNul(this.matrix[i]))
             {
                 return false
             }
@@ -509,11 +511,11 @@ class Matrix(val width: Int, val height: Int)
      *
      * @return `true` if matrix is zero matrix
      */
-    fun isZero(): Boolean
+    fun isZero() : Boolean
     {
         for (i in 0 until this.size)
         {
-            if (!Matrix.isNul(this.matrix[i]))
+            if (! Matrix.isNul(this.matrix[i]))
             {
                 return false
             }
@@ -530,7 +532,7 @@ class Matrix(val width: Int, val height: Int)
      *
      * @param factor Value to multiply with
      */
-    operator fun timesAssign(factor: Double)
+    operator fun timesAssign(factor : Double)
     {
         for (i in 0 until this.size)
         {
@@ -546,7 +548,7 @@ class Matrix(val width: Int, val height: Int)
      * @param factor Value to multiply with
      * @return multiplied matrix
      */
-    operator fun times(factor: Double): Matrix
+    operator fun times(factor : Double) : Matrix
     {
         val copy = this.copy()
         copy *= factor
@@ -562,9 +564,10 @@ class Matrix(val width: Int, val height: Int)
      * @throws IllegalArgumentException if given matrix width isn't this matrix height OR given matrix height isn't this
      * matrix width
      */
-    fun multiplication(matrix: Matrix): FutureResult<Matrix>
+    fun multiplication(matrix : Matrix) : FutureResult<Matrix>
     {
-        argumentCheck(this.width == matrix.height && this.height == matrix.width) { "The multiplied matrix must have size : ${this.height}x${this.width}" }
+        argumentCheck(
+            this.width == matrix.height && this.height == matrix.width) { "The multiplied matrix must have size : ${this.height}x${this.width}" }
 
         val result = Matrix(matrix.width, this.height)
         val futures = ArrayList<FutureResult<Unit>>()
@@ -602,9 +605,10 @@ class Matrix(val width: Int, val height: Int)
      * @param xy X and Y diagonal coordinate
      * @throws IllegalArgumentException If diagonal outside the matrix
      */
-    fun pivot(xy: Int)
+    fun pivot(xy : Int)
     {
-        argumentCheck(xy >= 0 && xy < this.width && xy < this.height) { "It is a ${this.width}x${this.height} matrix, but xy=$xy" }
+        argumentCheck(
+            xy >= 0 && xy < this.width && xy < this.height) { "It is a ${this.width}x${this.height} matrix, but xy=$xy" }
 
         if (Matrix.isNul(this.matrix[xy + xy * this.width]))
         {
@@ -622,7 +626,7 @@ class Matrix(val width: Int, val height: Int)
      * @param value new value
      * @throws IllegalArgumentException If coordinate outside the matrix
      */
-    operator fun set(x: Int, y: Int, value: Double)
+    operator fun set(x : Int, y : Int, value : Double)
     {
         this.check(x, y)
         this.matrix[x + y * this.width] = value
@@ -635,7 +639,7 @@ class Matrix(val width: Int, val height: Int)
      * @param matrix Matrix to subtract
      * @throws IllegalArgumentException If given matrix haven't this matrix size
      */
-    operator fun minusAssign(matrix: Matrix)
+    operator fun minusAssign(matrix : Matrix)
     {
         argumentCheck(this.width == matrix.width && this.height == matrix.height) { "Matrix must have same size !" }
 
@@ -654,7 +658,7 @@ class Matrix(val width: Int, val height: Int)
      * @return subtracted matrix
      * @throws IllegalArgumentException If given matrix haven't this matrix size
      */
-    operator fun minus(matrix: Matrix): Matrix
+    operator fun minus(matrix : Matrix) : Matrix
     {
         val copy = this.copy()
         copy -= matrix
@@ -665,7 +669,7 @@ class Matrix(val width: Int, val height: Int)
      * Opposite of each value of the matrix
      * @return Negative matrix
      */
-    operator fun unaryMinus(): Matrix = this * -1.0
+    operator fun unaryMinus() : Matrix = this * - 1.0
 
     /**
      * Transform to matrix to identity one
@@ -706,18 +710,18 @@ class Matrix(val width: Int, val height: Int)
      *
      * @return Transpose matrix
      */
-    fun transpose(): Matrix
+    fun transpose() : Matrix
     {
         val transpose = Matrix(this.height, this.width)
         var index = 0
-        var pos: Int
+        var pos : Int
 
         for (y in 0 until this.height)
         {
             pos = y
             for (x in 0 until this.width)
             {
-                transpose.matrix[pos] = this.matrix[index++]
+                transpose.matrix[pos] = this.matrix[index ++]
                 pos += this.height
             }
         }
@@ -733,7 +737,7 @@ class Matrix(val width: Int, val height: Int)
      * @return Matrix hash code
      * @see Object.hashCode
      */
-    override fun hashCode(): Int =
+    override fun hashCode() : Int =
         (this.width * 31 + this.height) * 31 + this.matrix.hash
 
     /**
@@ -742,7 +746,7 @@ class Matrix(val width: Int, val height: Int)
      * @return `true` if other is equals to this matrix
      * @see Object.equals
      */
-    override fun equals(other: Any?): Boolean
+    override fun equals(other : Any?) : Boolean
     {
         if (this === other)
         {
@@ -784,7 +788,7 @@ class Matrix(val width: Int, val height: Int)
      * @return String representation
      * @see Object.toString
      */
-    override fun toString(): String
+    override fun toString() : String
     {
         val stringBuilder = StringBuilder("Matrix ")
         stringBuilder.append(this.width)
@@ -799,11 +803,11 @@ class Matrix(val width: Int, val height: Int)
 
         stringBuilder.append(" : ")
         var w = 0
-        val texts = Array(this.size, { "" })
+        val texts = Array(this.size) { "" }
         val numberFormat = NumberFormat.getInstance()
         numberFormat.minimumFractionDigits = 5
         numberFormat.maximumFractionDigits = 5
-        var length: Int
+        var length : Int
 
         for (i in 0 until this.size)
         {
@@ -840,15 +844,16 @@ class Matrix(val width: Int, val height: Int)
      * @param y Y
      * @throws IllegalArgumentException If position outside the matrix
      */
-    private fun check(x: Int, y: Int)
+    private fun check(x : Int, y : Int)
     {
-        argumentCheck((x in 0 until this.width) && (y in 0 until this.height)) { "x must be in [0, ${this.width}[ and y in [0, ${this.height}[ not ($x, $y)" }
+        argumentCheck(
+            (x in 0 until this.width) && (y in 0 until this.height)) { "x must be in [0, ${this.width}[ and y in [0, ${this.height}[ not ($x, $y)" }
     }
 
     /**
      * Compute an adjacent cell
      */
-    private val taskAdjacent: (TaskAdjacent) -> Unit =
+    private val taskAdjacent : (TaskAdjacent) -> Unit =
         { adjacent ->
             var index = adjacent.index
             var sign = adjacent.sign
@@ -856,15 +861,15 @@ class Matrix(val width: Int, val height: Int)
             // Compute adjacent line
             for (y in 0 until this.height)
             {
-                adjacent.adjacent[index++] = sign * this.determinantSubMatrix(adjacent.x, y)
-                sign *= -1.0
+                adjacent.adjacent[index ++] = sign * this.determinantSubMatrix(adjacent.x, y)
+                sign *= - 1.0
             }
         }
 
     /**
      * Multiplication task
      */
-    private val taskMultiplicationCell: (TaskMultiplicationCell) -> Unit =
+    private val taskMultiplicationCell : (TaskMultiplicationCell) -> Unit =
         { multiplicationCell ->
             var indexFirst = multiplicationCell.y * multiplicationCell.firstWidth
             var indexSecond = multiplicationCell.x
@@ -874,10 +879,11 @@ class Matrix(val width: Int, val height: Int)
             for (i in 0 until multiplicationCell.firstWidth)
             {
                 res += multiplicationCell.first[indexFirst] * multiplicationCell.second[indexSecond]
-                indexFirst++
+                indexFirst ++
                 indexSecond += multiplicationCell.secondWidth
             }
 
-            multiplicationCell.result[multiplicationCell.x + multiplicationCell.y * multiplicationCell.resultWidth] = res
+            multiplicationCell.result[multiplicationCell.x + multiplicationCell.y * multiplicationCell.resultWidth] =
+                res
         }
 }

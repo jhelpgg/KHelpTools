@@ -1,0 +1,44 @@
+keyExit
+Quitter
+-<=-=>-
+
+keyExitToolTip
+Quitte l'application.
+-<=-=>-
+
+english
+Anglais
+-<=-=>-
+
+french
+Français
+-<=-=>-
+
+black
+Noir c'est noir
+-<=-=>-
+
+yellow
+Soumarin jaune
+-<=-=>-
+
+titleExample
+C'est un titre
+-<=-=>-
+
+textExample
+Cet un texte d'exemple
+Plusieurs lignes ça fonctionne?
+On verra bien
+-<=-=>-
+
+htmlExample
+<html>
+    Est-que le <b>HTML</b> est interprété ?<br>
+    Peut être que <i>probablement</i> ça marche!
+</html>
+-<=-=>-
+
+color
+Couleur
+-<=-=>-

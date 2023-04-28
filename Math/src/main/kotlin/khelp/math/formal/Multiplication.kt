@@ -1,6 +1,7 @@
 package khelp.math.formal
 
 import khelp.utilities.collections.SortedArray
+import khelp.utilities.collections.sortedArray
 import java.util.Stack
 
 /**
@@ -40,7 +41,7 @@ class Multiplication(parameter1 : Function, parameter2 : Function) : BinaryOpera
                 return functionListOf(constant(value))
             }
 
-            val result = SortedArray<Function>(FunctionComparator, false)
+            val result = sortedArray<Function>(false)
             result += constant(value)
             (index until length).forEach { result += array[it] }
             return result
@@ -58,7 +59,7 @@ class Multiplication(parameter1 : Function, parameter2 : Function) : BinaryOpera
          */
         internal fun extractMultiplicationParameters(multiplication : Multiplication) : SortedArray<Function>
         {
-            val list = SortedArray<Function>(FunctionComparator, false)
+            val list = sortedArray<Function>(false)
             val stack = Stack<Multiplication>()
             stack.push(multiplication)
             var multiplication : Multiplication

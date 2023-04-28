@@ -1,6 +1,6 @@
 package khelp.game.screen
 
-import fr.jhelp.utilities.random
+import khelp.utilities.math.random
 import khelp.game.resources.GameResources
 import khelp.game.resources.Transition
 import khelp.ui.game.interpolation.GameImageInterpolationGoesDown

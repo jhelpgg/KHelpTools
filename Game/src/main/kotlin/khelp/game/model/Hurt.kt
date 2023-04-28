@@ -4,4 +4,4 @@ sealed class Hurt
 
 object MissHurt : Hurt()
 
-class HitHurt(hit : Int) : Hurt()
+class HitHurt(val hit : Int) : Hurt()

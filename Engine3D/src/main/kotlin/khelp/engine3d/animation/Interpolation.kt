@@ -1,11 +1,11 @@
 package khelp.engine3d.animation
 
-import fr.jhelp.utilities.random
 import khelp.engine3d.utils.cubic
 import khelp.engine3d.utils.quadratic
 import khelp.utilities.extensions.compare
 import khelp.utilities.extensions.nul
 import khelp.utilities.math.EPSILON
+import khelp.utilities.math.random
 import khelp.utilities.math.square
 import kotlin.math.E
 import kotlin.math.PI

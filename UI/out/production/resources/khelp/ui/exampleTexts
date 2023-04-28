@@ -1,0 +1,46 @@
+keyExit
+Exit
+-<=-=>-
+
+keyExitToolTip
+Exit from application.
+-<=-=>-
+
+english
+English
+-<=-=>-
+
+french
+French
+-<=-=>-
+
+black
+Black is black
+-<=-=>-
+
+yellow
+Yellow submarine
+-<=-=>-
+
+titleExample
+This is a title
+-<=-=>-
+
+textExample
+This is a text example
+Multiline in label work?
+Well we will see
+-<=-=>-
+
+htmlExample
+<html>
+    Will interpret <b>HTML</b> content ?<br>
+    May be it <i>may</i> work!<br>
+    <img src="resources:/iconGG.jpg" /><br>
+    After image
+</html>
+-<=-=>-
+
+color
+Color
+-<=-=>-

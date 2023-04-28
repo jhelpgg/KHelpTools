@@ -8,9 +8,9 @@ import khelp.engine3d.geometry.Vertex
 import khelp.engine3d.geometry.path.Path
 import khelp.engine3d.render.Object3D
 import khelp.engine3d.render.TwoSidedRule
+import khelp.math.extensions.toFunction
 import khelp.math.formal.Function
 import khelp.math.formal.Variable
-import khelp.math.formal.toFunction
 import khelp.utilities.math.isNul
 import khelp.utilities.math.sign
 

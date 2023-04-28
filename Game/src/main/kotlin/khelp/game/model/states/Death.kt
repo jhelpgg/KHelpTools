@@ -1,6 +1,6 @@
 package khelp.game.model.states
 
-import fr.jhelp.utilities.random
+import khelp.utilities.math.random
 import khelp.game.model.Statistics
 
 class Death : State()

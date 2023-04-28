@@ -184,7 +184,7 @@ class JHelpFont(val font : Font, val underline : Boolean = false)
     val family : String = this.font.family
 
     /**Maximum width of a character*/
-    private val maximumCharacterWidth : Int by lazy {
+    val maximumCharacterWidth : Int by lazy {
         var maximum = 0
 
         for (character in 32 .. 127)

@@ -1,7 +1,9 @@
 package khelp.editor.ui
 
 import khelp.editor.ui.components.color.Color4fChooser
+import khelp.editor.ui.materialeditor.MaterialEditor
 import khelp.editor.ui.mesheditor.MeshEditor
+import khelp.editor.ui.patheditor.PathEditor
 import khelp.engine3d.event.ActionCode
 import khelp.engine3d.render.Color4f
 import khelp.engine3d.render.Node
@@ -121,6 +123,7 @@ object Editor
 
         this.bottomCanChange = false
         val previousTool = this.bottomTool
+        this.imageChooser = ImageChooser(LAST_IMAGE_DIRECTORY_KEY, this.preferences)
         val futureResult = this.imageChooser.selectImage()
         this.showBottom(BottomTool.IMAGE_CHOOSER)
         futureResult.then {
@@ -170,7 +173,9 @@ object Editor
 
         window3D.actionManager.actionObservable.observedBy(TaskContext.INDEPENDENT, this::actionOn3D)
 
-        this.changeScreen(MeshEditor(window3D.mouseManager, window3D.nodePickedFlow))
+        //this.changeScreen(MeshEditor(window3D.mouseManager, window3D.nodePickedFlow))
+        //this.changeScreen(PathEditor())
+        this.changeScreen(MaterialEditor())
     }
 
     private fun changeScreen(screenEditor : ScreenEditor)

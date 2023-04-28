@@ -6,6 +6,7 @@ import khelp.thread.observable.ObservableData
 import khelp.ui.components.JLabel
 import khelp.ui.layout.table.TableLayoutConstraint
 import khelp.utilities.extensions.bounds
+import khelp.utilities.extensions.limit_0_255
 import javax.swing.JPanel
 import javax.swing.JSlider
 import javax.swing.JSpinner
@@ -21,7 +22,7 @@ internal class ColorPartSelector(private val key : String)
         get() = this.valueObservableData.value()
         set(value)
         {
-            val newValue = value.bounds(0, 255)
+            val newValue = value.limit_0_255
 
             if (newValue != this.valueObservableData.value())
             {
