@@ -21,4 +21,5 @@ include ':Match3'
 include ':Image'
 include ':Art'
 include ':Neural'
+include 'ObjViewer'
 
