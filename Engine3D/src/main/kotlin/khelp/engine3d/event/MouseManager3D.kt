@@ -1,5 +1,6 @@
 package khelp.engine3d.event
 
+import khelp.engine3d.gui.GUI
 import khelp.thread.delay
 import khelp.thread.future.FutureResult
 import khelp.thread.observable.Observable
@@ -8,7 +9,7 @@ import khelp.ui.events.MouseState
 import khelp.ui.events.MouseStatus
 import org.lwjgl.glfw.GLFW
 
-class MouseManager3D internal constructor(private val width : Int, private val height : Int)
+class MouseManager3D internal constructor(private val width : Int, private val height : Int, private val gui : GUI)
 {
     companion object
     {
@@ -135,11 +136,17 @@ class MouseManager3D internal constructor(private val width : Int, private val h
     private fun pushMouseState(mouseStatus : MouseStatus)
     {
         this.mouseStatus = mouseStatus
-        this.mouseStateObservableData.value(MouseState(mouseStatus,
-                                                       this.mouseX, this.mouseY,
-                                                       this.leftButtonDown, this.middleButtonDown, this.rightButtonDown,
-                                                       this.shift, this.control, this.alt,
-                                                       this.clicked))
+        val mouseState = MouseState(mouseStatus,
+                                    this.mouseX, this.mouseY,
+                                    this.leftButtonDown, this.middleButtonDown, this.rightButtonDown,
+                                    this.shift, this.control, this.alt,
+                                    this.clicked)
+
+
+        if (! this.gui.mouseState(mouseState))
+        {
+            this.mouseStateObservableData.value(mouseState)
+        }
 
         if (mouseStatus == MouseStatus.MOVE || mouseStatus == MouseStatus.DRAG || this.clicked)
         {

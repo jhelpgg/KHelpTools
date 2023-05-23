@@ -2,6 +2,9 @@ package khelp.obj.viewer.ui
 
 import khelp.engine3d.event.ActionCode
 import khelp.engine3d.format.obj.objLoader
+import khelp.engine3d.gui.dsl.buttonText
+import khelp.engine3d.gui.dsl.proportionLayout
+import khelp.engine3d.gui.layout.proprtion.GUIProportionConstraint
 import khelp.engine3d.render.Material
 import khelp.engine3d.render.Node
 import khelp.engine3d.render.Scene
@@ -14,6 +17,9 @@ import khelp.thread.TaskContext
 import khelp.thread.parallel
 import khelp.ui.events.MouseState
 import khelp.ui.events.MouseStatus
+import khelp.utilities.extensions.percent
+import khelp.utilities.log.mark
+import java.awt.Color
 import java.io.File
 import java.io.FileInputStream
 import java.util.concurrent.atomic.AtomicBoolean
@@ -57,6 +63,11 @@ object FrameObjViewer
     {
         window3DFull("Obj Viewer") {
             this@FrameObjViewer.window3D = this
+            val button = buttonText(keyText = "ok")
+            button.click = { mark("CLICK") }
+            this.gui.proportionLayout {
+                button with GUIProportionConstraint(25.percent, 50.percent, 20.percent, 10.percent)
+            }
             this@FrameObjViewer.scene = this.scene
             this.mouseManager.mouseStateObservable.observedBy(TaskContext.INDEPENDENT, this@FrameObjViewer::mouseAction)
             this.actionManager.actionObservable.observedBy(TaskContext.INDEPENDENT, this@FrameObjViewer::actions)

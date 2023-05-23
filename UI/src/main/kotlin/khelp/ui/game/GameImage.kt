@@ -99,13 +99,17 @@ class GameImage(val width : Int, val height : Int) : Icon
     private val refreshFlowData = FlowData<Unit>()
     val refreshFlow : Flow<Unit> = this.refreshFlowData.flow
 
-    fun clear(color : Color)
+    fun clear(color : Color, refresh : Boolean = true)
     {
         val col = color.rgb
         val length = this.width * this.height
         val pixels = IntArray(length) { col }
         this.image.setRGB(0, 0, this.width, this.height, pixels, 0, this.width)
-        this.refresh()
+
+        if (refresh)
+        {
+            this.refresh()
+        }
     }
 
     fun draw(drawer : (Graphics2D) -> Unit)

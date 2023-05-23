@@ -5,5 +5,7 @@ enum class MouseStatus
     STAY,
     OUTSIDE,
     MOVE,
-    DRAG
+    DRAG,
+    ENTER,
+    EXIT
 }

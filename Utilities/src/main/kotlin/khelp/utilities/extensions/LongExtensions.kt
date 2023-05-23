@@ -1,6 +1,7 @@
 package khelp.utilities.extensions
 
 import khelp.utilities.Time
+import khelp.utilities.math.Percent
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
@@ -65,3 +66,5 @@ val Long.seconds get() = Time(this * 1000L)
 val Long.minutes get() = Time(this * 1000L * 60L)
 val Long.hours get() = Time(this * 1000L * 60L * 60L)
 val Long.days get() = Time(this * 1000L * 60L * 60L * 24L)
+
+val Long.percent : Percent get() = Percent(this)

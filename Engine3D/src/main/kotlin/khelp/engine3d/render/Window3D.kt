@@ -2,6 +2,7 @@ package khelp.engine3d.render
 
 import khelp.engine3d.event.ActionManager
 import khelp.engine3d.event.MouseManager3D
+import khelp.engine3d.gui.GUI
 import khelp.engine3d.sound3d.SoundManager
 import khelp.engine3d.utils.TEMPORARY_FLOAT_BUFFER
 import khelp.engine3d.utils.ThreadOpenGL
@@ -182,6 +183,8 @@ class Window3D private constructor()
     private var nodeDetect : Node? = null
     private val nodePickedFlowData = FlowData<Node?>()
     val nodePickedFlow : Flow<Node?> = this.nodePickedFlowData.flow
+    lateinit var gui : GUI
+        private set
 
     /**
      * Sound manager
@@ -347,7 +350,10 @@ class Window3D private constructor()
 
             // Draw 2D objects over 3D
             GL11.glDisable(GL11.GL_DEPTH_TEST)
-            //  this.drawOver3D()
+            GL11.glPushMatrix()
+            this.gui.plane.matrixRootToMe()
+            this.gui.plane.renderSpecific()
+            GL11.glPopMatrix()
         }
         catch (ignored : Exception)
         {
@@ -421,7 +427,8 @@ class Window3D private constructor()
     {
         this.actionManager.computeAxisLimits()
         this.soundManager.init()
-        this.mouseManager = MouseManager3D(this.width, this.height)
+        this.gui = GUI(this.width, this.height)
+        this.mouseManager = MouseManager3D(this.width, this.height, this.gui)
         this.ready = true
         this.initialize3D()
 

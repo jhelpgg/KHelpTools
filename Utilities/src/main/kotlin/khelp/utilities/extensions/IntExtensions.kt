@@ -1,6 +1,7 @@
 package khelp.utilities.extensions
 
 import khelp.utilities.Time
+import khelp.utilities.math.Percent
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
@@ -82,3 +83,5 @@ infix fun Int.and(value : Byte) : Int =
 
 infix fun Int.or(value : Byte) : Int =
     this or (value.toInt() and 0xFF)
+
+val Int.percent : Percent get() = Percent(this)

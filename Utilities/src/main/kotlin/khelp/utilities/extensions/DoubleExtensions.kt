@@ -1,5 +1,6 @@
 package khelp.utilities.extensions
 
+import khelp.utilities.math.Percent
 import khelp.utilities.math.isNul
 import khelp.utilities.math.sign
 import kotlin.math.floor
@@ -50,3 +51,5 @@ fun Double.modulo(minimum : Double, maximum : Double) : Double
     real = (real - min) / space
     return (space * (real - floor(real))) + min
 }
+
+val Double.percent : Percent get() = Percent(this)

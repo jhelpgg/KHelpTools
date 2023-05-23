@@ -1,5 +1,6 @@
 package khelp.utilities.extensions
 
+import khelp.utilities.math.Percent
 import khelp.utilities.math.isNul
 import khelp.utilities.math.sign
 import kotlin.math.floor
@@ -51,3 +52,5 @@ fun Float.modulo(minimum : Float, maximum : Float) : Float
 
     return (space * (real - floor(real))) + min
 }
+
+val Float.percent : Percent get() = Percent(this)
