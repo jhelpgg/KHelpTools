@@ -79,7 +79,6 @@ fun buttonText(keyText : String,
     normal.font = font
     normal.textColorMain = textColor
     normal.textColorBorder = textColorBorder
-    normal.borderText = hasTextBorder
     normal.background = StyleBackgroundColor(normalBackground)
     normal.textAlignment = TextAlignment.CENTER
     normal.verticalAlignment = VerticalAlignment.CENTER
@@ -93,7 +92,6 @@ fun buttonText(keyText : String,
     over.font = font
     over.textColorMain = textColor
     over.textColorBorder = textColorBorder
-    over.borderText = hasTextBorder
     over.background = StyleBackgroundColor(overBackground)
     over.textAlignment = TextAlignment.CENTER
     over.verticalAlignment = VerticalAlignment.CENTER
@@ -107,7 +105,6 @@ fun buttonText(keyText : String,
     down.font = font
     down.textColorMain = textColor
     down.textColorBorder = textColorBorder
-    down.borderText = hasTextBorder
     down.background = StyleBackgroundColor(downBackground)
     down.textAlignment = TextAlignment.CENTER
     down.verticalAlignment = VerticalAlignment.CENTER
@@ -121,7 +118,6 @@ fun buttonText(keyText : String,
     disabled.font = font
     disabled.textColorMain = textColor
     disabled.textColorBorder = textColorBorder
-    disabled.borderText = hasTextBorder
     disabled.textAlignment = TextAlignment.CENTER
     disabled.verticalAlignment = VerticalAlignment.CENTER
     disabled.background = StyleBackgroundColor(disabledBackground)
