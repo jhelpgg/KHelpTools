@@ -70,4 +70,13 @@ fun Color.contrast(contrast : Double) : Color
     return Color(red, green, blue, this.alpha)
 }
 
+val Color.nearInvisible : Color get() = Color(this.red, this.green, this.blue, 64)
+
+val Color.semiVisible : Color get() = Color(this.red, this.green, this.blue, 128)
+
+val Color.almostVisible : Color get() = Color(this.red, this.green, this.blue, 192)
+
+val Color.opaque : Color get() = Color(this.red, this.green, this.blue, 255)
+
+
 
