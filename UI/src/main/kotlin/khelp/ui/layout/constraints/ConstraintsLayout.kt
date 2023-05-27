@@ -110,7 +110,7 @@ class ConstraintsLayout : LayoutManager2
         var constraintLoop : ConstraintsLayoutConstraint? = null
         var sizeLoop = queue.size
 
-        while (queue.isNotEmpty())
+        while (queue.notEmpty)
         {
             val constraint = queue.outQueue()
 

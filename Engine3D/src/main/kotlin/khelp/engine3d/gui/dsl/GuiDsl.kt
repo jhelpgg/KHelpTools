@@ -8,6 +8,8 @@ import khelp.engine3d.gui.layout.GUIConstraints
 import khelp.engine3d.gui.layout.GUILayout
 import khelp.engine3d.gui.layout.absolute.GUIAbsoluteConstraint
 import khelp.engine3d.gui.layout.absolute.GUIAbsoluteLayout
+import khelp.engine3d.gui.layout.constraint.GUIConstraintConstraint
+import khelp.engine3d.gui.layout.constraint.GUIConstraintLayout
 import khelp.engine3d.gui.layout.proprtion.GUIProportionConstraint
 import khelp.engine3d.gui.layout.proprtion.GUIProportionLayout
 import khelp.resources.ResourcesText
@@ -22,7 +24,7 @@ import khelp.ui.style.ComponentHighLevel
 import khelp.ui.style.background.StyleBackgroundColor
 import khelp.ui.style.shape.StyleShape
 import khelp.ui.style.shape.StyleShapeSausage
-import khelp.ui.utilities.DEFAULT_FONT
+import khelp.ui.utilities.BUTTON_FONT
 import java.awt.Color
 
 fun <C : GUIConstraints, L : GUILayout<C>> GUI.content(layout : L, content : GuiLayoutFiller<C, L>.() -> Unit)
@@ -40,6 +42,14 @@ fun GUI.absoluteLayout(content : GuiLayoutFiller<GUIAbsoluteConstraint, GUIAbsol
 fun GUI.proportionLayout(content : GuiLayoutFiller<GUIProportionConstraint, GUIProportionLayout>.() -> Unit)
 {
     this.content(GUIProportionLayout(), content)
+}
+
+fun GUI.constraintLayout(content : GUIConstraintFiller.() -> Unit)
+{
+    val layout = GUIConstraintLayout()
+    val filler = GUIConstraintFiller(layout)
+    content(filler)
+    this.layout = layout
 }
 
 fun panelAbsolute(content : GuiLayoutFiller<GUIAbsoluteConstraint, GUIAbsoluteLayout>.() -> Unit) :
@@ -60,9 +70,19 @@ fun panelProportion(content : GuiLayoutFiller<GUIProportionConstraint, GUIPropor
     return GUIComponentPanel<GUIProportionConstraint, GUIProportionLayout>(layout)
 }
 
+
+fun panelConstraint(content : GUIConstraintFiller.() -> Unit) :
+        GUIComponentPanel<GUIConstraintConstraint, GUIConstraintLayout>
+{
+    val layout = GUIConstraintLayout()
+    val filler = GUIConstraintFiller(layout)
+    content(filler)
+    return GUIComponentPanel<GUIConstraintConstraint, GUIConstraintLayout>(layout)
+}
+
 fun buttonText(keyText : String,
                resourcesText : ResourcesText = defaultTexts,
-               font : JHelpFont = DEFAULT_FONT,
+               font : JHelpFont = BUTTON_FONT,
                textColor : Color = Color.WHITE,
                textColorBorder : Color = textColor.invert,
                shape : StyleShape = StyleShapeSausage,

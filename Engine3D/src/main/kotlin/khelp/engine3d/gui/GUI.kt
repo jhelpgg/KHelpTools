@@ -36,7 +36,7 @@ class GUI internal constructor(private val width : Int, private val height : Int
             else                      -> this.plane.scaleY = this.height.toFloat() / this.width.toFloat()
         }
 
-        this.plane.z = - 1f
+        this.plane.z = - 1.2f
     }
 
     internal fun mouseState(mouseState : MouseState) : Boolean
@@ -44,7 +44,7 @@ class GUI internal constructor(private val width : Int, private val height : Int
         val x = mouseState.x
         val y = mouseState.y
 
-        for (component in this.layout.components())
+        for (component in this.layout.components().reversed())
         {
             if (component.visible && component.contains(x, y))
             {

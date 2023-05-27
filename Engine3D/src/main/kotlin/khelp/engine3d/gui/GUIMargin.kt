@@ -16,6 +16,17 @@ class GUIMargin(val left : Int = 0, val right : Int = 0, val top : Int = 0, val 
                                                     this.top == other.top && this.bottom == other.bottom
         }
 
+    fun left(left : Int) : GUIMargin =
+        GUIMargin(left = left, right = this.right, top = this.top, bottom = this.bottom)
+
+    fun right(right : Int) : GUIMargin =
+        GUIMargin(left = this.left, right = right, top = this.top, bottom = this.bottom)
+
+    fun top(top : Int) : GUIMargin =
+        GUIMargin(left = this.left, right = this.right, top = top, bottom = this.bottom)
+
+    fun bottom(bottom : Int) : GUIMargin =
+        GUIMargin(left = this.left, right = this.right, top = this.top, bottom = bottom)
 
     override fun hashCode() : Int = Objects.hash(this.left, this.right, this.top, this.bottom)
 

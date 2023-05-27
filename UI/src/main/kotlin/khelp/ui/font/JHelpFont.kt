@@ -364,7 +364,7 @@ class JHelpFont(val font : Font, val underline : Boolean = false)
     fun stringWidth(string : String) : Int
     {
         val bounds = this.font.getStringBounds(string, FONT_RENDER_CONTEXT)
-        return ceil(bounds.width).toInt()
+        return ceil(bounds.width + 1.0).toInt()
     }
 
     /**

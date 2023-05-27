@@ -2,9 +2,9 @@ package khelp.obj.viewer.ui
 
 import khelp.engine3d.event.ActionCode
 import khelp.engine3d.format.obj.objLoader
+import khelp.engine3d.gui.component.GUIComponentEmpty
 import khelp.engine3d.gui.dsl.buttonText
-import khelp.engine3d.gui.dsl.proportionLayout
-import khelp.engine3d.gui.layout.proprtion.GUIProportionConstraint
+import khelp.engine3d.gui.dsl.constraintLayout
 import khelp.engine3d.render.Material
 import khelp.engine3d.render.Node
 import khelp.engine3d.render.Scene
@@ -13,15 +13,19 @@ import khelp.engine3d.render.Window3D
 import khelp.engine3d.render.prebuilt.Box
 import khelp.engine3d.render.window3DFull
 import khelp.engine3d.resource.Textures
+import khelp.resources.Resources
 import khelp.thread.TaskContext
 import khelp.thread.parallel
 import khelp.ui.events.MouseState
 import khelp.ui.events.MouseStatus
-import khelp.utilities.extensions.percent
-import khelp.utilities.log.mark
-import java.awt.Color
+import khelp.ui.extensions.color
+import khelp.ui.style.background.StyleBackgroundColor
+import khelp.ui.style.shape.StyleShapeRectangle
+import khelp.ui.utilities.colors.Green
+import khelp.ui.utilities.colors.Red
 import java.io.File
 import java.io.FileInputStream
+import java.util.Locale
 import java.util.concurrent.atomic.AtomicBoolean
 
 object FrameObjViewer
@@ -63,10 +67,43 @@ object FrameObjViewer
     {
         window3DFull("Obj Viewer") {
             this@FrameObjViewer.window3D = this
-            val button = buttonText(keyText = "ok")
-            button.click = { mark("CLICK") }
-            this.gui.proportionLayout {
-                button with GUIProportionConstraint(25.percent, 50.percent, 20.percent, 10.percent)
+            val buttonOpen = buttonText(keyText = "open")
+            buttonOpen.click = {
+                if (Resources.languageObservableData.value().language == Locale.ENGLISH.language)
+                {
+                    Resources.languageObservableData.value(Locale.FRENCH)
+                }
+                else
+                {
+                    Resources.languageObservableData.value(Locale.ENGLISH)
+                }
+            }
+            val buttonSaveAs = buttonText(keyText = "saveAs")
+
+            this.gui.constraintLayout {
+                buttonOpen with {
+                    this.horizontalExpanded
+                    this.verticalWrapped
+
+                    this.marginTop = 8
+                    this.marginLeft = 8
+                    this.marginRight = 8
+
+                    this.topAtParent
+                    this.bottomFree
+                    this.leftAtParent
+                    this.rightAtParent
+                }
+
+                buttonSaveAs with {
+                    this.horizontalWrapped
+                    this.verticalWrapped
+
+                    this.topAtBottom = buttonOpen
+                    this.bottomAtParent
+                    this.leftAtParent
+                    this.rightAtParent
+                }
             }
             this@FrameObjViewer.scene = this.scene
             this.mouseManager.mouseStateObservable.observedBy(TaskContext.INDEPENDENT, this@FrameObjViewer::mouseAction)

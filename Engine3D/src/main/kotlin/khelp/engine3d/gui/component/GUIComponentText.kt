@@ -88,10 +88,14 @@ class GUIComponentText : GUIComponent()
             return Dimension(16 + margin.width, 16 + margin.height)
         }
 
+
         val text = this.resourcesText[this.keyText]
         val paragraph = this.font.computeTextParagraph(text, this.textAlignment)
         val more = if (this.textColorBorder.alpha == 0) 0 else 2
-        return Dimension(margin.width + more + paragraph.size.width,
-                         margin.height + more + paragraph.size.height)
+        val shapeMargin = this.shape.margin(0, 0,
+                                            more + paragraph.size.width,
+                                            more + paragraph.size.height)
+        return Dimension(margin.width + more + paragraph.size.width + shapeMargin.left + shapeMargin.right + 16,
+                         margin.height + more + paragraph.size.height + shapeMargin.top + shapeMargin.bottom + 16)
     }
 }
