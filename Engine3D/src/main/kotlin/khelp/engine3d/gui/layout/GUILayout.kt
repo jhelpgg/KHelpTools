@@ -1,6 +1,7 @@
 package khelp.engine3d.gui.layout
 
 import khelp.engine3d.gui.component.GUIComponent
+import khelp.utilities.extensions.inverted
 import khelp.utilities.extensions.transform
 import java.awt.Dimension
 
@@ -15,6 +16,9 @@ abstract class GUILayout<C : GUIConstraints>
 
     internal fun components() : Iterable<GUIComponent> =
         this.components.transform { (component, _) -> component }
+
+    internal fun componentsInverted() : Iterable<GUIComponent> =
+        this.components.inverted().transform { (component, _) -> component }
 
     internal fun layout(parentWidth : Int, parentHeight : Int)
     {

@@ -44,7 +44,7 @@ class GUI internal constructor(private val width : Int, private val height : Int
         val x = mouseState.x
         val y = mouseState.y
 
-        for (component in this.layout.components().reversed())
+        for (component in this.layout.componentsInverted())
         {
             if (component.visible && component.contains(x, y))
             {
