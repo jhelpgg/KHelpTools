@@ -22,65 +22,12 @@ abstract class GUIComponent
     internal var y = 0
     internal var width = 16
     internal var height = 16
-    internal var refresh : () -> Unit = {}
     var margin : GUIMargin = GUIMargin()
-        set(value)
-        {
-            if (field != value)
-            {
-                field = value
-                this.refresh()
-            }
-        }
     var visible : Boolean = true
-        set(value)
-        {
-            if (field != value)
-            {
-                field = value
-                this.refresh()
-            }
-        }
-
     var borderColor : Color = TRANSPARENT
-        set(value)
-        {
-            if (field != value)
-            {
-                field = value
-                this.refresh()
-            }
-        }
-
     var shape : StyleShape = StyleShapeRectangle
-        set(value)
-        {
-            if (field != value)
-            {
-                field = value
-                this.refresh()
-            }
-        }
-
     var background : StyleBackground = StyleBackgroundTransparent
-        set(value)
-        {
-            if (field != value)
-            {
-                field = value
-                this.refresh()
-            }
-        }
-
     var componentHighLevel : ComponentHighLevel = ComponentHighLevel.AT_GROUND
-        set(value)
-        {
-            if (field != value)
-            {
-                field = value
-                this.refresh()
-            }
-        }
 
     fun contains(x : Int, y : Int) : Boolean =
         x >= this.x && y >= this.y && x < this.x + this.width && y < this.y + this.height

@@ -3,6 +3,7 @@ package khelp.ui.extensions
 import khelp.ui.TextAlignment
 import khelp.ui.font.JHelpFont
 import khelp.ui.game.GameImage
+import khelp.ui.utilities.colors.BaseColor
 import java.awt.Graphics2D
 import kotlin.math.max
 
@@ -126,3 +127,7 @@ fun Graphics2D.drawImageCenter(x : Int, y : Int, image : GameImage)
     image.drawOn(this, x - image.width / 2, y - image.height - 2)
 }
 
+fun Graphics2D.baseColor(baseColor : BaseColor<*>)
+{
+    this.color = baseColor.color
+}

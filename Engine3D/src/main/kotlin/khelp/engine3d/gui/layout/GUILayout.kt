@@ -6,12 +6,10 @@ import java.awt.Dimension
 
 abstract class GUILayout<C : GUIConstraints>
 {
-    internal var refresh : () -> Unit = {}
     private val components = ArrayList<Pair<GUIComponent, C>>()
 
     fun add(component : GUIComponent, constraint : C)
     {
-        component.refresh = { this.refresh() }
         this.components.add(Pair<GUIComponent, C>(component, constraint))
     }
 

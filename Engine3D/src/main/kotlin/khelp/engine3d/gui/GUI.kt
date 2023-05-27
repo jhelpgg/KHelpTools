@@ -5,27 +5,21 @@ import khelp.engine3d.gui.layout.GUILayout
 import khelp.engine3d.gui.layout.absolute.GUIAbsoluteLayout
 import khelp.engine3d.render.Texture
 import khelp.engine3d.render.prebuilt.Plane
-import khelp.thread.parallel
 import khelp.ui.events.MouseState
 import khelp.ui.events.MouseStatus
 import khelp.ui.game.GameImage
 import khelp.ui.utilities.TRANSPARENT
-import java.util.concurrent.atomic.AtomicBoolean
 
 class GUI internal constructor(private val width : Int, private val height : Int)
 {
-    private val refresh : () -> Unit = this::update
     private val image = GameImage(this.width, this.height)
     private val texture = Texture(this.image)
     internal val plane = Plane("GUI")
-    private val updating = AtomicBoolean(false)
-    private val dirty = AtomicBoolean(false)
     private var previousComponent : GUIComponent? = null
 
     var layout : GUILayout<*> = GUIAbsoluteLayout()
         set(value)
         {
-            value.refresh = this.refresh
             field = value
             this.update()
         }
@@ -96,39 +90,24 @@ class GUI internal constructor(private val width : Int, private val height : Int
         return false
     }
 
-    private fun update()
+    internal fun update()
     {
-        if (this.updating.compareAndSet(false, true))
-        {
-            parallel {
-                do
+        this.layout.layout(this.width, this.height)
+        this.image.clear(TRANSPARENT, false)
+        this.image.draw { graphics2D ->
+            for (component in layout.components())
+            {
+                if (component.visible)
                 {
-                    this.layout.layout(this.width, this.height)
-                    this.image.clear(TRANSPARENT, false)
-                    this.image.draw { graphics2D ->
-                        for (component in layout.components())
-                        {
-                            if (component.visible)
-                            {
-                                val clip = graphics2D.clip
-                                val transform = graphics2D.transform
-                                graphics2D.clipRect(component.x, component.y, component.width, component.height)
-                                graphics2D.translate(component.x, component.y)
-                                component.draw(graphics2D)
-                                graphics2D.clip = clip
-                                graphics2D.transform = transform
-                            }
-                        }
-                    }
+                    val clip = graphics2D.clip
+                    val transform = graphics2D.transform
+                    graphics2D.clipRect(component.x, component.y, component.width, component.height)
+                    graphics2D.translate(component.x, component.y)
+                    component.draw(graphics2D)
+                    graphics2D.clip = clip
+                    graphics2D.transform = transform
                 }
-                while (this.dirty.compareAndSet(true, false))
-
-                this.updating.set(false)
             }
-        }
-        else
-        {
-            this.dirty.set(true)
         }
     }
 }

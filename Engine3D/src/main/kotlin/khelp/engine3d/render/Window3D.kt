@@ -349,6 +349,7 @@ class Window3D private constructor()
             GL11.glPopMatrix()
 
             // Draw 2D objects over 3D
+            this.gui.update()
             GL11.glDisable(GL11.GL_DEPTH_TEST)
             GL11.glPushMatrix()
             this.gui.plane.matrixRootToMe()

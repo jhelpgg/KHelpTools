@@ -14,15 +14,6 @@ class GUIComponentButton(private val normal : GUIComponent,
                          private val disabled : GUIComponent) : GUIComponent()
 {
     var enabled : Boolean = true
-        set(value)
-        {
-            if (field != value)
-            {
-                field = value
-                this.refresh()
-            }
-        }
-
     var click : () -> Unit = {}
 
     private var isOver = false
@@ -33,15 +24,15 @@ class GUIComponentButton(private val normal : GUIComponent,
         val component =
             when
             {
-                !this.enabled -> this.disabled
-                this.isDown -> this.down
-                this.isOver -> this.over
-                else -> this.normal
+                ! this.enabled -> this.disabled
+                this.isDown    -> this.down
+                this.isOver    -> this.over
+                else           -> this.normal
             }
 
         component.margin = this.margin
         component.x = 0
-        component.y=0
+        component.y = 0
         component.width = this.width
         component.height = this.height
         component.draw(graphics2D)
@@ -75,15 +66,12 @@ class GUIComponentButton(private val normal : GUIComponent,
     {
         if (this.enabled)
         {
-            var shouldRefresh = false
-
             when
             {
                 mouseState.mouseStatus == MouseStatus.ENTER ->
                     if (! this.isOver)
                     {
                         this.isOver = true
-                        shouldRefresh = ! this.isDown
                     }
 
                 mouseState.mouseStatus == MouseStatus.EXIT  ->
@@ -91,28 +79,20 @@ class GUIComponentButton(private val normal : GUIComponent,
                     {
                         this.isOver = false
                         this.isDown = false
-                        shouldRefresh = ! this.isDown
                     }
 
                 mouseState.leftButtonDown                   ->
                     if (! this.isDown)
                     {
                         this.isDown = true
-                        shouldRefresh = true
                     }
 
                 ! mouseState.leftButtonDown                 ->
                     if (this.isDown)
                     {
                         this.isDown = false
-                        shouldRefresh = true
                         parallel(task = this.click)
                     }
-            }
-
-            if (shouldRefresh)
-            {
-                this.refresh()
             }
 
             return true
