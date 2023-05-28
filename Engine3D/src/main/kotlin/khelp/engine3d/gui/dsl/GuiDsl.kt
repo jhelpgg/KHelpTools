@@ -120,13 +120,16 @@ fun GUI.colorChooserButton(colorChoose : (BaseColor<*>) -> Unit) : GUIComponentB
     val button = GUIComponentButton(emptyUp, emptyOver, emptyDown, emptyGrey)
     button.click = { dialogColorChooser.show() }
 
-    dialogColorChooser.showing.observedBy(TaskContext.INDEPENDENT) {
-        val colorChosen = dialogColorChooser.color.value()
-        emptyUp.background = StyleBackgroundColor(colorChosen.color)
-        emptyOver.background = StyleBackgroundColor(colorChosen.lighter.color)
-        emptyDown.background = StyleBackgroundColor(colorChosen.darker.color)
-        emptyGrey.background = StyleBackgroundColor(colorChosen.color.grey)
-        colorChoose(colorChosen)
+    dialogColorChooser.showing.observedBy(TaskContext.INDEPENDENT) { showing ->
+        if (! showing)
+        {
+            val colorChosen = dialogColorChooser.color.value()
+            emptyUp.background = StyleBackgroundColor(colorChosen.color)
+            emptyOver.background = StyleBackgroundColor(colorChosen.lighter.color)
+            emptyDown.background = StyleBackgroundColor(colorChosen.darker.color)
+            emptyGrey.background = StyleBackgroundColor(colorChosen.color.grey)
+            colorChoose(colorChosen)
+        }
     }
 
     return button
