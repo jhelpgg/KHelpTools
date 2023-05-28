@@ -1,12 +1,10 @@
 package khelp.engine3d.gui
 
-import khelp.engine3d.gui.component.GUIComponent
 import khelp.engine3d.gui.layout.GUILayout
 import khelp.engine3d.gui.layout.absolute.GUIAbsoluteLayout
 import khelp.engine3d.render.Texture
 import khelp.engine3d.render.prebuilt.Plane
 import khelp.ui.events.MouseState
-import khelp.ui.events.MouseStatus
 import khelp.ui.game.GameImage
 import khelp.ui.utilities.TRANSPARENT
 
@@ -15,7 +13,6 @@ class GUI internal constructor(private val width : Int, private val height : Int
     private val image = GameImage(this.width, this.height)
     private val texture = Texture(this.image)
     internal val plane = Plane("GUI")
-    private var previousComponent : GUIComponent? = null
 
     var layout : GUILayout<*> = GUIAbsoluteLayout()
         set(value)
@@ -39,56 +36,8 @@ class GUI internal constructor(private val width : Int, private val height : Int
         this.plane.z = - 1.2f
     }
 
-    internal fun mouseState(mouseState : MouseState) : Boolean
-    {
-        val x = mouseState.x
-        val y = mouseState.y
-
-        for (component in this.layout.componentsInverted())
-        {
-            if (component.visible && component.contains(x, y))
-            {
-                if (this.previousComponent != component)
-                {
-                    this.previousComponent?.let { previous ->
-                        previous.mouseState(MouseState(MouseStatus.EXIT,
-                                                       mouseState.x - previous.x, mouseState.y - previous.y,
-                                                       leftButtonDown = false, middleButtonDown = false,
-                                                       rightButtonDown = false,
-                                                       shiftDown = false, controlDown = false, altDown = false,
-                                                       clicked = false))
-                    }
-
-                    component.mouseState(MouseState(MouseStatus.ENTER,
-                                                    mouseState.x - component.x, mouseState.y - component.y,
-                                                    leftButtonDown = false, middleButtonDown = false,
-                                                    rightButtonDown = false,
-                                                    shiftDown = false, controlDown = false, altDown = false,
-                                                    clicked = false))
-                }
-
-                this.previousComponent = component
-                val state = MouseState(mouseState.mouseStatus,
-                                       mouseState.x - component.x, mouseState.y - component.y,
-                                       mouseState.leftButtonDown, mouseState.middleButtonDown,
-                                       mouseState.rightButtonDown,
-                                       mouseState.shiftDown, mouseState.controlDown, mouseState.altDown,
-                                       mouseState.clicked)
-                return component.mouseState(state)
-            }
-        }
-
-        this.previousComponent?.let { previous ->
-            previous.mouseState(MouseState(MouseStatus.EXIT,
-                                           mouseState.x - previous.x, mouseState.y - previous.y,
-                                           leftButtonDown = false, middleButtonDown = false, rightButtonDown = false,
-                                           shiftDown = false, controlDown = false, altDown = false,
-                                           clicked = false))
-        }
-
-        this.previousComponent = null
-        return false
-    }
+    internal fun mouseState(mouseState : MouseState) : Boolean =
+        this.layout.mouseState(mouseState)
 
     internal fun update()
     {

@@ -43,25 +43,6 @@ class GUIComponentPanel<C : GUIConstraints, L : GUILayout<C>>(private val layout
         return Dimension(preferred.width + margin.width, preferred.height + margin.height)
     }
 
-    override fun mouseState(mouseState : MouseState) : Boolean
-    {
-        val x = mouseState.x
-        val y = mouseState.y
-
-        for (component in this.layout.componentsInverted())
-        {
-            if (component.visible && component.contains(x, y))
-            {
-                val state = MouseState(mouseState.mouseStatus,
-                                       mouseState.x - component.x, mouseState.y - component.y,
-                                       mouseState.leftButtonDown, mouseState.middleButtonDown,
-                                       mouseState.rightButtonDown,
-                                       mouseState.shiftDown, mouseState.controlDown, mouseState.altDown,
-                                       mouseState.clicked)
-                return component.mouseState(state)
-            }
-        }
-
-        return false
-    }
+    override fun mouseState(mouseState : MouseState) : Boolean =
+        this.layout.mouseState(mouseState)
 }
