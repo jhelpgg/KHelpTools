@@ -2,6 +2,7 @@ package khelp.engine3d.gui
 
 import khelp.engine3d.gui.component.GUIComponentPanel
 import khelp.engine3d.gui.component.GUIDialog
+import khelp.engine3d.gui.component.dialogs.DialogColorChooser
 import khelp.engine3d.gui.layout.GUIConstraints
 import khelp.engine3d.gui.layout.GUILayout
 import khelp.engine3d.gui.layout.absolute.GUIAbsoluteLayout
@@ -44,6 +45,8 @@ class GUI internal constructor(private val width : Int, private val height : Int
 
     fun <C : GUIConstraints, L : GUILayout<C>> createDialog(layout : L) : GUIDialog<C, L> =
         GUIDialog<C, L>(GUIComponentPanel<C, L>(layout), this)
+
+    fun dialogColorChooser() : DialogColorChooser = DialogColorChooser(this)
 
     internal fun <C : GUIConstraints, L : GUILayout<C>> show(dialog : GUIDialog<C, L>)
     {

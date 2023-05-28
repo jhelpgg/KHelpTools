@@ -3,6 +3,7 @@ package khelp.obj.viewer.ui
 import khelp.engine3d.event.ActionCode
 import khelp.engine3d.format.obj.objLoader
 import khelp.engine3d.gui.dsl.buttonText
+import khelp.engine3d.gui.dsl.colorChooserButton
 import khelp.engine3d.gui.dsl.constraintLayout
 import khelp.engine3d.gui.dsl.dialogProportion
 import khelp.engine3d.gui.layout.proprtion.GUIProportionConstraint
@@ -85,6 +86,8 @@ object FrameObjViewer
             buttonSaveAs.click = dialog::show
             buttonCancel.click = dialog::close
 
+            val buttonColor = this.gui.colorChooserButton { color -> println("Color = $color") }
+
             this.gui.constraintLayout {
                 buttonOpen with {
                     this.horizontalExpanded
@@ -107,6 +110,16 @@ object FrameObjViewer
                     this.topAtBottom = buttonOpen
                     this.bottomAtParent
                     this.leftAtParent
+                    this.rightFree
+                }
+
+                buttonColor with {
+                    this.horizontalWrapped
+                    this.verticalWrapped
+
+                    this.topAtBottom = buttonOpen
+                    this.bottomAtParent
+                    this.leftAtRight = buttonSaveAs
                     this.rightAtParent
                 }
             }

@@ -1,7 +1,9 @@
 package khelp.engine3d.gui.dsl
 
 import khelp.engine3d.gui.GUI
+import khelp.engine3d.gui.GUIMargin
 import khelp.engine3d.gui.component.GUIComponentButton
+import khelp.engine3d.gui.component.GUIComponentEmpty
 import khelp.engine3d.gui.component.GUIComponentPanel
 import khelp.engine3d.gui.component.GUIComponentText
 import khelp.engine3d.gui.component.GUIDialog
@@ -15,8 +17,10 @@ import khelp.engine3d.gui.layout.proprtion.GUIProportionConstraint
 import khelp.engine3d.gui.layout.proprtion.GUIProportionLayout
 import khelp.resources.ResourcesText
 import khelp.resources.defaultTexts
+import khelp.thread.TaskContext
 import khelp.ui.TextAlignment
 import khelp.ui.VerticalAlignment
+import khelp.ui.extensions.color
 import khelp.ui.extensions.contrast
 import khelp.ui.extensions.grey
 import khelp.ui.extensions.invert
@@ -24,8 +28,10 @@ import khelp.ui.font.JHelpFont
 import khelp.ui.style.ComponentHighLevel
 import khelp.ui.style.background.StyleBackgroundColor
 import khelp.ui.style.shape.StyleShape
+import khelp.ui.style.shape.StyleShapeRoundRectangle
 import khelp.ui.style.shape.StyleShapeSausage
 import khelp.ui.utilities.BUTTON_FONT
+import khelp.ui.utilities.colors.BaseColor
 import java.awt.Color
 
 fun <C : GUIConstraints, L : GUILayout<C>> GUI.content(layout : L, content : GuiLayoutFiller<C, L>.() -> Unit)
@@ -76,6 +82,54 @@ fun GUI.dialogConstraint(
     val filler = GUIConstraintFiller(layout)
     content(filler)
     return this.createDialog(layout)
+}
+
+fun GUI.colorChooserButton(colorChoose : (BaseColor<*>) -> Unit) : GUIComponentButton
+{
+    val dialogColorChooser = this.dialogColorChooser()
+    val baseColor = dialogColorChooser.color.value()
+
+    val emptyUp = GUIComponentEmpty()
+    emptyUp.borderColor = Color.LIGHT_GRAY
+    emptyUp.margin = GUIMargin(4, 4, 4, 4)
+    emptyUp.background = StyleBackgroundColor(baseColor.color)
+    emptyUp.componentHighLevel = ComponentHighLevel.HIGHEST
+    emptyUp.shape = StyleShapeRoundRectangle
+
+    val emptyOver = GUIComponentEmpty()
+    emptyOver.borderColor = Color.WHITE
+    emptyOver.margin = GUIMargin(4, 4, 4, 4)
+    emptyOver.background = StyleBackgroundColor(baseColor.lighter.color)
+    emptyOver.componentHighLevel = ComponentHighLevel.FLY
+    emptyOver.shape = StyleShapeRoundRectangle
+
+    val emptyDown = GUIComponentEmpty()
+    emptyDown.borderColor = Color.BLACK
+    emptyDown.margin = GUIMargin(4, 4, 4, 4)
+    emptyDown.background = StyleBackgroundColor(baseColor.darker.color)
+    emptyDown.componentHighLevel = ComponentHighLevel.AT_GROUND
+    emptyDown.shape = StyleShapeRoundRectangle
+
+    val emptyGrey = GUIComponentEmpty()
+    emptyGrey.borderColor = Color.GRAY
+    emptyGrey.margin = GUIMargin(4, 4, 4, 4)
+    emptyGrey.background = StyleBackgroundColor(baseColor.color.grey)
+    emptyGrey.componentHighLevel = ComponentHighLevel.NEAR_GROUND
+    emptyGrey.shape = StyleShapeRoundRectangle
+
+    val button = GUIComponentButton(emptyUp, emptyOver, emptyDown, emptyGrey)
+    button.click = { dialogColorChooser.show() }
+
+    dialogColorChooser.showing.observedBy(TaskContext.INDEPENDENT) {
+        val colorChosen = dialogColorChooser.color.value()
+        emptyUp.background = StyleBackgroundColor(colorChosen.color)
+        emptyOver.background = StyleBackgroundColor(colorChosen.lighter.color)
+        emptyDown.background = StyleBackgroundColor(colorChosen.darker.color)
+        emptyGrey.background = StyleBackgroundColor(colorChosen.color.grey)
+        colorChoose(colorChosen)
+    }
+
+    return button
 }
 
 fun panelAbsolute(content : GuiLayoutFiller<GUIAbsoluteConstraint, GUIAbsoluteLayout>.() -> Unit) :
