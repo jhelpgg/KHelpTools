@@ -4,6 +4,7 @@ import khelp.engine3d.gui.GUI
 import khelp.engine3d.gui.component.GUIComponentButton
 import khelp.engine3d.gui.component.GUIComponentPanel
 import khelp.engine3d.gui.component.GUIComponentText
+import khelp.engine3d.gui.component.GUIDialog
 import khelp.engine3d.gui.layout.GUIConstraints
 import khelp.engine3d.gui.layout.GUILayout
 import khelp.engine3d.gui.layout.absolute.GUIAbsoluteConstraint
@@ -50,6 +51,31 @@ fun GUI.constraintLayout(content : GUIConstraintFiller.() -> Unit)
     val filler = GUIConstraintFiller(layout)
     content(filler)
     this.layout = layout
+}
+
+fun <C : GUIConstraints, L : GUILayout<C>> GUI.dialog(layout : L,
+                                                      content : GuiLayoutFiller<C, L>.() -> Unit) : GUIDialog<C, L>
+{
+    val filler = GuiLayoutFiller<C, L>(layout)
+    content(filler)
+    return this.createDialog(layout)
+}
+
+fun GUI.dialogAbsolute(
+    content : GuiLayoutFiller<GUIAbsoluteConstraint, GUIAbsoluteLayout>.() -> Unit) : GUIDialog<GUIAbsoluteConstraint, GUIAbsoluteLayout> =
+    this.dialog(GUIAbsoluteLayout(), content)
+
+fun GUI.dialogProportion(
+    content : GuiLayoutFiller<GUIProportionConstraint, GUIProportionLayout>.() -> Unit) : GUIDialog<GUIProportionConstraint, GUIProportionLayout> =
+    this.dialog(GUIProportionLayout(), content)
+
+fun GUI.dialogConstraint(
+    content : GUIConstraintFiller.() -> Unit) : GUIDialog<GUIConstraintConstraint, GUIConstraintLayout>
+{
+    val layout = GUIConstraintLayout()
+    val filler = GUIConstraintFiller(layout)
+    content(filler)
+    return this.createDialog(layout)
 }
 
 fun panelAbsolute(content : GuiLayoutFiller<GUIAbsoluteConstraint, GUIAbsoluteLayout>.() -> Unit) :

@@ -6,7 +6,7 @@ import khelp.utilities.extensions.utf8
 /**
  * Stream that write in a String.
  *
- * Received data supposed to represents a String in UTF-8 format
+ * Received data supposed to represent a String in UTF-8 format
  */
 class StringOutputStream : ByteArrayOutputStream()
 {

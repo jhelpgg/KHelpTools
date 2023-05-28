@@ -17,4 +17,20 @@ class ObservableData<T : Any>(private var value : T)
             this.observable.valueChanged(value)
         }
     }
+
+    fun valueIf(value : T, condition : (T) -> Boolean) : Boolean
+    {
+        var changed = false
+
+        this.mutex {
+            if (condition(this.value))
+            {
+                this.value = value
+                this.observable.valueChanged(value)
+                changed = true
+            }
+        }
+
+        return changed
+    }
 }

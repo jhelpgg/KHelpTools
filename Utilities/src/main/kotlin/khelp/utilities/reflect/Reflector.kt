@@ -1,8 +1,8 @@
 package khelp.utilities.reflect
 
+import khelp.utilities.extensions.calendar
 import java.lang.reflect.Array
 import java.util.Calendar
-import khelp.utilities.extensions.calendar
 
 
 /**
@@ -47,7 +47,7 @@ const val DEFAULT_SHORT = 0.toShort()
  * @return Default value
  */
 @Suppress("UNCHECKED_CAST")
-fun <T> defaultValue(clazz: Class<T>, instanceProvider: (Class<*>) -> Any? = { null }): T
+fun <T> defaultValue(clazz : Class<T>, instanceProvider : (Class<*>) -> Any? = { null }) : T
 {
     if (clazz.isPrimitive)
     {
@@ -149,7 +149,7 @@ fun <T> defaultValue(clazz: Class<T>, instanceProvider: (Class<*>) -> Any? = { n
                 return Array.get(values, 0) as T
             }
         }
-        catch (ignored: Exception)
+        catch (ignored : Exception)
         {
         }
 
@@ -168,7 +168,7 @@ fun <T> defaultValue(clazz: Class<T>, instanceProvider: (Class<*>) -> Any? = { n
         while (componentType.isArray)
         {
             componentType = componentType.componentType
-            count++
+            count ++
         }
 
         return Array.newInstance(componentType, *IntArray(count)) as T
@@ -185,3 +185,7 @@ fun <T> defaultValue(clazz: Class<T>, instanceProvider: (Class<*>) -> Any? = { n
 
     return constructor.newInstance(*parameters) as T
 }
+
+val <T> Class<T>?.isVoid : Boolean
+    get() =
+        this == null || this == Void.TYPE || this == Void::class.java || this == Unit::class.java

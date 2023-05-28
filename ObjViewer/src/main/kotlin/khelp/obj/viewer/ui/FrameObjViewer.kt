@@ -2,9 +2,10 @@ package khelp.obj.viewer.ui
 
 import khelp.engine3d.event.ActionCode
 import khelp.engine3d.format.obj.objLoader
-import khelp.engine3d.gui.component.GUIComponentEmpty
 import khelp.engine3d.gui.dsl.buttonText
 import khelp.engine3d.gui.dsl.constraintLayout
+import khelp.engine3d.gui.dsl.dialogProportion
+import khelp.engine3d.gui.layout.proprtion.GUIProportionConstraint
 import khelp.engine3d.render.Material
 import khelp.engine3d.render.Node
 import khelp.engine3d.render.Scene
@@ -18,11 +19,7 @@ import khelp.thread.TaskContext
 import khelp.thread.parallel
 import khelp.ui.events.MouseState
 import khelp.ui.events.MouseStatus
-import khelp.ui.extensions.color
-import khelp.ui.style.background.StyleBackgroundColor
-import khelp.ui.style.shape.StyleShapeRectangle
-import khelp.ui.utilities.colors.Green
-import khelp.ui.utilities.colors.Red
+import khelp.utilities.extensions.percent
 import java.io.File
 import java.io.FileInputStream
 import java.util.Locale
@@ -79,6 +76,14 @@ object FrameObjViewer
                 }
             }
             val buttonSaveAs = buttonText(keyText = "saveAs")
+
+            val buttonCancel = buttonText(keyText = "cancel")
+            val dialog = this.gui.dialogProportion {
+                buttonCancel with GUIProportionConstraint(0.percent, 0.percent, 100.percent, 100.percent)
+            }
+
+            buttonSaveAs.click = dialog::show
+            buttonCancel.click = dialog::close
 
             this.gui.constraintLayout {
                 buttonOpen with {
