@@ -29,6 +29,34 @@ abstract class GUIComponent
     var background : StyleBackground = StyleBackgroundTransparent
     var componentHighLevel : ComponentHighLevel = ComponentHighLevel.AT_GROUND
 
+    var marginLeft : Int
+        get() = this.margin.left
+        set(value)
+        {
+            this.margin = this.margin.left(value)
+        }
+
+    var marginRight : Int
+        get() = this.margin.right
+        set(value)
+        {
+            this.margin = this.margin.right(value)
+        }
+
+    var marginTop : Int
+        get() = this.margin.top
+        set(value)
+        {
+            this.margin = this.margin.top(value)
+        }
+
+    var marginBottom : Int
+        get() = this.margin.bottom
+        set(value)
+        {
+            this.margin = this.margin.bottom(value)
+        }
+
     fun contains(x : Int, y : Int) : Boolean =
         x >= this.x && y >= this.y && x < this.x + this.width && y < this.y + this.height
 

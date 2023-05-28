@@ -45,6 +45,34 @@ class GUIDialog<C : GUIConstraints, L : GUILayout<C>> internal constructor(inter
             this.panel.background = value
         }
 
+    var marginLeft : Int
+        get() = this.panel.margin.left
+        set(value)
+        {
+            this.panel.margin = this.panel.margin.left(value)
+        }
+
+    var marginRight : Int
+        get() = this.panel.margin.right
+        set(value)
+        {
+            this.panel.margin = this.panel.margin.right(value)
+        }
+
+    var marginTop : Int
+        get() = this.panel.margin.top
+        set(value)
+        {
+            this.panel.margin = this.panel.margin.top(value)
+        }
+
+    var marginBottom : Int
+        get() = this.panel.margin.bottom
+        set(value)
+        {
+            this.panel.margin = this.panel.margin.bottom(value)
+        }
+
     init
     {
         this.panel.shape = StyleShapeRoundRectangle
