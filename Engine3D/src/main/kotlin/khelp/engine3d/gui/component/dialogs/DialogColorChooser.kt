@@ -140,7 +140,7 @@ class DialogColorChooser internal constructor(gui : GUI)
 
                 this.marginTop = 8
 
-                this.topAtBottom = panel
+                this topAtBottomOf panel
                 this.bottomAtParent
                 this.leftAtParent
                 this.rightAtParent

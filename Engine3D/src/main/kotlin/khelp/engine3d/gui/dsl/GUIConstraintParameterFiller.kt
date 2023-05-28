@@ -7,22 +7,18 @@ import khelp.engine3d.gui.layout.constraint.bottom.GUIBottomAtParent
 import khelp.engine3d.gui.layout.constraint.bottom.GUIBottomFree
 import khelp.engine3d.gui.layout.constraint.bottom.GUIBottomToBottomOf
 import khelp.engine3d.gui.layout.constraint.bottom.GUIBottomToTopOf
-import khelp.engine3d.gui.layout.constraint.bottom.attached
 import khelp.engine3d.gui.layout.constraint.left.GUILeftAtParent
 import khelp.engine3d.gui.layout.constraint.left.GUILeftFree
 import khelp.engine3d.gui.layout.constraint.left.GUILeftToLeftOf
 import khelp.engine3d.gui.layout.constraint.left.GUILeftToRightOf
-import khelp.engine3d.gui.layout.constraint.left.attached
 import khelp.engine3d.gui.layout.constraint.right.GUIRightAtParent
 import khelp.engine3d.gui.layout.constraint.right.GUIRightFree
 import khelp.engine3d.gui.layout.constraint.right.GUIRightToLeftOf
 import khelp.engine3d.gui.layout.constraint.right.GUIRightToRightOf
-import khelp.engine3d.gui.layout.constraint.right.attached
 import khelp.engine3d.gui.layout.constraint.top.GUITopAtParent
 import khelp.engine3d.gui.layout.constraint.top.GUITopFree
 import khelp.engine3d.gui.layout.constraint.top.GUITopToBottomOf
 import khelp.engine3d.gui.layout.constraint.top.GUITopToTopOf
-import khelp.engine3d.gui.layout.constraint.top.attached
 
 class GUIConstraintParameterFiller internal constructor()
 {
@@ -92,25 +88,15 @@ class GUIConstraintParameterFiller internal constructor()
             this.constraint.topConstraint = GUITopFree
         }
 
-    var topAtTop : GUIComponent?
-        get() = this.constraint.topConstraint.attached
-        set(value)
-        {
-            if (value != null)
-            {
-                this.constraint.topConstraint = GUITopToTopOf(value)
-            }
-        }
+    infix fun topAtTopOf(component : GUIComponent)
+    {
+        this.constraint.topConstraint = GUITopToTopOf(component)
+    }
 
-    var topAtBottom : GUIComponent?
-        get() = this.constraint.topConstraint.attached
-        set(value)
-        {
-            if (value != null)
-            {
-                this.constraint.topConstraint = GUITopToBottomOf(value)
-            }
-        }
+    infix fun topAtBottomOf(component : GUIComponent)
+    {
+        this.constraint.topConstraint = GUITopToBottomOf(component)
+    }
 
     val bottomAtParent : Unit
         get()
@@ -124,25 +110,15 @@ class GUIConstraintParameterFiller internal constructor()
             this.constraint.bottomConstraint = GUIBottomFree
         }
 
-    var bottomAtTop : GUIComponent?
-        get() = this.constraint.bottomConstraint.attached
-        set(value)
-        {
-            if (value != null)
-            {
-                this.constraint.bottomConstraint = GUIBottomToTopOf(value)
-            }
-        }
+    infix fun bottomAtTopOf(component : GUIComponent)
+    {
+        this.constraint.bottomConstraint = GUIBottomToTopOf(component)
+    }
 
-    var bottomAtBottom : GUIComponent?
-        get() = this.constraint.bottomConstraint.attached
-        set(value)
-        {
-            if (value != null)
-            {
-                this.constraint.bottomConstraint = GUIBottomToBottomOf(value)
-            }
-        }
+    infix fun bottomAtBottomOf(component : GUIComponent)
+    {
+        this.constraint.bottomConstraint = GUIBottomToBottomOf(component)
+    }
 
     val leftAtParent : Unit
         get()
@@ -156,25 +132,15 @@ class GUIConstraintParameterFiller internal constructor()
             this.constraint.leftConstraint = GUILeftFree
         }
 
-    var leftAtLeft : GUIComponent?
-        get() = this.constraint.leftConstraint.attached
-        set(value)
-        {
-            if (value != null)
-            {
-                this.constraint.leftConstraint = GUILeftToLeftOf(value)
-            }
-        }
+    infix fun leftAtLeftOf(component : GUIComponent)
+    {
+        this.constraint.leftConstraint = GUILeftToLeftOf(component)
+    }
 
-    var leftAtRight : GUIComponent?
-        get() = this.constraint.leftConstraint.attached
-        set(value)
-        {
-            if (value != null)
-            {
-                this.constraint.leftConstraint = GUILeftToRightOf(value)
-            }
-        }
+    infix fun leftAtRightOf(component : GUIComponent)
+    {
+        this.constraint.leftConstraint = GUILeftToRightOf(component)
+    }
 
     val rightAtParent : Unit
         get()
@@ -188,23 +154,13 @@ class GUIConstraintParameterFiller internal constructor()
             this.constraint.rightConstraint = GUIRightFree
         }
 
-    var rightAtLeft : GUIComponent?
-        get() = this.constraint.rightConstraint.attached
-        set(value)
-        {
-            if (value != null)
-            {
-                this.constraint.rightConstraint = GUIRightToLeftOf(value)
-            }
-        }
+    infix fun rightAtLeftOf(component : GUIComponent)
+    {
+        this.constraint.rightConstraint = GUIRightToLeftOf(component)
+    }
 
-    var rightAtRight : GUIComponent?
-        get() = this.constraint.rightConstraint.attached
-        set(value)
-        {
-            if (value != null)
-            {
-                this.constraint.rightConstraint = GUIRightToRightOf(value)
-            }
-        }
+    infix fun rightAtRightOf(component : GUIComponent)
+    {
+        this.constraint.rightConstraint = GUIRightToRightOf(component)
+    }
 }
