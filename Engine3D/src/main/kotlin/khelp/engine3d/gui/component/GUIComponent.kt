@@ -81,8 +81,8 @@ abstract class GUIComponent
         }
 
         val additional = this.shape.margin(x, y, width - 2, height - 2)
-        val margin = GUIMargin(this.margin.left + additional.left + x, this.margin.right + additional.right - x,
-                               this.margin.top + additional.top + y, this.margin.bottom + additional.bottom - y)
+        val margin = GUIMargin(this.margin.left + additional.left, this.margin.right + additional.right,
+                               this.margin.top + additional.top, this.margin.bottom + additional.bottom)
         this.background.applyOnShape(graphics2D, shape)
 
         if (this.borderColor.alpha > 0)
@@ -107,9 +107,11 @@ abstract class GUIComponent
         val width = this.width - highLevel - x
         val height = this.height - highLevel - y
         val additional = this.shape.margin(x, y, width - 2, height - 2)
-        val margin = GUIMargin(this.margin.left + additional.left, this.margin.right + additional.right,
-                               this.margin.top + additional.top, this.margin.bottom + additional.bottom)
-        return this.preferredSize(margin)
+        val margin = GUIMargin(this.margin.left, this.margin.right,
+                               this.margin.top, this.margin.bottom)
+        val preferred = this.preferredSize(margin)
+        return Dimension(preferred.width + x + additional.left + additional.right,
+                         preferred.height + y + additional.top + additional.bottom)
     }
 
     protected abstract fun preferredSize(margin : GUIMargin) : Dimension

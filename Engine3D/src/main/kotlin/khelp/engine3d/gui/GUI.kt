@@ -70,7 +70,8 @@ class GUI internal constructor(private val width : Int, private val height : Int
         {
             val panel = panelNullable !!
             val state = MouseState(mouseState.mouseStatus,
-                                   mouseState.x - panel.x, mouseState.y - panel.y,
+                                   mouseState.x - panel.x - panel.margin.left,
+                                   mouseState.y - panel.y - panel.margin.top,
                                    mouseState.leftButtonDown, mouseState.middleButtonDown, mouseState.rightButtonDown,
                                    mouseState.shiftDown, mouseState.controlDown, mouseState.altDown,
                                    mouseState.clicked)
