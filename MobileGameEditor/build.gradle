@@ -1,0 +1,39 @@
+plugins {
+    id 'org.jetbrains.kotlin.jvm'
+}
+
+group 'khelp.mobile.game.editor'
+version '1.0-SNPASHOT'
+
+dependencies {
+    implementation project(":Utilities")
+    implementation project(":Thread")
+    implementation project(":Preferences")
+    implementation project(":Resources")
+    implementation project(":IO")
+    implementation project(":UI")
+    implementation project(":Math")
+    implementation project(":Engine3D")
+
+    implementation('org.jetbrains.kotlin:kotlin-reflect:1.6.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+}
+
+tasks.test {
+    useJUnitPlatform()
+}
+repositories {
+    mavenCentral()
+}
+compileKotlin {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
+compileTestKotlin {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}

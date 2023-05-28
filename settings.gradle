@@ -22,4 +22,5 @@ include ':Image'
 include ':Art'
 include ':Neural'
 include 'ObjViewer'
+include 'MobileGameEditor'
 
