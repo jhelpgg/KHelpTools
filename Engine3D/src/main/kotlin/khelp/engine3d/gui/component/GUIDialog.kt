@@ -26,12 +26,6 @@ class GUIDialog<C : GUIConstraints, L : GUILayout<C>> internal constructor(inter
         {
             this.panel.margin = value
         }
-    var visible : Boolean
-        get() = this.panel.visible
-        set(value)
-        {
-            this.panel.visible = value
-        }
     var borderColor : Color
         get() = this.panel.borderColor
         set(value)
