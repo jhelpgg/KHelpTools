@@ -13,6 +13,8 @@ import khelp.engine3d.gui.layout.absolute.GUIAbsoluteConstraint
 import khelp.engine3d.gui.layout.absolute.GUIAbsoluteLayout
 import khelp.engine3d.gui.layout.constraint.GUIConstraintConstraint
 import khelp.engine3d.gui.layout.constraint.GUIConstraintLayout
+import khelp.engine3d.gui.layout.horizontal.GUIHorizontalConstraint
+import khelp.engine3d.gui.layout.horizontal.GUIHorizontalLayout
 import khelp.engine3d.gui.layout.proprtion.GUIProportionConstraint
 import khelp.engine3d.gui.layout.proprtion.GUIProportionLayout
 import khelp.engine3d.gui.layout.vertical.GUIVerticalConstraint
@@ -69,6 +71,14 @@ fun GUI.verticalLayout(content : GUIVerticalFiller.() -> Unit)
     this.layout = layout
 }
 
+fun GUI.horizontalLayout(content : GUIHorizontalFiller.() -> Unit)
+{
+    val layout = GUIHorizontalLayout()
+    val filter = GUIHorizontalFiller(layout)
+    content(filter)
+    this.layout = layout
+}
+
 fun <C : GUIConstraints, L : GUILayout<C>> GUI.dialog(layout : L,
                                                       content : GuiLayoutFiller<C, L>.() -> Unit) : GUIDialog<C, L>
 {
@@ -98,6 +108,14 @@ fun GUI.dialogVertical(content : GUIVerticalFiller.() -> Unit) : GUIDialog<GUIVe
 {
     val layout = GUIVerticalLayout()
     val filter = GUIVerticalFiller(layout)
+    content(filter)
+    return this.createDialog(layout)
+}
+
+fun GUI.dialogHorizontal(content : GUIHorizontalFiller.() -> Unit) : GUIDialog<GUIHorizontalConstraint, GUIHorizontalLayout>
+{
+    val layout = GUIHorizontalLayout()
+    val filter = GUIHorizontalFiller(layout)
     content(filter)
     return this.createDialog(layout)
 }
@@ -187,6 +205,14 @@ fun panelVertical(content : GUIVerticalFiller.() -> Unit) : GUIComponentPanel<GU
     val filter = GUIVerticalFiller(layout)
     content(filter)
     return GUIComponentPanel<GUIVerticalConstraint, GUIVerticalLayout>(layout)
+}
+
+fun panelHorizontal(content : GUIHorizontalFiller.() -> Unit) : GUIComponentPanel<GUIHorizontalConstraint, GUIHorizontalLayout>
+{
+    val layout = GUIHorizontalLayout()
+    val filter = GUIHorizontalFiller(layout)
+    content(filter)
+    return GUIComponentPanel<GUIHorizontalConstraint, GUIHorizontalLayout>(layout)
 }
 
 fun buttonText(keyText : String,
