@@ -8,10 +8,17 @@ import khelp.engine3d.gui.dsl.buttonText
 import khelp.engine3d.gui.dsl.constraintLayout
 import khelp.engine3d.gui.dsl.panelVertical
 import khelp.engine3d.render.Window3D
+import khelp.resources.LOAD
+import khelp.resources.NO
+import khelp.resources.OTHER
+import khelp.resources.SAVE
 import khelp.resources.SAVE_AS
+import khelp.resources.YES
 import khelp.resources.defaultResources
+import khelp.resources.defaultTexts
 import khelp.thread.TaskContext
 import khelp.thread.observable.Observer
+import khelp.ui.GenericAction
 import khelp.ui.events.MouseState
 import khelp.ui.extensions.color
 import khelp.ui.extensions.nearInvisible
@@ -24,6 +31,7 @@ import khelp.ui.utilities.colors.Blue
 import khelp.ui.utilities.colors.Green
 import khelp.ui.utilities.colors.Red
 import khelp.utilities.log.debug
+import khelp.utilities.log.mark
 import khelp.utilities.math.random
 
 class MainScreen : Screen
@@ -87,6 +95,41 @@ class MainScreen : Screen
             }
         }
 
+        val noAction =
+            GenericAction(defaultTexts, NO, GameImage.load("warning.png", defaultResources), TaskContext.INDEPENDENT) {
+                mark("NO")
+            }
+
+        val loadAction =
+            GenericAction(defaultTexts, LOAD, GameImage.load("question.png", defaultResources),
+                          TaskContext.INDEPENDENT) {
+                mark("LOAD")
+            }
+
+        val otherAction =
+            GenericAction(defaultTexts, OTHER, GameImage.load("information.png", defaultResources),
+                          TaskContext.INDEPENDENT) {
+                mark("OTHER")
+            }
+
+        val noIconAction =
+            GenericAction(defaultTexts, SAVE, TaskContext.INDEPENDENT) {
+                mark("SAVE")
+            }
+
+
+        window3D.gui.menuBar {
+            YES {
+                + noAction
+                + loadAction
+            }
+
+            SAVE {
+                + otherAction
+                + noIconAction
+            }
+        }
+
         window3D.gui.constraintLayout {
             this@MainScreen.removeMeButton with {
                 this.horizontalExpanded
@@ -144,7 +187,7 @@ class MainScreen : Screen
 
     private fun mouseState(mouseState : MouseState)
     {
-        debug(mouseState)
+        //   debug(mouseState)
         // Something TODO ?
     }
 }

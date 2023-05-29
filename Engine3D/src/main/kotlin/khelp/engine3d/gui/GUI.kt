@@ -3,15 +3,24 @@ package khelp.engine3d.gui
 import khelp.engine3d.gui.component.GUIComponentPanel
 import khelp.engine3d.gui.component.GUIDialog
 import khelp.engine3d.gui.component.dialogs.DialogColorChooser
+import khelp.engine3d.gui.component.menu.GUIMenuBar
+import khelp.engine3d.gui.dsl.GUIMenuBarCreator
 import khelp.engine3d.gui.layout.GUIConstraints
 import khelp.engine3d.gui.layout.GUILayout
+import khelp.engine3d.gui.layout.absolute.GUIAbsoluteConstraint
 import khelp.engine3d.gui.layout.absolute.GUIAbsoluteLayout
 import khelp.engine3d.render.Texture
 import khelp.engine3d.render.prebuilt.Plane
+import khelp.resources.ResourcesText
+import khelp.resources.defaultTexts
 import khelp.thread.Mutex
 import khelp.ui.events.MouseState
+import khelp.ui.extensions.invert
+import khelp.ui.font.JHelpFont
 import khelp.ui.game.GameImage
+import khelp.ui.utilities.DEFAULT_FONT
 import khelp.ui.utilities.TRANSPARENT
+import java.awt.Color
 
 class GUI internal constructor(private val width : Int, private val height : Int)
 {
@@ -19,13 +28,16 @@ class GUI internal constructor(private val width : Int, private val height : Int
     private val texture = Texture(this.image)
     private val mutexDialog = Mutex()
     private val dialogs = ArrayList<GUIDialog<*, *>>()
+    private var menuBarPanel : GUIComponentPanel<*, *>? = null
+    private var menuBarY = 0
+    private var completeLayout : GUILayout<*> = GUIAbsoluteLayout()
     internal val plane = Plane("GUI")
 
     var layout : GUILayout<*> = GUIAbsoluteLayout()
         set(value)
         {
             field = value
-            this.update()
+            this.completeLayout()
         }
 
     init
@@ -47,6 +59,21 @@ class GUI internal constructor(private val width : Int, private val height : Int
         GUIDialog<C, L>(GUIComponentPanel<C, L>(layout), this)
 
     fun dialogColorChooser() : DialogColorChooser = DialogColorChooser(this)
+
+    fun menuBar(resourcesText : ResourcesText = defaultTexts,
+                textColor : Color = Color.WHITE,
+                textBackColor : Color = textColor.invert,
+                font : JHelpFont = DEFAULT_FONT,
+                creator : GUIMenuBarCreator.() -> Unit)
+    {
+        val menuBar = GUIMenuBar(resourcesText, font, textColor, textBackColor)
+        val menuCreator = GUIMenuBarCreator(menuBar)
+        creator(menuCreator)
+        val (panel, height) = menuBar.panel(this.width)
+        this.menuBarPanel = panel
+        this.menuBarY = height
+        this.completeLayout()
+    }
 
     internal fun <C : GUIConstraints, L : GUILayout<C>> show(dialog : GUIDialog<C, L>)
     {
@@ -81,16 +108,16 @@ class GUI internal constructor(private val width : Int, private val height : Int
             return panel.mouseState(state)
         }
 
-        return this.layout.mouseState(mouseState)
+        return this.completeLayout.mouseState(mouseState)
 
     }
 
     internal fun update()
     {
-        this.layout.layout(this.width, this.height)
+        this.completeLayout.layout(this.width, this.height)
         this.image.clear(TRANSPARENT, false)
         this.image.draw { graphics2D ->
-            for (component in layout.components())
+            for (component in completeLayout.components())
             {
                 if (component.visible)
                 {
@@ -123,5 +150,27 @@ class GUI internal constructor(private val width : Int, private val height : Int
                 }
             }
         }
+    }
+
+
+    private fun completeLayout()
+    {
+        val menuBar = this.menuBarPanel
+
+        if (menuBar == null)
+        {
+            this.completeLayout = this.layout
+        }
+        else
+        {
+            val completeLayout = GUIAbsoluteLayout()
+            completeLayout.add(GUIComponentPanel(this.layout),
+                               GUIAbsoluteConstraint(0, this.menuBarY, this.width, this.height - this.menuBarY))
+            completeLayout.add(menuBar,
+                               GUIAbsoluteConstraint(0, 0, this.width, this.height))
+            this.completeLayout = completeLayout
+        }
+
+        this.update()
     }
 }

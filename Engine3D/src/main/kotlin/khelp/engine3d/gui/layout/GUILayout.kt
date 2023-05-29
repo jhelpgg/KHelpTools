@@ -60,10 +60,16 @@ abstract class GUILayout<C : GUIConstraints>
                                            mouseState.shiftDown, mouseState.controlDown, mouseState.altDown,
                                            mouseState.clicked)
 
-                    return component.mouseState(state)
+                    if( component.mouseState(state))
+                    {
+                        return true
+                    }
                 }
 
-                return mouseState.mouseStatus == MouseStatus.ENTER
+                if( mouseState.mouseStatus == MouseStatus.ENTER)
+                {
+                    return true
+                }
             }
         }
 

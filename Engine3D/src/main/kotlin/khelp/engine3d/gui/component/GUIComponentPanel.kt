@@ -45,4 +45,10 @@ class GUIComponentPanel<C : GUIConstraints, L : GUILayout<C>>(private val layout
 
     override fun mouseState(mouseState : MouseState) : Boolean =
         this.layout.mouseState(mouseState)
+
+    internal fun relayoutWithPreferred()
+    {
+        val size = this.preferredSize()
+        this.layout.layout(size.width, size.height)
+    }
 }

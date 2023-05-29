@@ -1,6 +1,7 @@
 package khelp.engine3d.gui.component
 
 import khelp.engine3d.gui.GUIMargin
+import khelp.thread.parallel
 import khelp.ui.events.MouseState
 import khelp.ui.style.COMPONENT_HIGHEST_LEVEL
 import khelp.ui.style.ComponentHighLevel
@@ -15,6 +16,7 @@ import java.awt.Color
 import java.awt.Dimension
 import java.awt.Graphics2D
 import java.awt.geom.Area
+import java.util.concurrent.atomic.AtomicBoolean
 
 abstract class GUIComponent
 {
@@ -22,6 +24,8 @@ abstract class GUIComponent
     internal var y = 0
     internal var width = 16
     internal var height = 16
+    internal var downAction : () -> Unit = {}
+    private var downToReport = AtomicBoolean(true)
     var margin : GUIMargin = GUIMargin()
     var visible : Boolean = true
     var borderColor : Color = TRANSPARENT
@@ -60,10 +64,29 @@ abstract class GUIComponent
     fun contains(x : Int, y : Int) : Boolean =
         x >= this.x && y >= this.y && x < this.x + this.width && y < this.y + this.height
 
-    internal open fun mouseState(mouseState : MouseState) : Boolean = false
+    internal open fun mouseState(mouseState : MouseState) : Boolean
+    {
+        if (mouseState.leftButtonDown && this.downToReport.compareAndSet(true, false))
+        {
+            parallel(task = this.downAction)
+            return true
+        }
+        else if (! mouseState.leftButtonDown)
+        {
+            this.downToReport.set(true)
+        }
+
+        return false
+    }
 
     fun draw(graphics2D : Graphics2D)
     {
+        if (this.background == StyleBackgroundTransparent)
+        {
+            this.drawIntern(graphics2D, this.margin)
+            return
+        }
+
         val highLevel = this.componentHighLevel.level
         val x = COMPONENT_HIGHEST_LEVEL - highLevel
         val y = COMPONENT_HIGHEST_LEVEL - highLevel
@@ -101,6 +124,11 @@ abstract class GUIComponent
 
     fun preferredSize() : Dimension
     {
+        if (this.background == StyleBackgroundTransparent)
+        {
+            return this.preferredSize(this.margin)
+        }
+
         val highLevel = this.componentHighLevel.level
         val x = COMPONENT_HIGHEST_LEVEL - highLevel
         val y = COMPONENT_HIGHEST_LEVEL - highLevel
