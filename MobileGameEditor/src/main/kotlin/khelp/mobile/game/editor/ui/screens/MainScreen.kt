@@ -16,6 +16,7 @@ import khelp.resources.SAVE_AS
 import khelp.resources.YES
 import khelp.resources.defaultResources
 import khelp.resources.defaultTexts
+import khelp.resources.standardText
 import khelp.thread.TaskContext
 import khelp.thread.observable.Observer
 import khelp.ui.GenericAction
@@ -113,8 +114,8 @@ class MainScreen : Screen
             }
 
         val noIconAction =
-            GenericAction(defaultTexts, SAVE, TaskContext.INDEPENDENT) {
-                mark("SAVE")
+            GenericAction(defaultTexts, "No icon !".standardText, TaskContext.INDEPENDENT) {
+                mark("No icon !")
             }
 
 

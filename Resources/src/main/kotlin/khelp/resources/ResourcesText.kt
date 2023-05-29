@@ -3,6 +3,8 @@ package khelp.resources
 import khelp.io.readLines
 import khelp.thread.TaskContext
 import khelp.thread.observable.ObservableData
+import khelp.utilities.extensions.regularExpression
+import khelp.utilities.regex.ANY
 import java.util.Locale
 
 class ResourcesText internal constructor(private var basePath : String, private val resources : Resources)
@@ -12,6 +14,14 @@ class ResourcesText internal constructor(private var basePath : String, private 
         private const val TEXT_SEPARATOR = "-<=-=>-"
         private const val START_COMMENT = "#-<*"
         private const val END_COMMENT = "*>-#"
+        private const val STANDARD_TEXT_HEADER = "<Text>"
+        private const val STANDARD_TEXT_FOOTER = "</Text>"
+        private val TEXT_GROUP = ANY.zeroOrMore().group()
+        private val TEXT_REGEX =
+            ResourcesText.STANDARD_TEXT_HEADER.regularExpression + ResourcesText.TEXT_GROUP + ResourcesText.STANDARD_TEXT_FOOTER.regularExpression
+
+        fun standardTextKey(text : String) : String =
+            "${ResourcesText.STANDARD_TEXT_HEADER}$text${ResourcesText.STANDARD_TEXT_FOOTER}"
     }
 
     private val observableData = ObservableData(this)
@@ -24,10 +34,19 @@ class ResourcesText internal constructor(private var basePath : String, private 
         Resources.languageObservableData.observable.observedBy(TaskContext.IO, this::loadTexts)
     }
 
-    operator fun get(key : String) : String =
-        synchronized(this.texts) {
+    operator fun get(key : String) : String
+    {
+        val matcher = ResourcesText.TEXT_REGEX.matcher(key)
+
+        if (matcher.matches())
+        {
+            return matcher.group(ResourcesText.TEXT_GROUP)
+        }
+
+        return synchronized(this.texts) {
             this.texts[key] ?: if (this != defaultTexts) defaultTexts[key] else "/!\\ No key defined for $key /!\\"
         }
+    }
 
     private fun loadTexts(locale : Locale)
     {
@@ -100,7 +119,6 @@ class ResourcesText internal constructor(private var basePath : String, private 
                                       if (notFirstLine)
                                       {
                                           text.append('\n')
-                                          notFirstLine = true
                                       }
 
                                       text.append(line)
