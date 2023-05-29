@@ -2,15 +2,22 @@ package khelp.mobile.game.editor.ui.screens
 
 import khelp.engine3d.event.ActionCode
 import khelp.engine3d.gui.component.GUIComponentEmpty
+import khelp.engine3d.gui.component.GUIComponentTextImage
 import khelp.engine3d.gui.dsl.buttonText
 import khelp.engine3d.gui.dsl.constraintLayout
 import khelp.engine3d.render.Window3D
+import khelp.resources.SAVE_AS
+import khelp.resources.defaultResources
 import khelp.thread.TaskContext
 import khelp.thread.observable.Observer
 import khelp.ui.events.MouseState
 import khelp.ui.extensions.color
 import khelp.ui.extensions.semiVisible
+import khelp.ui.game.GameImage
+import khelp.ui.style.ImageTextRelativePosition
 import khelp.ui.style.background.StyleBackgroundColor
+import khelp.ui.style.shape.StyleShapeRoundRectangle
+import khelp.ui.utilities.colors.Blue
 import khelp.ui.utilities.colors.Red
 import khelp.utilities.log.debug
 
@@ -24,6 +31,14 @@ class MainScreen : Screen
         component
     }
     private val removeMeButton = buttonText(keyText = "ok")
+    private val label : GUIComponentTextImage by lazy {
+        val component = GUIComponentTextImage()
+        component.keyText = SAVE_AS
+        component.image = GameImage.load("error.png", defaultResources)
+        component.background = StyleBackgroundColor(Blue.BLUE_0500.color.semiVisible)
+        component.shape = StyleShapeRoundRectangle
+        component
+    }
 
     override fun attach(window3D : Window3D)
     {
@@ -31,6 +46,12 @@ class MainScreen : Screen
             window3D.actionManager.actionObservable.observedBy(TaskContext.INDEPENDENT, this::actionCodes)
         this.observerMouseState =
             window3D.mouseManager.mouseStateObservable.observedBy(TaskContext.INDEPENDENT, this::mouseState)
+
+        removeMeButton.click = {
+            val values = ImageTextRelativePosition.values()
+            this.label.imageTextRelativePosition =
+                values[(this.label.imageTextRelativePosition.ordinal + 1) % values.size]
+        }
 
         val scene = window3D.scene
         scene.root.removeAllChildren()
@@ -57,13 +78,23 @@ class MainScreen : Screen
                 this.rightAtParent
             }
 
+            this@MainScreen.label with {
+                this.horizontalWrapped
+                this.verticalWrapped
+
+                this.topAtParent
+                this bottomAtTopOf this@MainScreen.removeMeButton
+                this.leftAtParent
+                this.rightFree
+            }
+
             this@MainScreen.empty with {
                 this.horizontalExpanded
                 this.verticalExpanded
 
                 this.topAtParent
                 this bottomAtTopOf this@MainScreen.removeMeButton
-                this.leftAtParent
+                this leftAtRightOf this@MainScreen.label
                 this.rightAtParent
             }
         }
