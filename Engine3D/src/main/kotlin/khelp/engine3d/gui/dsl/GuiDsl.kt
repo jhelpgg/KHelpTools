@@ -15,6 +15,8 @@ import khelp.engine3d.gui.layout.constraint.GUIConstraintConstraint
 import khelp.engine3d.gui.layout.constraint.GUIConstraintLayout
 import khelp.engine3d.gui.layout.proprtion.GUIProportionConstraint
 import khelp.engine3d.gui.layout.proprtion.GUIProportionLayout
+import khelp.engine3d.gui.layout.vertical.GUIVerticalConstraint
+import khelp.engine3d.gui.layout.vertical.GUIVerticalLayout
 import khelp.resources.ResourcesText
 import khelp.resources.defaultTexts
 import khelp.thread.TaskContext
@@ -59,6 +61,14 @@ fun GUI.constraintLayout(content : GUIConstraintFiller.() -> Unit)
     this.layout = layout
 }
 
+fun GUI.verticalLayout(content : GUIVerticalFiller.() -> Unit)
+{
+    val layout = GUIVerticalLayout()
+    val filter = GUIVerticalFiller(layout)
+    content(filter)
+    this.layout = layout
+}
+
 fun <C : GUIConstraints, L : GUILayout<C>> GUI.dialog(layout : L,
                                                       content : GuiLayoutFiller<C, L>.() -> Unit) : GUIDialog<C, L>
 {
@@ -81,6 +91,14 @@ fun GUI.dialogConstraint(
     val layout = GUIConstraintLayout()
     val filler = GUIConstraintFiller(layout)
     content(filler)
+    return this.createDialog(layout)
+}
+
+fun GUI.dialogVertical(content : GUIVerticalFiller.() -> Unit) : GUIDialog<GUIVerticalConstraint, GUIVerticalLayout>
+{
+    val layout = GUIVerticalLayout()
+    val filter = GUIVerticalFiller(layout)
+    content(filter)
     return this.createDialog(layout)
 }
 
@@ -161,6 +179,14 @@ fun panelConstraint(content : GUIConstraintFiller.() -> Unit) :
     val filler = GUIConstraintFiller(layout)
     content(filler)
     return GUIComponentPanel<GUIConstraintConstraint, GUIConstraintLayout>(layout)
+}
+
+fun panelVertical(content : GUIVerticalFiller.() -> Unit) : GUIComponentPanel<GUIVerticalConstraint, GUIVerticalLayout>
+{
+    val layout = GUIVerticalLayout()
+    val filter = GUIVerticalFiller(layout)
+    content(filter)
+    return GUIComponentPanel<GUIVerticalConstraint, GUIVerticalLayout>(layout)
 }
 
 fun buttonText(keyText : String,
