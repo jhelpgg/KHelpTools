@@ -8,6 +8,7 @@ import khelp.engine3d.gui.dsl.buttonText
 import khelp.engine3d.gui.dsl.constraintLayout
 import khelp.engine3d.gui.dsl.panelVertical
 import khelp.engine3d.render.Window3D
+import khelp.mobile.game.editor.EDITOR_TEXTS
 import khelp.resources.LOAD
 import khelp.resources.NO
 import khelp.resources.OTHER
@@ -20,6 +21,10 @@ import khelp.resources.standardText
 import khelp.thread.TaskContext
 import khelp.thread.observable.Observer
 import khelp.ui.GenericAction
+import khelp.ui.components.JHelpFrame
+import khelp.ui.components.JLabel
+import khelp.ui.dsl.borderLayout
+import khelp.ui.dsl.frame
 import khelp.ui.events.MouseState
 import khelp.ui.extensions.color
 import khelp.ui.extensions.nearInvisible
@@ -71,6 +76,19 @@ class MainScreen : Screen
         component
     }
 
+    private val frame : JHelpFrame by lazy {
+        frame {
+            this.borderLayout { this.center(JLabel("Test".standardText, EDITOR_TEXTS)) }
+
+            this.canCloseNow = {
+                this.isVisible = false
+                false
+            }
+
+            this.isAlwaysOnTop = true
+        }
+    }
+
     override fun attach(window3D : Window3D)
     {
         this.observerActionsCodes =
@@ -116,6 +134,7 @@ class MainScreen : Screen
         val noIconAction =
             GenericAction(defaultTexts, "No icon !".standardText, TaskContext.INDEPENDENT) {
                 mark("No icon !")
+                this.frame.isVisible = true
             }
 
 

@@ -21,3 +21,5 @@ const val LOAD = "load"
 const val OTHER = "other"
 
 const val OPEN = "open"
+
+const val OK = "ok"
