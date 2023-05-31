@@ -38,5 +38,7 @@ interface NavigatorModel
 
     fun editMaterial()
 
+    fun editTexture()
+
     fun back() : Boolean
 }

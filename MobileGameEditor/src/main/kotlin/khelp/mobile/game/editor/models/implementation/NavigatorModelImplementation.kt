@@ -85,6 +85,11 @@ internal class NavigatorModelImplementation : NavigatorModel
         //  TODO("Not yet implemented")
     }
 
+    override fun editTexture()
+    {
+        //TODO("Not yet implemented")
+    }
+
     /**
      * @return `true` when have to exit the application
      */

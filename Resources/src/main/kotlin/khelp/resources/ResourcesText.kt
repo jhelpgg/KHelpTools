@@ -7,7 +7,7 @@ import khelp.utilities.extensions.regularExpression
 import khelp.utilities.regex.ANY
 import java.util.Locale
 
-class ResourcesText internal constructor(private var basePath : String, private val resources : Resources)
+class ResourcesText internal constructor(private var basePath : String, val resources : Resources)
 {
     companion object
     {
@@ -16,7 +16,8 @@ class ResourcesText internal constructor(private var basePath : String, private 
         private const val END_COMMENT = "*>-#"
         private const val STANDARD_TEXT_HEADER = "<Text>"
         private const val STANDARD_TEXT_FOOTER = "</Text>"
-        private val TEXT_GROUP = ANY.zeroOrMore().group()
+        private val TEXT_GROUP = ANY.zeroOrMore()
+            .group()
         private val TEXT_REGEX =
             ResourcesText.STANDARD_TEXT_HEADER.regularExpression + ResourcesText.TEXT_GROUP + ResourcesText.STANDARD_TEXT_FOOTER.regularExpression
 
