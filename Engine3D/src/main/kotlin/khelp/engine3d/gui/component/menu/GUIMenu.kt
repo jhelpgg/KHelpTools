@@ -5,17 +5,13 @@ import khelp.engine3d.gui.component.GUIComponentText
 import khelp.engine3d.gui.component.GUIComponentTextImage
 import khelp.engine3d.gui.dsl.panelVertical
 import khelp.resources.ResourcesText
-import khelp.thread.Mutex
 import khelp.ui.GenericAction
 import khelp.ui.TextAlignment
 import khelp.ui.VerticalAlignment
-import khelp.ui.extensions.color
-import khelp.ui.extensions.semiVisible
 import khelp.ui.font.JHelpFont
 import khelp.ui.style.ImageTextRelativePosition
 import khelp.ui.style.background.StyleBackgroundColor
 import khelp.ui.style.shape.StyleShapeRectangle
-import khelp.ui.utilities.colors.Grey
 import java.awt.Color
 import java.awt.event.ActionEvent
 
@@ -26,7 +22,6 @@ internal class GUIMenu(val keyText : String, val resourcesText : ResourcesText, 
         private val ACTION_EVENT = ActionEvent(Unit, 0, "")
     }
 
-    private val mutex = Mutex()
     private val actions = ArrayList<GenericAction>()
     private var panel : GUIComponentPanel<*, *>? = null
 
