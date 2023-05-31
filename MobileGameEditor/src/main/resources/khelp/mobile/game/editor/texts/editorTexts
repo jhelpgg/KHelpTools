@@ -1,0 +1,91 @@
+#-<*
+    ****************
+    *** Menu bar ***
+    ****************
+*>-#
+
+#-<*
+    File
+*>-#
+
+file
+File
+-<=-=>-
+
+newProject
+New project
+-<=-=>-
+
+openProject
+Open project
+-<=-=>-
+
+save
+Save
+-<=-=>-
+
+saveAs
+Save as ...
+-<=-=>-
+
+exit
+Exit
+-<=-=>-
+
+#-<*
+    Scene
+*>-#
+
+scene
+Scene
+-<=-=>-
+
+addNode
+Add a node
+-<=-=>-
+
+addBox
+Add a box
+-<=-=>-
+
+addSphere
+Add a Sphere
+-<=-=>-
+
+addRevolution
+Add a revolution
+-<=-=>-
+
+addObject
+Add an object
+-<=-=>-
+
+#-<*
+    Resources
+*>-#
+
+resources
+Resources
+-<=-=>-
+
+projectTextures
+Project textures
+-<=-=>-
+
+importTexture
+Import texture
+-<=-=>-
+
+#-<*
+    Editors
+*>-#
+
+editors
+Editors
+-<=-=>-
+
+editMaterial
+Edit material
+-<=-=>-
+
+

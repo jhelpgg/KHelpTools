@@ -16,5 +16,27 @@ interface NavigatorModel
 
     fun openProject()
 
+    fun save()
+
+    fun saveAs()
+
+    fun exit()
+
+    fun addNode()
+
+    fun addBox()
+
+    fun addSphere()
+
+    fun addRevolution()
+
+    fun addObject()
+
+    fun projectTextures()
+
+    fun importTexture()
+
+    fun editMaterial()
+
     fun back() : Boolean
 }

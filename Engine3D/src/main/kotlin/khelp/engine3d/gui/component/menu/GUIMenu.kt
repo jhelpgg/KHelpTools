@@ -19,7 +19,7 @@ import khelp.ui.utilities.colors.Grey
 import java.awt.Color
 import java.awt.event.ActionEvent
 
-internal class GUIMenu(val keyText : String, val resourcesText : ResourcesText)
+internal class GUIMenu(val keyText : String, val resourcesText : ResourcesText, val backgroundColor : Color)
 {
     companion object
     {
@@ -82,7 +82,7 @@ internal class GUIMenu(val keyText : String, val resourcesText : ResourcesText)
             }
         }
 
-        panel.background = StyleBackgroundColor(Grey.GREY_0500.color.semiVisible)
+        panel.background = StyleBackgroundColor(this.backgroundColor)
         panel.borderColor = Color.BLACK
         panel.shape = StyleShapeRectangle
         panel.relayoutWithPreferred()

@@ -44,50 +44,6 @@ class MainScreen : Screen
 {
     private var observerActionsCodes : Observer<List<ActionCode>>? = null
     private var observerMouseState : Observer<MouseState>? = null
-    private val empty : GUIComponentPanel<*, *> by lazy {
-        panelVertical {
-            var color = Red.RED_0500.darkest
-            var size = 16
-
-            do
-            {
-                val component = GUIComponentEmpty(size)
-                component.background = StyleBackgroundColor(color.color.semiVisible)
-                size += 8
-                color = color.lighter
-
-                when (random(0, 2))
-                {
-                    0 -> component.left
-                    1 -> component.center
-                    2 -> component.right
-                }
-            }
-            while (color != color.lighter)
-        }
-    }
-    private val removeMeButton = buttonText(keyText = "ok")
-    private val label : GUIComponentTextImage by lazy {
-        val component = GUIComponentTextImage()
-        component.keyText = SAVE_AS
-        component.image = GameImage.load("error.png", defaultResources)
-        component.background = StyleBackgroundColor(Blue.BLUE_0500.color.semiVisible)
-        component.shape = StyleShapeRoundRectangle
-        component
-    }
-
-    private val frame : JHelpFrame by lazy {
-        frame {
-            this.borderLayout { this.center(JLabel("Test".standardText, EDITOR_TEXTS)) }
-
-            this.canCloseNow = {
-                this.isVisible = false
-                false
-            }
-
-            this.isAlwaysOnTop = true
-        }
-    }
 
     override fun attach(window3D : Window3D)
     {
@@ -96,95 +52,7 @@ class MainScreen : Screen
         this.observerMouseState =
             window3D.mouseManager.mouseStateObservable.observedBy(TaskContext.INDEPENDENT, this::mouseState)
 
-        this.removeMeButton.click = {
-            val values = ImageTextRelativePosition.values()
-            this.label.imageTextRelativePosition =
-                values[(this.label.imageTextRelativePosition.ordinal + 1) % values.size]
-        }
-
-        this.empty.background = StyleBackgroundColor(Green.GREEN_0500.color.nearInvisible)
-
-        val scene = window3D.scene
-        scene.root.removeAllChildren()
-        scene.root {
-            this.z = - 2f
-            this.box("Box") {
-                this.angleX = 12.5f
-                this.angleY = 12.5f
-            }
-        }
-
-        val noAction =
-            GenericAction(defaultTexts, NO, GameImage.load("warning.png", defaultResources), TaskContext.INDEPENDENT) {
-                mark("NO")
-            }
-
-        val loadAction =
-            GenericAction(defaultTexts, LOAD, GameImage.load("question.png", defaultResources),
-                          TaskContext.INDEPENDENT) {
-                mark("LOAD")
-            }
-
-        val otherAction =
-            GenericAction(defaultTexts, OTHER, GameImage.load("information.png", defaultResources),
-                          TaskContext.INDEPENDENT) {
-                mark("OTHER")
-            }
-
-        val noIconAction =
-            GenericAction(defaultTexts, "No icon !".standardText, TaskContext.INDEPENDENT) {
-                mark("No icon !")
-                this.frame.isVisible = true
-            }
-
-
-        window3D.gui.menuBar {
-            YES {
-                + noAction
-                + loadAction
-            }
-
-            SAVE {
-                + otherAction
-                + noIconAction
-            }
-        }
-
-        window3D.gui.constraintLayout {
-            this@MainScreen.removeMeButton with {
-                this.horizontalExpanded
-                this.verticalWrapped
-
-                this.marginLeft = 32
-                this.marginRight = 32
-                this.marginBottom = 16
-
-                this.topFree
-                this.bottomAtParent
-                this.leftAtParent
-                this.rightAtParent
-            }
-
-            this@MainScreen.label with {
-                this.horizontalWrapped
-                this.verticalWrapped
-
-                this.topAtParent
-                this bottomAtTopOf this@MainScreen.removeMeButton
-                this.leftAtParent
-                this.rightFree
-            }
-
-            this@MainScreen.empty with {
-                this.horizontalWrapped
-                this.verticalExpanded
-
-                this.topAtParent
-                this bottomAtTopOf this@MainScreen.removeMeButton
-                this leftAtRightOf this@MainScreen.label
-                this.rightAtParent
-            }
-        }
+        // TODO
     }
 
     override fun detach()

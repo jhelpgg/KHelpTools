@@ -9,8 +9,6 @@ import khelp.engine3d.gui.layout.horizontal.GUIHorizontalLayout
 import khelp.resources.ResourcesText
 import khelp.ui.TextAlignment
 import khelp.ui.VerticalAlignment
-import khelp.ui.extensions.color
-import khelp.ui.extensions.semiVisible
 import khelp.ui.font.JHelpFont
 import khelp.ui.style.background.StyleBackgroundColor
 import khelp.ui.style.shape.StyleShapeRectangle
@@ -20,14 +18,15 @@ import kotlin.math.min
 internal class GUIMenuBar(val resourcesText : ResourcesText,
                           val font : JHelpFont,
                           val textColor : Color,
-                          val textBorderColor : Color)
+                          val textBorderColor : Color,
+                          val backgroundColor : Color)
 {
     private val menus = ArrayList<GUIMenu>()
     private var previousPanel : GUIComponentPanel<*, *>? = null
 
     fun addMenu(keyText : String) : GUIMenu
     {
-        val menu = GUIMenu(keyText, this.resourcesText)
+        val menu = GUIMenu(keyText, this.resourcesText, this.backgroundColor)
         this.menus.add(menu)
         return menu
     }
@@ -60,7 +59,7 @@ internal class GUIMenuBar(val resourcesText : ResourcesText,
         }
 
         val header = GUIComponentPanel<GUIHorizontalConstraint, GUIHorizontalLayout>(headerLayout)
-        header.background = StyleBackgroundColor(khelp.ui.utilities.colors.Grey.GREY_0500.color.semiVisible)
+        header.background = StyleBackgroundColor(this.backgroundColor)
         header.borderColor = Color.BLACK
         header.shape = StyleShapeRectangle
         val headerSize = header.preferredSize()

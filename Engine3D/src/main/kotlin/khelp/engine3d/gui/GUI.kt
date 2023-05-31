@@ -15,11 +15,15 @@ import khelp.resources.ResourcesText
 import khelp.resources.defaultTexts
 import khelp.thread.Mutex
 import khelp.ui.events.MouseState
+import khelp.ui.extensions.almostVisible
+import khelp.ui.extensions.color
 import khelp.ui.extensions.invert
+import khelp.ui.extensions.semiVisible
 import khelp.ui.font.JHelpFont
 import khelp.ui.game.GameImage
 import khelp.ui.utilities.DEFAULT_FONT
 import khelp.ui.utilities.TRANSPARENT
+import khelp.ui.utilities.colors.Green
 import java.awt.Color
 
 class GUI internal constructor(private val width : Int, private val height : Int)
@@ -64,9 +68,10 @@ class GUI internal constructor(private val width : Int, private val height : Int
                 textColor : Color = Color.WHITE,
                 textBackColor : Color = textColor.invert,
                 font : JHelpFont = DEFAULT_FONT,
+                backgroundColor : Color = Green.GREEN_0050.color.semiVisible,
                 creator : GUIMenuBarCreator.() -> Unit)
     {
-        val menuBar = GUIMenuBar(resourcesText, font, textColor, textBackColor)
+        val menuBar = GUIMenuBar(resourcesText, font, textColor, textBackColor, backgroundColor)
         val menuCreator = GUIMenuBarCreator(menuBar)
         creator(menuCreator)
         val (panel, height) = menuBar.panel(this.width)

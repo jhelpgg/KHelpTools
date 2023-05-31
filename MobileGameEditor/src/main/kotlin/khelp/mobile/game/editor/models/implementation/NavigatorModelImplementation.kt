@@ -30,6 +30,64 @@ internal class NavigatorModelImplementation : NavigatorModel
         // TODO("Not yet implemented")
     }
 
+    override fun save()
+    {
+        //TODO("Not yet implemented")
+    }
+
+    override fun saveAs()
+    {
+        //  TODO("Not yet implemented")
+    }
+
+    override fun exit()
+    {
+        // TODO("Not yet implemented")
+    }
+
+    override fun addNode()
+    {
+        //   TODO("Not yet implemented")
+    }
+
+    override fun addBox()
+    {
+        //   TODO("Not yet implemented")
+    }
+
+    override fun addSphere()
+    {
+        // TODO("Not yet implemented")
+    }
+
+    override fun addRevolution()
+    {
+        // TODO("Not yet implemented")
+    }
+
+    override fun addObject()
+    {
+        // TODO("Not yet implemented")
+    }
+
+    override fun projectTextures()
+    {
+        //  TODO("Not yet implemented")
+    }
+
+    override fun importTexture()
+    {
+        //  TODO("Not yet implemented")
+    }
+
+    override fun editMaterial()
+    {
+        //  TODO("Not yet implemented")
+    }
+
+    /**
+     * @return `true` when have to exit the application
+     */
     override fun back() : Boolean
     {
         //TODO("Not yet implemented")
