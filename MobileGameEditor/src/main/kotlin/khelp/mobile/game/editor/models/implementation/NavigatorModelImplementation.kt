@@ -1,5 +1,6 @@
 package khelp.mobile.game.editor.models.implementation
 
+import khelp.engine3d.render.Window3D
 import khelp.io.DirectorySource
 import khelp.mobile.game.editor.MAIN_DIRECTORY
 import khelp.mobile.game.editor.models.shared.NavigatorModel
@@ -15,6 +16,12 @@ internal class NavigatorModelImplementation : NavigatorModel
     override val screen : Observable<Screens> = this.screensObservableData.observable
     private var projectDirectory = MAIN_DIRECTORY
     private var projectResources = Resources(DirectorySource(MAIN_DIRECTORY))
+    private var window3D : Window3D? = null
+
+    override fun window3D(window3D : Window3D)
+    {
+        this.window3D = window3D
+    }
 
     override fun projectDirectory() : File = this.projectDirectory
 
@@ -42,7 +49,7 @@ internal class NavigatorModelImplementation : NavigatorModel
 
     override fun exit()
     {
-        // TODO("Not yet implemented")
+        this.window3D?.close()
     }
 
     override fun addNode()

@@ -17,6 +17,8 @@ object MobileGameEditor
     fun show()
     {
         window3DFull("Mobile game editor") {
+            this@MobileGameEditor.navigatorModel.window3D(this)
+
             this.gui.menuBar(resourcesText = EDITOR_TEXTS,
                              font = MENU_FONT) {
                 "file" {

@@ -1,5 +1,6 @@
 package khelp.mobile.game.editor.models.shared
 
+import khelp.engine3d.render.Window3D
 import khelp.resources.Resources
 import khelp.thread.observable.Observable
 import java.io.File
@@ -7,6 +8,8 @@ import java.io.File
 interface NavigatorModel
 {
     val screen : Observable<Screens>
+
+    fun window3D(window3D : Window3D)
 
     fun projectDirectory() : File
 
