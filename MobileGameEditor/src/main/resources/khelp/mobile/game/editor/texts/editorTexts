@@ -92,4 +92,13 @@ editTexture
 Edit Texture
 -<=-=>-
 
+#-<*
+    ****************
+    *** Messages ***
+    ****************
+*>-#
 
+exitConfirmation
+Do you really want to exit ?
+You will loose last not saved changes.
+-<=-=>-

@@ -3,6 +3,7 @@ package khelp.engine3d.gui
 import khelp.engine3d.gui.component.GUIComponentPanel
 import khelp.engine3d.gui.component.GUIDialog
 import khelp.engine3d.gui.component.dialogs.DialogColorChooser
+import khelp.engine3d.gui.component.dialogs.DialogMessage
 import khelp.engine3d.gui.component.menu.GUIMenuBar
 import khelp.engine3d.gui.dsl.GUIMenuBarCreator
 import khelp.engine3d.gui.layout.GUIConstraints
@@ -15,7 +16,6 @@ import khelp.resources.ResourcesText
 import khelp.resources.defaultTexts
 import khelp.thread.Mutex
 import khelp.ui.events.MouseState
-import khelp.ui.extensions.almostVisible
 import khelp.ui.extensions.color
 import khelp.ui.extensions.invert
 import khelp.ui.extensions.semiVisible
@@ -43,6 +43,8 @@ class GUI internal constructor(private val width : Int, private val height : Int
             field = value
             this.completeLayout()
         }
+
+    val dialogMessage = DialogMessage(this)
 
     init
     {

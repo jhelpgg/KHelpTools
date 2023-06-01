@@ -2,12 +2,16 @@ package khelp.mobile.game.editor.models.implementation
 
 import khelp.engine3d.render.Window3D
 import khelp.io.DirectorySource
+import khelp.mobile.game.editor.EDITOR_TEXTS
 import khelp.mobile.game.editor.MAIN_DIRECTORY
 import khelp.mobile.game.editor.models.shared.NavigatorModel
 import khelp.mobile.game.editor.models.shared.Screens
 import khelp.resources.Resources
 import khelp.thread.observable.Observable
 import khelp.thread.observable.ObservableData
+import khelp.ui.components.message.MessageAction
+import khelp.ui.components.message.MessageButtons
+import khelp.ui.components.message.MessageType
 import java.io.File
 
 internal class NavigatorModelImplementation : NavigatorModel
@@ -49,7 +53,10 @@ internal class NavigatorModelImplementation : NavigatorModel
 
     override fun exit()
     {
-        this.window3D?.close()
+        if (this.confirmExit())
+        {
+            this.window3D?.close()
+        }
     }
 
     override fun addNode()
@@ -103,6 +110,17 @@ internal class NavigatorModelImplementation : NavigatorModel
     override fun back() : Boolean
     {
         //TODO("Not yet implemented")
-        return true
+        return this.confirmExit()
+    }
+
+    private fun confirmExit() : Boolean
+    {
+        val window3D = this.window3D ?: return true
+
+        val future = window3D.gui.dialogMessage.show(MessageType.QUESTION, MessageButtons.YES_NO,
+                                                     "exitConfirmation", EDITOR_TEXTS)
+        future.waitCompletion()
+
+        return future.result() == MessageAction.YES
     }
 }
