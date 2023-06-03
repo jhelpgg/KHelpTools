@@ -3,8 +3,8 @@ package khelp.thread.future
 import khelp.thread.TaskContext
 import khelp.thread.extensions.unwrap
 import khelp.thread.parallel
-import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
+import java.util.concurrent.CancellationException
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.atomic.AtomicReference
 

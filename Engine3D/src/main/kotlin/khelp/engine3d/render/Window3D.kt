@@ -3,6 +3,7 @@ package khelp.engine3d.render
 import khelp.engine3d.event.ActionManager
 import khelp.engine3d.event.MouseManager3D
 import khelp.engine3d.gui.GUI
+import khelp.engine3d.gui.frames.FrameInputText
 import khelp.engine3d.sound3d.SoundManager
 import khelp.engine3d.utils.TEMPORARY_FLOAT_BUFFER
 import khelp.engine3d.utils.ThreadOpenGL
@@ -214,6 +215,7 @@ class Window3D private constructor()
         }
 
         //Closing
+        FrameInputText.close()
         GLFW.glfwSetWindowShouldClose(this.windowId, true)
         this.waitCloseLocker.unlock()
     }

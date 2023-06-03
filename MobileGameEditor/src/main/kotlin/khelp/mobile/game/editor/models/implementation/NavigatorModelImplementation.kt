@@ -1,5 +1,6 @@
 package khelp.mobile.game.editor.models.implementation
 
+import khelp.engine3d.gui.frames.FrameInputText
 import khelp.engine3d.render.Window3D
 import khelp.io.DirectorySource
 import khelp.mobile.game.editor.EDITOR_TEXTS
@@ -7,11 +8,13 @@ import khelp.mobile.game.editor.MAIN_DIRECTORY
 import khelp.mobile.game.editor.models.shared.NavigatorModel
 import khelp.mobile.game.editor.models.shared.Screens
 import khelp.resources.Resources
+import khelp.resources.standardText
 import khelp.thread.observable.Observable
 import khelp.thread.observable.ObservableData
 import khelp.ui.components.message.MessageAction
 import khelp.ui.components.message.MessageButtons
 import khelp.ui.components.message.MessageType
+import khelp.utilities.log.debug
 import java.io.File
 
 internal class NavigatorModelImplementation : NavigatorModel
@@ -61,6 +64,9 @@ internal class NavigatorModelImplementation : NavigatorModel
 
     override fun addNode()
     {
+        FrameInputText.show(titleKeyText = "Type some text".standardText)
+            .and { text -> debug(text) }
+            .onCancel { reason -> debug("Cancel", reason) }
         //   TODO("Not yet implemented")
     }
 
