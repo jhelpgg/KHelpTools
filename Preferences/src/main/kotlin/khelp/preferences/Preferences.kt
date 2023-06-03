@@ -1,5 +1,6 @@
 package khelp.preferences
 
+import khelp.io.extensions.createFile
 import khelp.io.extensions.readInt
 import khelp.io.extensions.writeInt
 import khelp.io.obtainExternalFile
@@ -93,7 +94,10 @@ class Preferences(preferencesPath : String = "pref/preferences.pref")
     private fun save()
     {
         treatOutputStream(
-            { FileOutputStream(this.preferencesFile) },
+            {
+                this.preferencesFile.createFile()
+                FileOutputStream(this.preferencesFile)
+            },
             { outputStream ->
                 outputStream.writeInt(this.preferences.size)
 

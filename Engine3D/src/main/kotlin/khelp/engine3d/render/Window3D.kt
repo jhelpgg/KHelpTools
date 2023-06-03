@@ -3,6 +3,7 @@ package khelp.engine3d.render
 import khelp.engine3d.event.ActionManager
 import khelp.engine3d.event.MouseManager3D
 import khelp.engine3d.gui.GUI
+import khelp.engine3d.gui.frames.FrameFileChooser
 import khelp.engine3d.gui.frames.FrameInputText
 import khelp.engine3d.sound3d.SoundManager
 import khelp.engine3d.utils.TEMPORARY_FLOAT_BUFFER
@@ -186,6 +187,23 @@ class Window3D private constructor()
     val nodePickedFlow : Flow<Node?> = this.nodePickedFlowData.flow
     lateinit var gui : GUI
         private set
+    var visible : Boolean = true
+        set(value)
+        {
+            if (field != value)
+            {
+                field = value
+
+                if (value)
+                {
+                    GLFW.glfwShowWindow(this.windowId)
+                }
+                else
+                {
+                    GLFW.glfwHideWindow(this.windowId)
+                }
+            }
+        }
 
     /**
      * Sound manager
@@ -216,6 +234,7 @@ class Window3D private constructor()
 
         //Closing
         FrameInputText.close()
+        FrameFileChooser.close()
         GLFW.glfwSetWindowShouldClose(this.windowId, true)
         this.waitCloseLocker.unlock()
     }

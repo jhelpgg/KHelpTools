@@ -2,9 +2,13 @@ package khelp.ui.components.style
 
 import khelp.thread.TaskContext
 import khelp.thread.delay
+import khelp.ui.extensions.color
 import khelp.ui.style.COMPONENT_HIGHEST_LEVEL
+import khelp.ui.style.ComponentHighLevel
 import khelp.ui.style.Style
+import khelp.ui.style.background.StyleBackgroundColor
 import khelp.ui.utilities.SHADOW
+import khelp.ui.utilities.colors.Grey
 import java.awt.Dimension
 import java.awt.Graphics
 import java.awt.Graphics2D
@@ -14,6 +18,11 @@ import javax.swing.JComponent
 
 abstract class StyledComponent<S : Style>(val style : S) : JComponent()
 {
+    companion object
+    {
+        private val DISABLED_BACKGROUND = StyleBackgroundColor(Grey.GREY_0500.color)
+    }
+
     init
     {
         delay(128)
@@ -27,7 +36,7 @@ abstract class StyledComponent<S : Style>(val style : S) : JComponent()
     final override fun paintComponent(graphics : Graphics)
     {
         val graphics2D = graphics as Graphics2D
-        val highLevel = this.style.componentHighLevel.level
+        val highLevel = if (this.isEnabled) this.style.componentHighLevel.level else ComponentHighLevel.FLY.level
         val x = COMPONENT_HIGHEST_LEVEL - highLevel
         val y = COMPONENT_HIGHEST_LEVEL - highLevel
         val width = this.width - highLevel - x
@@ -44,7 +53,15 @@ abstract class StyledComponent<S : Style>(val style : S) : JComponent()
             graphics.fill(area)
         }
 
-        this.style.background.applyOnShape(graphics2D, shape)
+        if (this.isEnabled)
+        {
+            this.style.background.applyOnShape(graphics2D, shape)
+        }
+        else
+        {
+            StyledComponent.DISABLED_BACKGROUND.applyOnShape(graphics2D, shape)
+        }
+
         val margin = this.style.shape.margin(x, y, width, height)
         val clip = graphics2D.clip
         val xInner = x + margin.left

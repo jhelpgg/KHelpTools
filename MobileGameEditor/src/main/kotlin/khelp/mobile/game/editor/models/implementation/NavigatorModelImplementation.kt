@@ -1,5 +1,6 @@
 package khelp.mobile.game.editor.models.implementation
 
+import khelp.engine3d.gui.frames.FrameFileChooser
 import khelp.engine3d.gui.frames.FrameInputText
 import khelp.engine3d.render.Window3D
 import khelp.io.DirectorySource
@@ -41,6 +42,9 @@ internal class NavigatorModelImplementation : NavigatorModel
 
     override fun openProject()
     {
+        FrameFileChooser.show()
+            .and { file -> debug(file.absolutePath) }
+            .onCancel { reason -> debug("Cancel", reason) }
         // TODO("Not yet implemented")
     }
 

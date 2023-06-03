@@ -1,8 +1,5 @@
 package khelp.utilities.regex
 
-import java.util.Stack
-import java.util.concurrent.atomic.AtomicBoolean
-import java.util.regex.Pattern
 import khelp.utilities.extensions.regularExpression
 import khelp.utilities.extensions.toUnicode
 import khelp.utilities.regex.dsl.MatcherReplacement
@@ -12,6 +9,10 @@ import khelp.utilities.text.CharactersInterval
 import khelp.utilities.text.EmptyCharactersInterval
 import khelp.utilities.text.SimpleCharactersInterval
 import khelp.utilities.text.UnionCharactersInterval
+import khelp.utilities.thread.Mutex
+import java.util.Stack
+import java.util.concurrent.atomic.AtomicBoolean
+import java.util.regex.Pattern
 
 /**
  * Regular expression
@@ -20,9 +21,9 @@ import khelp.utilities.text.UnionCharactersInterval
  *
  * Regular expression is resolve after a call to [matcher], [matches], [replacement] or [split]
  */
-class RegularExpression internal constructor(private val format: String,
-                                             private val regularExpressionParameter: RegularExpressionElement? = null,
-                                             private val regularExpressionSecondParameter: RegularExpressionElement? = null)
+class RegularExpression internal constructor(private val format : String,
+                                             private val regularExpressionParameter : RegularExpressionElement? = null,
+                                             private val regularExpressionSecondParameter : RegularExpressionElement? = null)
     : RegularExpressionElement()
 {
     companion object
@@ -30,12 +31,13 @@ class RegularExpression internal constructor(private val format: String,
         /**
          * Create regular expression for any character inside an interval of characters
          */
-        fun interval(charactersInterval: CharactersInterval): RegularExpression
+        fun interval(charactersInterval : CharactersInterval) : RegularExpression
         {
             val format =
                 when (charactersInterval)
                 {
-                    is EmptyCharactersInterval  -> throw IllegalArgumentException("Empty interval can't be convert to regular expression")
+                    is EmptyCharactersInterval  -> throw IllegalArgumentException(
+                        "Empty interval can't be convert to regular expression")
                     is SimpleCharactersInterval -> charactersInterval.format("[", "]", "[", "]", "-", true)
                     is UnionCharactersInterval  ->
                     {
@@ -64,7 +66,7 @@ class RegularExpression internal constructor(private val format: String,
         /**
          * Create regular expression for any character except those inside an interval of characters
          */
-        fun allCharactersExclude(charactersInterval: CharactersInterval): RegularExpression
+        fun allCharactersExclude(charactersInterval : CharactersInterval) : RegularExpression
         {
             val format =
                 when (charactersInterval)
@@ -98,12 +100,13 @@ class RegularExpression internal constructor(private val format: String,
         /**
          * Create regular expression that match exactly a text
          */
-        fun text(text: String): RegularExpression =
+        fun text(text : String) : RegularExpression =
             RegularExpression(Pattern.quote(text))
     }
 
     internal val patternComputed = AtomicBoolean(false)
-    private lateinit var pattern: Pattern
+    private lateinit var pattern : Pattern
+    private val mutex = Mutex()
 
     /**
      * Indicates if given text fully match the regular expression.
@@ -111,7 +114,7 @@ class RegularExpression internal constructor(private val format: String,
      * The regular expression is resolved after call this method.
      * This regular expression could not be combined with an other one after that.
      */
-    fun matches(text: String): Boolean =
+    fun matches(text : String) : Boolean =
         this.obtainMatcher(text)
             .matches()
 
@@ -122,7 +125,7 @@ class RegularExpression internal constructor(private val format: String,
      * This regular expression could not be combined with an other one after that.
      */
     @ReplacementDSL
-    fun replacement(replacementCreator: MatcherReplacement.() -> Unit): Replacement
+    fun replacement(replacementCreator : MatcherReplacement.() -> Unit) : Replacement
     {
         // Pattern must be evaluate before create match, to be sure group IDs have been computed
         val pattern = this.getPattern()
@@ -137,7 +140,7 @@ class RegularExpression internal constructor(private val format: String,
      * The regular expression is resolved after call this method.
      * This regular expression could not be combined with an other one after that.
      */
-    fun matcher(text: String): ResultMatcher =
+    fun matcher(text : String) : ResultMatcher =
         ResultMatcher(this, this.obtainMatcher(text), text)
 
     /**
@@ -146,20 +149,22 @@ class RegularExpression internal constructor(private val format: String,
      * The regular expression is resolved after call this method.
      * This regular expression could not be combined with an other one after that.
      */
-    fun split(text: String, limit: Int = Int.MAX_VALUE): Array<String> =
+    fun split(text : String, limit : Int = Int.MAX_VALUE) : Array<String> =
         this.getPattern()
             .split(text, limit)
 
     /**
      * Combine this regular expression with an other one to make a regular expression match this follow by given one
      */
-    operator fun plus(regularExpression: RegularExpression): RegularExpression =
+    operator fun plus(regularExpression : RegularExpression) : RegularExpression =
         when
         {
             this.patternComputed.get()              ->
-                throw  IllegalStateException("This regular expression already have computed its pattern, so can't be combined")
+                throw  IllegalStateException(
+                    "This regular expression already have computed its pattern, so can't be combined")
             regularExpression.patternComputed.get() ->
-                throw  IllegalArgumentException("The given regular expression already have computed its pattern, so can't be combined")
+                throw  IllegalArgumentException(
+                    "The given regular expression already have computed its pattern, so can't be combined")
             else                                    ->
                 RegularExpression("%s%s", this, regularExpression)
         }
@@ -167,49 +172,52 @@ class RegularExpression internal constructor(private val format: String,
     /**
      * Combine this regular expression with a group to make a regular expression match this follow by given one
      */
-    operator fun plus(regularExpressionGroup: RegularExpressionGroup): RegularExpression
+    operator fun plus(regularExpressionGroup : RegularExpressionGroup) : RegularExpression
     {
-        stateCheck(!this.patternComputed.get()) { "This regular expression already have computed its pattern, so can't be combined" }
+        stateCheck(
+            ! this.patternComputed.get()) { "This regular expression already have computed its pattern, so can't be combined" }
 
         val parent = RegularExpression("%s%s", this, regularExpressionGroup)
         regularExpressionGroup.setParent(parent)
         return parent
     }
 
-    operator fun plus(char: Char): RegularExpression =
+    operator fun plus(char : Char) : RegularExpression =
         this + char.regularExpression
 
-    operator fun plus(charArray: CharArray): RegularExpression =
+    operator fun plus(charArray : CharArray) : RegularExpression =
         this + charArray.regularExpression
 
-    operator fun plus(text: String): RegularExpression =
+    operator fun plus(text : String) : RegularExpression =
         this + text.regularExpression
 
-    operator fun plus(charactersInterval: CharactersInterval): RegularExpression =
+    operator fun plus(charactersInterval : CharactersInterval) : RegularExpression =
         this + charactersInterval.regularExpression
 
-    infix fun OR(charactersInterval: CharactersInterval): RegularExpression =
+    infix fun OR(charactersInterval : CharactersInterval) : RegularExpression =
         this OR charactersInterval.regularExpression
 
-    infix fun OR(char: Char): RegularExpression =
+    infix fun OR(char : Char) : RegularExpression =
         this OR char.regularExpression
 
-    infix fun OR(charArray: CharArray): RegularExpression =
+    infix fun OR(charArray : CharArray) : RegularExpression =
         this OR charArray.regularExpression
 
-    infix fun OR(text: String): RegularExpression =
+    infix fun OR(text : String) : RegularExpression =
         this OR text.regularExpression
 
     /**
      * Combine this regular expression with an other one to make a regular expression match this or the given one
      */
-    infix fun OR(regularExpression: RegularExpression): RegularExpression =
+    infix fun OR(regularExpression : RegularExpression) : RegularExpression =
         when
         {
             this.patternComputed.get()              ->
-                throw  IllegalStateException("This regular expression already have computed its pattern, so can't be combined")
+                throw  IllegalStateException(
+                    "This regular expression already have computed its pattern, so can't be combined")
             regularExpression.patternComputed.get() ->
-                throw  IllegalArgumentException("The given regular expression already have computed its pattern, so can't be combined")
+                throw  IllegalArgumentException(
+                    "The given regular expression already have computed its pattern, so can't be combined")
             else                                    ->
                 RegularExpression("(?:(?:%s)|(?:%s))", this, regularExpression)
         }
@@ -217,11 +225,12 @@ class RegularExpression internal constructor(private val format: String,
     /**
      * Combine this regular expression with a group to make a regular expression match this follow by given one
      */
-    infix fun OR(regularExpression: RegularExpressionGroup): RegularExpression =
+    infix fun OR(regularExpression : RegularExpressionGroup) : RegularExpression =
         when
         {
             this.patternComputed.get() ->
-                throw  IllegalStateException("This regular expression already have computed its pattern, so can't be combined")
+                throw  IllegalStateException(
+                    "This regular expression already have computed its pattern, so can't be combined")
             else                       ->
             {
                 val parent = RegularExpression("(?:(?:%s)|%s)", this, regularExpression)
@@ -233,10 +242,11 @@ class RegularExpression internal constructor(private val format: String,
     /**
      * Create a regular expression that can repeat this one zero, one or several times
      */
-    fun zeroOrMore(): RegularExpression =
+    fun zeroOrMore() : RegularExpression =
         if (this.patternComputed.get())
         {
-            throw  IllegalStateException("This regular expression already have computed its pattern, so can't be combined")
+            throw  IllegalStateException(
+                "This regular expression already have computed its pattern, so can't be combined")
         }
         else
         {
@@ -246,10 +256,11 @@ class RegularExpression internal constructor(private val format: String,
     /**
      * Create a regular expression that can repeat this one at least one time
      */
-    fun oneOrMore(): RegularExpression =
+    fun oneOrMore() : RegularExpression =
         if (this.patternComputed.get())
         {
-            throw  IllegalStateException("This regular expression already have computed its pattern, so can't be combined")
+            throw  IllegalStateException(
+                "This regular expression already have computed its pattern, so can't be combined")
         }
         else
         {
@@ -259,10 +270,11 @@ class RegularExpression internal constructor(private val format: String,
     /**
      * Create a regular expression that match or not to this one
      */
-    fun zeroOrOne(): RegularExpression =
+    fun zeroOrOne() : RegularExpression =
         if (this.patternComputed.get())
         {
-            throw  IllegalStateException("This regular expression already have computed its pattern, so can't be combined")
+            throw  IllegalStateException(
+                "This regular expression already have computed its pattern, so can't be combined")
         }
         else
         {
@@ -272,11 +284,12 @@ class RegularExpression internal constructor(private val format: String,
     /**
      * Create a regular expression that match only if this one is repeat a fix number of times
      */
-    fun exactTimes(times: Int): RegularExpression =
+    fun exactTimes(times : Int) : RegularExpression =
         when
         {
             this.patternComputed.get() ->
-                throw  IllegalStateException("This regular expression already have computed its pattern, so can't be combined")
+                throw  IllegalStateException(
+                    "This regular expression already have computed its pattern, so can't be combined")
             times <= 0                 -> throw IllegalArgumentException("times must >0, not $times")
             times == 1                 -> this
             else                       -> RegularExpression("(?:%s){$times}", this)
@@ -285,11 +298,12 @@ class RegularExpression internal constructor(private val format: String,
     /**
      * Create a regular expression that match only if this one is repeat at least a number of times
      */
-    fun atLeast(times: Int): RegularExpression =
+    fun atLeast(times : Int) : RegularExpression =
         when
         {
             this.patternComputed.get() ->
-                throw  IllegalStateException("This regular expression already have computed its pattern, so can't be combined")
+                throw  IllegalStateException(
+                    "This regular expression already have computed its pattern, so can't be combined")
             times <= 0                 -> this.zeroOrMore()
             times == 1                 -> this.oneOrMore()
             else                       -> RegularExpression("(?:%s){$times,}", this)
@@ -298,11 +312,12 @@ class RegularExpression internal constructor(private val format: String,
     /**
      * Create a regular expression that match only if this one is repeat at most a number of times
      */
-    fun atMost(times: Int): RegularExpression =
+    fun atMost(times : Int) : RegularExpression =
         when
         {
             this.patternComputed.get() ->
-                throw  IllegalStateException("This regular expression already have computed its pattern, so can't be combined")
+                throw  IllegalStateException(
+                    "This regular expression already have computed its pattern, so can't be combined")
             times <= 0                 -> throw IllegalArgumentException("times must >0, not $times")
             times == 1                 -> this.zeroOrOne()
             else                       -> RegularExpression("(?:%s){0,$times}", this)
@@ -311,12 +326,14 @@ class RegularExpression internal constructor(private val format: String,
     /**
      * Create a regular expression that match only if this one is repeat between a minimum and maximum number of times
      */
-    fun between(minimum: Int, maximum: Int): RegularExpression =
+    fun between(minimum : Int, maximum : Int) : RegularExpression =
         when
         {
             this.patternComputed.get()   ->
-                throw  IllegalStateException("This regular expression already have computed its pattern, so can't be combined")
-            minimum > maximum            -> throw IllegalArgumentException("minimum $minimum is not lower or equals to maximum $maximum")
+                throw  IllegalStateException(
+                    "This regular expression already have computed its pattern, so can't be combined")
+            minimum > maximum            -> throw IllegalArgumentException(
+                "minimum $minimum is not lower or equals to maximum $maximum")
             minimum < 0                  -> throw IllegalArgumentException("minimum must be >=0, not $minimum")
             maximum <= 0                 -> throw IllegalArgumentException("maximum must be >0, not $maximum")
             minimum == 0 && maximum == 1 -> this.zeroOrOne()
@@ -327,10 +344,11 @@ class RegularExpression internal constructor(private val format: String,
     /**
      * Create a capturing group that match to this regular expression
      */
-    fun group(): RegularExpressionGroup =
+    fun group() : RegularExpressionGroup =
         if (this.patternComputed.get())
         {
-            throw  IllegalStateException("This regular expression already have computed its pattern, so can't be combined")
+            throw  IllegalStateException(
+                "This regular expression already have computed its pattern, so can't be combined")
         }
         else
         {
@@ -342,7 +360,7 @@ class RegularExpression internal constructor(private val format: String,
      *
      * The difference with + is the given regular expression is not consumed
      */
-    fun followBy(regularExpression: RegularExpression): RegularExpression =
+    fun followBy(regularExpression : RegularExpression) : RegularExpression =
         RegularExpression("%s(?=%s)", this, regularExpression)
 
     /**
@@ -350,18 +368,18 @@ class RegularExpression internal constructor(private val format: String,
      *
      * The given regular expression is not consumed
      */
-    fun notFollowBy(regularExpression: RegularExpression): RegularExpression =
+    fun notFollowBy(regularExpression : RegularExpression) : RegularExpression =
         RegularExpression("%s(?!%s)", this, regularExpression)
 
 
     /**
      * Indicates if a regular expression or a group is inside this regular expression
      */
-    operator fun contains(regularExpressionElement: RegularExpressionElement): Boolean
+    operator fun contains(regularExpressionElement : RegularExpressionElement) : Boolean
     {
         val stack = Stack<RegularExpressionElement>()
         stack.push(this)
-        var current: RegularExpressionElement
+        var current : RegularExpressionElement
 
         while (stack.isNotEmpty())
         {
@@ -387,12 +405,12 @@ class RegularExpression internal constructor(private val format: String,
         return false
     }
 
-    override fun regexString(resolveGroup: Boolean): String
+    override fun regexString(resolveGroup : Boolean) : String
     {
         if (resolveGroup)
         {
             val stackRegularExpression = Stack<RegularExpressionElement>()
-            var current: RegularExpressionElement = this
+            var current : RegularExpressionElement = this
             var groupID = 1
 
             while (true)
@@ -406,7 +424,7 @@ class RegularExpression internal constructor(private val format: String,
                         if (current.groupID < 0)
                         {
                             current.groupID = groupID
-                            groupID++
+                            groupID ++
                         }
 
                         current = current.regularExpression
@@ -430,7 +448,7 @@ class RegularExpression internal constructor(private val format: String,
                                 stackRegularExpression.push(current.regularExpressionSecondParameter)
                             }
 
-                            current = current.regularExpressionParameter!!
+                            current = current.regularExpressionParameter !!
                         }
                 }
             }
@@ -458,11 +476,11 @@ class RegularExpression internal constructor(private val format: String,
         }
     }
 
-    internal fun insideHierarchy(regularExpressionElement: RegularExpressionElement): Boolean
+    internal fun insideHierarchy(regularExpressionElement : RegularExpressionElement) : Boolean
     {
         val stack = Stack<RegularExpressionElement>()
         stack.push(this)
-        var current: RegularExpressionElement
+        var current : RegularExpressionElement
 
         while (stack.isNotEmpty())
         {
@@ -489,15 +507,17 @@ class RegularExpression internal constructor(private val format: String,
     }
 
 
-    private fun obtainMatcher(text: String) =
+    private fun obtainMatcher(text : String) =
         this.getPattern()
             .matcher(text)
 
-    private fun getPattern(): Pattern
+    private fun getPattern() : Pattern
     {
-        if (this.patternComputed.compareAndSet(false, true))
-        {
-            this.pattern = Pattern.compile(this.regexString(true))
+        this.mutex.playInCriticalSection {
+            if (this.patternComputed.compareAndSet(false, true))
+            {
+                this.pattern = Pattern.compile(this.regexString(true))
+            }
         }
 
         return this.pattern

@@ -1,6 +1,8 @@
 package khelp.ui.components
 
 import khelp.resources.ResourcesText
+import khelp.thread.TaskContext
+import khelp.thread.delay
 import khelp.ui.GenericAction
 import khelp.ui.components.message.Message
 import khelp.ui.components.message.MessageDialog
@@ -138,5 +140,9 @@ class JHelpFrame internal constructor(title : String = "JHelpFrame",
 
         centerOnScreen(this)
         this.isVisible = true
+
+        // Force do readjust frame
+        this.invalidate()
+        delay(TaskContext.MAIN, 128) { this.revalidate() }
     }
 }
