@@ -4,7 +4,9 @@ import khelp.engine3d.gui.GUI
 import khelp.engine3d.gui.GUIMargin
 import khelp.engine3d.gui.component.GUIComponentButton
 import khelp.engine3d.gui.component.GUIComponentEmpty
+import khelp.engine3d.gui.component.GUIComponentImage
 import khelp.engine3d.gui.component.GUIComponentPanel
+import khelp.engine3d.gui.component.GUIComponentScroll
 import khelp.engine3d.gui.component.GUIComponentText
 import khelp.engine3d.gui.component.GUIDialog
 import khelp.engine3d.gui.layout.GUIConstraints
@@ -26,11 +28,15 @@ import khelp.ui.TextAlignment
 import khelp.ui.VerticalAlignment
 import khelp.ui.extensions.color
 import khelp.ui.extensions.contrast
+import khelp.ui.extensions.grayVersion
 import khelp.ui.extensions.grey
 import khelp.ui.extensions.invert
+import khelp.ui.extensions.withContrast
 import khelp.ui.font.JHelpFont
+import khelp.ui.game.GameImage
 import khelp.ui.style.ComponentHighLevel
 import khelp.ui.style.background.StyleBackgroundColor
+import khelp.ui.style.background.StyleBackgroundPaint
 import khelp.ui.style.shape.StyleShape
 import khelp.ui.style.shape.StyleShapeRoundRectangle
 import khelp.ui.style.shape.StyleShapeSausage
@@ -112,7 +118,8 @@ fun GUI.dialogVertical(content : GUIVerticalFiller.() -> Unit) : GUIDialog<GUIVe
     return this.createDialog(layout)
 }
 
-fun GUI.dialogHorizontal(content : GUIHorizontalFiller.() -> Unit) : GUIDialog<GUIHorizontalConstraint, GUIHorizontalLayout>
+fun GUI.dialogHorizontal(
+    content : GUIHorizontalFiller.() -> Unit) : GUIDialog<GUIHorizontalConstraint, GUIHorizontalLayout>
 {
     val layout = GUIHorizontalLayout()
     val filter = GUIHorizontalFiller(layout)
@@ -207,13 +214,31 @@ fun panelVertical(content : GUIVerticalFiller.() -> Unit) : GUIComponentPanel<GU
     return GUIComponentPanel<GUIVerticalConstraint, GUIVerticalLayout>(layout)
 }
 
-fun panelHorizontal(content : GUIHorizontalFiller.() -> Unit) : GUIComponentPanel<GUIHorizontalConstraint, GUIHorizontalLayout>
+fun panelHorizontal(
+    content : GUIHorizontalFiller.() -> Unit) : GUIComponentPanel<GUIHorizontalConstraint, GUIHorizontalLayout>
 {
     val layout = GUIHorizontalLayout()
     val filter = GUIHorizontalFiller(layout)
     content(filter)
     return GUIComponentPanel<GUIHorizontalConstraint, GUIHorizontalLayout>(layout)
 }
+
+fun scrollAbsolute(
+    content : GuiLayoutFiller<GUIAbsoluteConstraint, GUIAbsoluteLayout>.() -> Unit) : GUIComponentScroll =
+    GUIComponentScroll(panelAbsolute(content))
+
+fun scrollProportion(
+    content : GuiLayoutFiller<GUIProportionConstraint, GUIProportionLayout>.() -> Unit) : GUIComponentScroll =
+    GUIComponentScroll(panelProportion(content))
+
+fun scrollConstraint(content : GUIConstraintFiller.() -> Unit) : GUIComponentScroll =
+    GUIComponentScroll(panelConstraint(content))
+
+fun scrollVertical(content : GUIVerticalFiller.() -> Unit) : GUIComponentScroll =
+    GUIComponentScroll(panelVertical(content))
+
+fun scrollHorizontal(content : GUIHorizontalFiller.() -> Unit) : GUIComponentScroll =
+    GUIComponentScroll(panelHorizontal(content))
 
 fun buttonText(keyText : String,
                resourcesText : ResourcesText = defaultTexts,
@@ -282,4 +307,36 @@ fun buttonText(keyText : String,
     return GUIComponentButton(normal, over, down, disabled)
 }
 
+fun buttonImage(normalImage : GameImage,
+                overImage : GameImage = normalImage.withContrast(2.0),
+                downImage : GameImage = normalImage.withContrast(0.5),
+                disabledImage : GameImage = normalImage.grayVersion(),
+                shape : StyleShape = StyleShapeSausage,
+                borderColor : Color = Color.BLACK) : GUIComponentButton
+{
+    val normal = GUIComponentImage(normalImage)
+    normal.background = StyleBackgroundPaint(GameImage.DARK_LIGHT_PAINT)
+    normal.shape = shape
+    normal.borderColor = borderColor
+    normal.componentHighLevel = ComponentHighLevel.HIGHEST
 
+    val over = GUIComponentImage(overImage)
+    over.background = StyleBackgroundPaint(GameImage.DARK_LIGHT_PAINT)
+    over.shape = shape
+    over.borderColor = borderColor
+    over.componentHighLevel = ComponentHighLevel.FLY
+
+    val down = GUIComponentImage(downImage)
+    down.background = StyleBackgroundPaint(GameImage.DARK_LIGHT_PAINT)
+    down.shape = shape
+    down.borderColor = borderColor
+    down.componentHighLevel = ComponentHighLevel.AT_GROUND
+
+    val disabled = GUIComponentImage(disabledImage)
+    disabled.background = StyleBackgroundPaint(GameImage.DARK_LIGHT_PAINT)
+    disabled.shape = shape
+    disabled.borderColor = borderColor
+    disabled.componentHighLevel = ComponentHighLevel.NEAR_GROUND
+
+    return GUIComponentButton(normal, over, down, disabled)
+}

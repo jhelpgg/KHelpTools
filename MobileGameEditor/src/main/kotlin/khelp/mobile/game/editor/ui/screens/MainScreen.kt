@@ -1,44 +1,15 @@
 package khelp.mobile.game.editor.ui.screens
 
 import khelp.engine3d.event.ActionCode
-import khelp.engine3d.gui.component.GUIComponentEmpty
-import khelp.engine3d.gui.component.GUIComponentPanel
-import khelp.engine3d.gui.component.GUIComponentTextImage
 import khelp.engine3d.gui.dsl.buttonText
 import khelp.engine3d.gui.dsl.constraintLayout
-import khelp.engine3d.gui.dsl.panelVertical
+import khelp.engine3d.gui.dsl.scrollVertical
 import khelp.engine3d.render.Window3D
-import khelp.mobile.game.editor.EDITOR_TEXTS
-import khelp.resources.LOAD
-import khelp.resources.NO
-import khelp.resources.OTHER
-import khelp.resources.SAVE
-import khelp.resources.SAVE_AS
-import khelp.resources.YES
-import khelp.resources.defaultResources
-import khelp.resources.defaultTexts
 import khelp.resources.standardText
 import khelp.thread.TaskContext
 import khelp.thread.observable.Observer
-import khelp.ui.GenericAction
-import khelp.ui.components.JHelpFrame
-import khelp.ui.components.JLabel
-import khelp.ui.dsl.borderLayout
-import khelp.ui.dsl.frame
 import khelp.ui.events.MouseState
-import khelp.ui.extensions.color
-import khelp.ui.extensions.nearInvisible
-import khelp.ui.extensions.semiVisible
-import khelp.ui.game.GameImage
-import khelp.ui.style.ImageTextRelativePosition
-import khelp.ui.style.background.StyleBackgroundColor
-import khelp.ui.style.shape.StyleShapeRoundRectangle
-import khelp.ui.utilities.colors.Blue
-import khelp.ui.utilities.colors.Green
-import khelp.ui.utilities.colors.Red
 import khelp.utilities.log.debug
-import khelp.utilities.log.mark
-import khelp.utilities.math.random
 
 class MainScreen : Screen
 {
@@ -52,6 +23,29 @@ class MainScreen : Screen
         this.observerMouseState =
             window3D.mouseManager.mouseStateObservable.observedBy(TaskContext.INDEPENDENT, this::mouseState)
 
+
+        val removeList = scrollVertical {
+            this.margin = 4
+
+            for (number in 1 .. 100)
+            {
+                val text = buttonText("Project number $number".standardText)
+                text.click = { debug("Project number $number") }
+                text.center
+            }
+        }
+
+        window3D.gui.constraintLayout {
+            removeList with {
+                this.horizontalWrapped
+                this.verticalExpanded
+
+                this.topAtParent
+                this.bottomAtParent
+                this.leftAtParent
+                this.rightFree
+            }
+        }
         // TODO
     }
 

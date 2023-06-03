@@ -3,10 +3,15 @@ package khelp.ui.game
 import khelp.resources.Resources
 import khelp.thread.flow.Flow
 import khelp.thread.flow.FlowData
+import khelp.ui.extensions.u
+import khelp.ui.extensions.v
 import khelp.ui.extensions.y
 import khelp.ui.utilities.FONT_RENDER_CONTEXT
 import khelp.ui.utilities.PercentGraphics
 import khelp.ui.utilities.TRANSPARENT
+import khelp.ui.utilities.yuvToBlue
+import khelp.ui.utilities.yuvToGreen
+import khelp.ui.utilities.yuvToRed
 import khelp.utilities.extensions.limit_0_255
 import java.awt.Color
 import java.awt.Component
@@ -264,6 +269,216 @@ class GameImage(val width : Int, val height : Int) : Icon
             }
         }
     }
+
+    fun contrast(contrast : Double)
+    {
+        this.manipulatePixels { pixels ->
+            for (index in pixels.indices)
+            {
+                val color = pixels[index]
+                val y = color.y * contrast
+                val u = color.u
+                val v = color.v
+                val red = yuvToRed(y, u, v)
+                val green = yuvToGreen(y, u, v)
+                val blue = yuvToBlue(y, u, v)
+                pixels[index] = (color and 0xFF000000.toInt()) or (red shl 16) or (green shl 8) or blue
+            }
+        }
+    }
+
+    /**
+     * Compute the image rotated from 180 degree
+     *
+     * @return Rotated image
+     */
+    fun rotate180() : GameImage
+    {
+        val source = this.grabPixels()
+        val width = this.width
+        val height = this.height
+        val length = width * height
+        val rotated = IntArray(length)
+
+        var pix = 0
+        var pixR = length - 1
+        while (pixR >= 0)
+        {
+            rotated[pixR] = source[pix]
+            pix ++
+            pixR --
+        }
+
+        val result = GameImage(width, height)
+        result.putPixels(0, 0, width, height, rotated)
+        return result
+    }
+
+    /**
+     * Compute the image rotated from 270 degree
+     *
+     * @return Rotated image
+     */
+    fun rotate270() : GameImage
+    {
+        val source = this.grabPixels()
+        val width = this.height
+        val height = this.width
+        val rotated = IntArray(width * height)
+
+        var xr = width - 1
+        val yr = 0
+        val startR = yr * width
+        var pixR = startR + xr
+
+        var pix = 0
+
+        for (y in 0 until this.height)
+        {
+            for (x in 0 until this.width)
+            {
+                rotated[pixR] = source[pix]
+
+                pix ++
+                pixR += width
+            }
+
+            xr --
+            pixR = startR + xr
+        }
+
+        val result = GameImage(width, height)
+        result.putPixels(0, 0, width, height, rotated)
+        return result
+    }
+
+    /**
+     * Compute the image rotated from 90 degree
+     *
+     * @return Rotated image
+     */
+    fun rotate90() : GameImage
+    {
+        val source = this.grabPixels()
+        val width = this.height
+        val height = this.width
+        val rotated = IntArray(width * height)
+
+        var xr = 0
+        val yr = height - 1
+        val stepR = - width
+        val startR = yr * width
+        var pixR = startR + xr
+
+        var pix = 0
+
+        for (y in 0 until this.height)
+        {
+            for (x in 0 until this.width)
+            {
+                rotated[pixR] = source[pix]
+
+                pix ++
+                pixR += stepR
+            }
+
+            xr ++
+            pixR = startR + xr
+        }
+
+        val result = GameImage(width, height)
+        result.putPixels(0, 0, width, height, rotated)
+        return result
+    }
+
+    /**
+     * Flip the image horizontally and vertically in same time.
+     *
+     * Visually its same result as :
+     *
+     * ```kotlin
+     *     image.flipHorizontal()
+     *     image.flipVertical()
+     * ```
+     *
+     * But it's done faster
+     */
+    fun flipBoth()
+    {
+        this.manipulatePixels { pixels ->
+            val length = pixels.size
+            val middlePixel = length shr 1
+            var color : Int
+
+            var pixelStart = 0
+            var pixelEnd = length - 1
+
+            while (pixelStart < middlePixel)
+            {
+                color = pixels[pixelStart]
+                pixels[pixelStart] = pixels[pixelEnd]
+                pixels[pixelEnd] = color
+                pixelStart ++
+                pixelEnd --
+            }
+        }
+    }
+
+    /**
+     * Flip the image horizontally
+     */
+    fun flipHorizontal()
+    {
+        this.manipulatePixels { pixels ->
+            val mx = this.width shr 1
+            var line = 0
+            var pixL : Int
+            var pixR : Int
+            var color : Int
+
+            for (y in 0 until this.height)
+            {
+                pixL = line
+                pixR = line + this.width - 1
+
+                for (x in 0 until mx)
+                {
+                    color = pixels[pixL]
+                    pixels[pixL] = pixels[pixR]
+                    pixels[pixR] = color
+
+                    pixL ++
+                    pixR --
+                }
+
+                line += this.width
+            }
+        }
+    }
+
+    /**
+     * Flip the image vertically
+     */
+    fun flipVertical()
+    {
+        this.manipulatePixels { pixels ->
+            val my = this.height shr 1
+            var lineU = 0
+            var lineB = (this.height - 1) * this.width
+            val line = IntArray(this.width)
+
+            for (y in 0 until my)
+            {
+                System.arraycopy(pixels, lineU, line, 0, this.width)
+                System.arraycopy(pixels, lineB, pixels, lineU, this.width)
+                System.arraycopy(line, 0, pixels, lineB, this.width)
+
+                lineU += this.width
+                lineB -= this.width
+            }
+        }
+    }
+
 
     fun toBufferedImage() : BufferedImage
     {

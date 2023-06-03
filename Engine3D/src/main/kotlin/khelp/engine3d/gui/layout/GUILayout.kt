@@ -34,18 +34,18 @@ abstract class GUILayout<C : GUIConstraints>
                     this.previousComponent?.let { previous ->
                         previous.mouseState(MouseState(MouseStatus.EXIT,
                                                        mouseState.x - previous.x, mouseState.y - previous.y,
-                                                       leftButtonDown = false, middleButtonDown = false,
-                                                       rightButtonDown = false,
-                                                       shiftDown = false, controlDown = false, altDown = false,
-                                                       clicked = false))
+                                                       mouseState.leftButtonDown, mouseState.middleButtonDown,
+                                                       mouseState.rightButtonDown,
+                                                       mouseState.shiftDown, mouseState.controlDown, mouseState.altDown,
+                                                       mouseState.clicked))
                     }
 
                     component.mouseState(MouseState(MouseStatus.ENTER,
                                                     mouseState.x - component.x, mouseState.y - component.y,
-                                                    leftButtonDown = false, middleButtonDown = false,
-                                                    rightButtonDown = false,
-                                                    shiftDown = false, controlDown = false, altDown = false,
-                                                    clicked = false))
+                                                    mouseState.leftButtonDown, mouseState.middleButtonDown,
+                                                    mouseState.rightButtonDown,
+                                                    mouseState.shiftDown, mouseState.controlDown, mouseState.altDown,
+                                                    mouseState.clicked))
                 }
 
                 this.previousComponent = component
@@ -76,9 +76,10 @@ abstract class GUILayout<C : GUIConstraints>
         this.previousComponent?.let { previous ->
             previous.mouseState(MouseState(MouseStatus.EXIT,
                                            mouseState.x - previous.x, mouseState.y - previous.y,
-                                           leftButtonDown = false, middleButtonDown = false, rightButtonDown = false,
-                                           shiftDown = false, controlDown = false, altDown = false,
-                                           clicked = false))
+                                           mouseState.leftButtonDown, mouseState.middleButtonDown,
+                                           mouseState.rightButtonDown,
+                                           mouseState.shiftDown, mouseState.controlDown, mouseState.altDown,
+                                           mouseState.clicked))
         }
 
         this.previousComponent = null
