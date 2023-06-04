@@ -39,10 +39,10 @@ fun <P, R : Any> parallel(context: TaskContext = TaskContext.INDEPENDENT,
     val futureResult = FutureResult<R>(context)
 
     val job = context.scope.launch {
-        withContext(context.dispatcher)
-        {
+//        withContext(context.dispatcher)
+ //       {
             futureResult.result(task.suspended()(parameter))
-        }
+   //     }
     }
 
     futureResult.job(job)

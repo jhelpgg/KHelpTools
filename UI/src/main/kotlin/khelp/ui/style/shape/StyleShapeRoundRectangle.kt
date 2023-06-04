@@ -8,15 +8,15 @@ import java.awt.geom.RoundRectangle2D
 object StyleShapeRoundRectangle : StyleShape
 {
     private const val arc = 32
-    private const val margin = this.arc / 8
+    private const val margin = this.arc / 4
 
     override fun draw(x : Int, y : Int, width : Int, height : Int, graphics2D : Graphics2D)
     {
-        graphics2D.drawRoundRect(x+1, y+1, width - 2, height - 2, this.arc, this.arc)
+        graphics2D.drawRoundRect(x + 1, y + 1, width - 2, height - 2, this.arc, this.arc)
     }
 
     override fun margin(x : Int, y : Int, width : Int, height : Int) : Insets =
-        Insets(this.margin, this.margin, this.margin, this.margin)
+        Insets(this.margin, this.margin * 2, this.margin, this.margin * 2)
 
     override fun createShape(x : Int, y : Int, width : Int, height : Int) : Shape =
         RoundRectangle2D.Double(x.toDouble(), y.toDouble(),

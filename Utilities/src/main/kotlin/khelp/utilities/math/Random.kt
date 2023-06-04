@@ -97,3 +97,5 @@ inline fun <reified E : Enum<E>> random() : E =
     (E::class.java.getDeclaredMethod("values")
         .invoke(null) as Array<E>).random()
 
+fun random(character1 : Char, character2 : Char) : Char =
+    random(character1.code, character2.code).toChar()

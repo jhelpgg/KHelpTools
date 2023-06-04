@@ -31,7 +31,7 @@ class GUIComponentText : GUIComponent()
 
         val text = this.resourcesText[this.keyText]
         val paragraph = this.font.computeTextParagraph(text, this.textAlignment, this.width, this.height)
-        val x = this.margin.left
+        val x = margin.left
         graphics2D.font = this.font.font
 
         val y =

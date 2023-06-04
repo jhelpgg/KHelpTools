@@ -15,6 +15,8 @@ import khelp.engine3d.gui.layout.absolute.GUIAbsoluteConstraint
 import khelp.engine3d.gui.layout.absolute.GUIAbsoluteLayout
 import khelp.engine3d.gui.layout.constraint.GUIConstraintConstraint
 import khelp.engine3d.gui.layout.constraint.GUIConstraintLayout
+import khelp.engine3d.gui.layout.grid.GUIGridConstraint
+import khelp.engine3d.gui.layout.grid.GUIGridLayout
 import khelp.engine3d.gui.layout.horizontal.GUIHorizontalConstraint
 import khelp.engine3d.gui.layout.horizontal.GUIHorizontalLayout
 import khelp.engine3d.gui.layout.proprtion.GUIProportionConstraint
@@ -85,6 +87,14 @@ fun GUI.horizontalLayout(content : GUIHorizontalFiller.() -> Unit)
     this.layout = layout
 }
 
+fun GUI.gridLayout(numberColumn : Int = 1, content : GUIGridFiller.() -> Unit)
+{
+    val layout = GUIGridLayout(numberColumn)
+    val filler = GUIGridFiller(layout)
+    content(filler)
+    this.layout = layout
+}
+
 fun <C : GUIConstraints, L : GUILayout<C>> GUI.dialog(layout : L,
                                                       content : GuiLayoutFiller<C, L>.() -> Unit) : GUIDialog<C, L>
 {
@@ -124,6 +134,15 @@ fun GUI.dialogHorizontal(
     val layout = GUIHorizontalLayout()
     val filter = GUIHorizontalFiller(layout)
     content(filter)
+    return this.createDialog(layout)
+}
+
+fun GUI.dialogGrid(numberColumn : Int = 1,
+                   content : GUIGridFiller.() -> Unit) : GUIDialog<GUIGridConstraint, GUIGridLayout>
+{
+    val layout = GUIGridLayout(numberColumn)
+    val filler = GUIGridFiller(layout)
+    content(filler)
     return this.createDialog(layout)
 }
 
@@ -196,7 +215,6 @@ fun panelProportion(content : GuiLayoutFiller<GUIProportionConstraint, GUIPropor
     return GUIComponentPanel<GUIProportionConstraint, GUIProportionLayout>(layout)
 }
 
-
 fun panelConstraint(content : GUIConstraintFiller.() -> Unit) :
         GUIComponentPanel<GUIConstraintConstraint, GUIConstraintLayout>
 {
@@ -223,6 +241,15 @@ fun panelHorizontal(
     return GUIComponentPanel<GUIHorizontalConstraint, GUIHorizontalLayout>(layout)
 }
 
+fun panelGrid(numberColumn : Int = 1,
+              content : GUIGridFiller.() -> Unit) : GUIComponentPanel<GUIGridConstraint, GUIGridLayout>
+{
+    val layout = GUIGridLayout(numberColumn)
+    val filler = GUIGridFiller(layout)
+    content(filler)
+    return GUIComponentPanel<GUIGridConstraint, GUIGridLayout>(layout)
+}
+
 fun scrollAbsolute(
     content : GuiLayoutFiller<GUIAbsoluteConstraint, GUIAbsoluteLayout>.() -> Unit) : GUIComponentScroll =
     GUIComponentScroll(panelAbsolute(content))
@@ -239,6 +266,9 @@ fun scrollVertical(content : GUIVerticalFiller.() -> Unit) : GUIComponentScroll 
 
 fun scrollHorizontal(content : GUIHorizontalFiller.() -> Unit) : GUIComponentScroll =
     GUIComponentScroll(panelHorizontal(content))
+
+fun scrollGrid(numberColumn : Int = 1, content : GUIGridFiller.() -> Unit) : GUIComponentScroll =
+    GUIComponentScroll(panelGrid(numberColumn, content))
 
 fun buttonText(keyText : String,
                resourcesText : ResourcesText = defaultTexts,

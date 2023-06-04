@@ -12,6 +12,7 @@ import khelp.ui.utilities.TRANSPARENT
 import khelp.ui.utilities.yuvToBlue
 import khelp.ui.utilities.yuvToGreen
 import khelp.ui.utilities.yuvToRed
+import khelp.utilities.argumentCheck
 import khelp.utilities.extensions.limit_0_255
 import java.awt.Color
 import java.awt.Component
@@ -237,6 +238,14 @@ class GameImage(val width : Int, val height : Int) : Icon
         val copy = GameImage(this.width, this.height)
         copy.putPixels(0, 0, this.width, this.height, this.grabPixels())
         return copy
+    }
+
+    fun copy(image : GameImage)
+    {
+        argumentCheck(this.width == image.width && this.height == image.height)
+        { "Image given have different dimension that this image" }
+
+        this.putPixels(0, 0, this.width, this.height, image.grabPixels())
     }
 
     fun gray()

@@ -13,4 +13,13 @@ inline fun <T> List<T>.forEachReversed(action : (T) -> Unit)
     }
 }
 
+inline fun <T> List<T>.forEachReversedWithIndex(action : (Int, T) -> Unit)
+{
+    for (index in this.size - 1 downTo 0)
+    {
+        action(index, this[index])
+    }
+}
+
+
 fun <T> List<T>.inverted() : Iterable<T> = ListInvertedIterable(this)

@@ -47,6 +47,7 @@ class GUIComponentScroll(private val viewPort : GUIComponentPanel<*, *>) : GUICo
 
     override fun drawIntern(graphics2D : Graphics2D, margin : GUIMargin)
     {
+        this.viewPort.relayoutWithPreferred()
         val width = this.width - margin.width
         val height = this.height - margin.height
         val viewPortWidth = width - 64
