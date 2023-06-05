@@ -1,11 +1,16 @@
 package khelp.mobile.game.editor.models.implementation
 
+import khelp.engine3d.gui.frames.FileChooseType
 import khelp.engine3d.gui.frames.FrameFileChooser
 import khelp.engine3d.gui.frames.FrameInputText
 import khelp.engine3d.render.Window3D
 import khelp.io.DirectorySource
 import khelp.mobile.game.editor.EDITOR_TEXTS
+import khelp.mobile.game.editor.KEY_TEXT_EXIT_CONFIRMATION
+import khelp.mobile.game.editor.KEY_TEXT_TITLE_CHOOSE_TEXTURE_FILE
 import khelp.mobile.game.editor.MAIN_DIRECTORY
+import khelp.mobile.game.editor.PREFERENCES
+import khelp.mobile.game.editor.PREFERENCE_KEY_LAST_TEXTURES_DIRECTORY
 import khelp.mobile.game.editor.models.shared.NavigatorModel
 import khelp.mobile.game.editor.models.shared.Screens
 import khelp.resources.Resources
@@ -42,9 +47,6 @@ internal class NavigatorModelImplementation : NavigatorModel
 
     override fun openProject()
     {
-        FrameFileChooser.show()
-            .and { file -> debug(file.absolutePath) }
-            .onCancel { reason -> debug("Cancel", reason) }
         // TODO("Not yet implemented")
     }
 
@@ -68,9 +70,6 @@ internal class NavigatorModelImplementation : NavigatorModel
 
     override fun addNode()
     {
-        FrameInputText.show(titleKeyText = "Type some text".standardText)
-            .and { text -> debug(text) }
-            .onCancel { reason -> debug("Cancel", reason) }
         //   TODO("Not yet implemented")
     }
 
@@ -101,7 +100,10 @@ internal class NavigatorModelImplementation : NavigatorModel
 
     override fun importTexture()
     {
-        //  TODO("Not yet implemented")
+        FrameFileChooser.preferences = PREFERENCES
+        FrameFileChooser.preferencesKey = PREFERENCE_KEY_LAST_TEXTURES_DIRECTORY
+        FrameFileChooser.show(KEY_TEXT_TITLE_CHOOSE_TEXTURE_FILE, EDITOR_TEXTS, FileChooseType.IMAGE_ONLY)
+            .and { file -> debug(file.absolutePath) }
     }
 
     override fun editMaterial()
@@ -128,7 +130,7 @@ internal class NavigatorModelImplementation : NavigatorModel
         val window3D = this.window3D ?: return true
 
         val future = window3D.gui.dialogMessage.show(MessageType.QUESTION, MessageButtons.YES_NO,
-                                                     "exitConfirmation", EDITOR_TEXTS)
+                                                     KEY_TEXT_EXIT_CONFIRMATION, EDITOR_TEXTS)
         future.waitCompletion()
 
         return future.result() == MessageAction.YES

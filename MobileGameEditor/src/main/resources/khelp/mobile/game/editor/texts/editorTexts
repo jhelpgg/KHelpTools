@@ -102,3 +102,17 @@ exitConfirmation
 Do you really want to exit ?
 You will loose last not saved changes.
 -<=-=>-
+
+#-<*
+    ***************************
+    *** File chooser titles ***
+    ***************************
+*>-#
+
+titleChooseTextureFile
+Choose a texture file
+-<=-=>-
+
+titleChooseObjFile
+Choose a model in obj format
+-<=-=>-
