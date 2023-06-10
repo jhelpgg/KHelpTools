@@ -39,6 +39,8 @@ interface NavigatorModel
 
     fun importTexture()
 
+    fun importOBJ()
+
     fun editMaterial()
 
     fun editTexture()

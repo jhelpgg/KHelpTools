@@ -27,6 +27,7 @@ const val KEY_TEXT_ADD_OBJECT = "addObject"
 const val KEY_TEXT_RESOURCES = "resources"
 const val KEY_TEXT_PROJECT_TEXTURES = "projectTextures"
 const val KEY_TEXT_IMPORT_TEXTURE = "importTexture"
+const val KEY_TEXT_IMPORT_OBJ = "importOBJ"
 
 //Editors
 

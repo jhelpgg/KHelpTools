@@ -56,7 +56,6 @@ object FrameFileChooser
         }
 
         this.fileChooser.isMultiSelectionEnabled = false
-        this.fileChooser.fileFilter = FileChooseType.IMAGE_AND_OBJ.fileFilter
         this.fileChooser.accessory = PreviewFileChooser
         this.fileChooser.addPropertyChangeListener { property ->
             parallel(TaskContext.IO, property, this::propertyChanged)
@@ -129,8 +128,15 @@ object FrameFileChooser
     {
         this.promiseFileSelected = Promise<File>()
         this.fileChooser.currentDirectory = this.preferences[this.preferencesKey, outsideDirectory]
+        this.fileChooser.isAcceptAllFileFilterUsed = false
+        this.fileChooser.resetChoosableFileFilters()
+
+        for (filter in this.fileChooser.choosableFileFilters)
+        {
+            this.fileChooser.removeChoosableFileFilter(filter)
+        }
+
         this.fileChooser.fileFilter = fileType.fileFilter
-        debug(this.fileChooser.currentDirectory.absolutePath)
         this.title.text = resourcesText[titleKeyText]
 
         this.wasShown = true

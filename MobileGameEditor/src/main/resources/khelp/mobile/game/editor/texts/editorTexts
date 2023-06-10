@@ -76,6 +76,10 @@ importTexture
 Import texture
 -<=-=>-
 
+importOBJ
+Import obj
+-<=-=>-
+
 #-<*
     Editors
 *>-#

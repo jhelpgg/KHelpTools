@@ -13,6 +13,7 @@ import khelp.mobile.game.editor.KEY_TEXT_EDIT_MATERIAL
 import khelp.mobile.game.editor.KEY_TEXT_EDIT_TEXTURE
 import khelp.mobile.game.editor.KEY_TEXT_EXIT
 import khelp.mobile.game.editor.KEY_TEXT_FILE
+import khelp.mobile.game.editor.KEY_TEXT_IMPORT_OBJ
 import khelp.mobile.game.editor.KEY_TEXT_IMPORT_TEXTURE
 import khelp.mobile.game.editor.KEY_TEXT_NEW_PROJECT
 import khelp.mobile.game.editor.KEY_TEXT_OPEN_PROJECT
@@ -58,6 +59,7 @@ object MobileGameEditor
                 KEY_TEXT_RESOURCES {
                     action(KEY_TEXT_PROJECT_TEXTURES, this@MobileGameEditor.navigatorModel::projectTextures)
                     action(KEY_TEXT_IMPORT_TEXTURE, this@MobileGameEditor.navigatorModel::importTexture)
+                    action(KEY_TEXT_IMPORT_OBJ, this@MobileGameEditor.navigatorModel::importOBJ)
                 }
 
                 KEY_TEXT_EDITORS {

@@ -2,7 +2,6 @@ package khelp.mobile.game.editor.models.implementation
 
 import khelp.engine3d.gui.frames.FileChooseType
 import khelp.engine3d.gui.frames.FrameFileChooser
-import khelp.engine3d.gui.frames.FrameInputText
 import khelp.engine3d.render.Window3D
 import khelp.io.DirectorySource
 import khelp.mobile.game.editor.EDITOR_TEXTS
@@ -10,11 +9,11 @@ import khelp.mobile.game.editor.KEY_TEXT_EXIT_CONFIRMATION
 import khelp.mobile.game.editor.KEY_TEXT_TITLE_CHOOSE_TEXTURE_FILE
 import khelp.mobile.game.editor.MAIN_DIRECTORY
 import khelp.mobile.game.editor.PREFERENCES
+import khelp.mobile.game.editor.PREFERENCE_KEY_LAST_OBJ_DIRECTORY
 import khelp.mobile.game.editor.PREFERENCE_KEY_LAST_TEXTURES_DIRECTORY
 import khelp.mobile.game.editor.models.shared.NavigatorModel
 import khelp.mobile.game.editor.models.shared.Screens
 import khelp.resources.Resources
-import khelp.resources.standardText
 import khelp.thread.observable.Observable
 import khelp.thread.observable.ObservableData
 import khelp.ui.components.message.MessageAction
@@ -103,6 +102,14 @@ internal class NavigatorModelImplementation : NavigatorModel
         FrameFileChooser.preferences = PREFERENCES
         FrameFileChooser.preferencesKey = PREFERENCE_KEY_LAST_TEXTURES_DIRECTORY
         FrameFileChooser.show(KEY_TEXT_TITLE_CHOOSE_TEXTURE_FILE, EDITOR_TEXTS, FileChooseType.IMAGE_ONLY)
+            .and { file -> debug(file.absolutePath) }
+    }
+
+    override fun importOBJ()
+    {
+        FrameFileChooser.preferences = PREFERENCES
+        FrameFileChooser.preferencesKey = PREFERENCE_KEY_LAST_OBJ_DIRECTORY
+        FrameFileChooser.show(KEY_TEXT_TITLE_CHOOSE_TEXTURE_FILE, EDITOR_TEXTS, FileChooseType.OBJ_ONLY)
             .and { file -> debug(file.absolutePath) }
     }
 
