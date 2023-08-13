@@ -64,7 +64,7 @@ abstract class GUIComponent
     fun contains(x : Int, y : Int) : Boolean =
         x >= this.x && y >= this.y && x < this.x + this.width && y < this.y + this.height
 
-    internal open fun mouseState(mouseState : MouseState) : Boolean
+    open fun mouseState(mouseState : MouseState) : Boolean
     {
         if (mouseState.leftButtonDown && this.downToReport.compareAndSet(true, false))
         {

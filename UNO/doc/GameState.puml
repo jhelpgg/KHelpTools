@@ -1,0 +1,30 @@
+@startuml
+'https://plantuml.com/state-diagram
+
+scale 512 width
+
+[*] --> Introduction
+Introduction --> GameStart
+GameStart --> ParticipantTurn
+ParticipantTurn --> Exit : exit
+Exit --> [*]
+ParticipantTurn --> Play : play
+Play --> GameResult : noMoreCard
+Play --> ParticipantTurn : next
+GameResult --> GameStart : atLeastTwoParticipantsLeft
+GameResult --> WinnerCongratulation : onlyOneSurvived
+WinnerCongratulation --> GameStart : newGame
+WinnerCongratulation  --> Exit : exit
+
+
+state GameStart {
+    [*] -> GetFullStack
+    GetFullStack -> Distribute
+    Distribute -> ChooseWay
+    ChooseWay -> ChooseFirstParticipant
+    ChooseFirstParticipant -> [*]
+}
+
+
+
+@enduml

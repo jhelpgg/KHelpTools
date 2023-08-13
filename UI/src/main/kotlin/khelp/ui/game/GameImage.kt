@@ -279,6 +279,20 @@ class GameImage(val width : Int, val height : Int) : Icon
         }
     }
 
+    fun colorize(color : Color)
+    {
+        val colorPart = color.rgb and 0x00_FF_FF_FF
+
+        this.manipulatePixels { pixels ->
+            for (index in pixels.indices)
+            {
+                val col = pixels[index]
+                pixels[index] =
+                    (col and 0xFF000000.toInt()) or colorPart
+            }
+        }
+    }
+
     fun contrast(contrast : Double)
     {
         this.manipulatePixels { pixels ->

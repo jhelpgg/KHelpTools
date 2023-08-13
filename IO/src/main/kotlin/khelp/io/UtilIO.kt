@@ -19,7 +19,7 @@ import java.util.zip.ZipOutputStream
 
 
 /**
- * One kilo-byte in bytes
+ * One kilobyte in bytes
  */
 const val KILO_BYTES = 1024
 
@@ -29,7 +29,7 @@ const val KILO_BYTES = 1024
 const val HEADER_SIZE = KILO_BYTES
 
 /**
- * One mega-byte in bytes
+ * One megabyte in bytes
  */
 const val MEGA_BYTES = 1024 * KILO_BYTES
 

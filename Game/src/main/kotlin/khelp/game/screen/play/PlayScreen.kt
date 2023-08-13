@@ -1,16 +1,19 @@
 package khelp.game.screen.play
 
-import khelp.utilities.math.random
 import khelp.game.event.KeyAction
 import khelp.game.event.KeyboardManager
 import khelp.game.resources.BackgroundImage
+import khelp.game.resources.BackgroundSound
 import khelp.game.resources.CHARACTER_SIZE
 import khelp.game.resources.CharacterImage
 import khelp.game.resources.CharacterPosition
+import khelp.game.resources.EffectSound
+import khelp.game.resources.SoundManager
 import khelp.game.screen.AlphabetText
 import khelp.game.screen.GameScreen
 import khelp.ui.extensions.drawImage
 import khelp.ui.utilities.TRANSPARENT
+import khelp.utilities.math.random
 import java.awt.BasicStroke
 import java.awt.Color
 
@@ -25,10 +28,11 @@ class PlayScreen(private val backgroundImage : BackgroundImage,
     private val dialog = AlphabetText(620, 3 * CHARACTER_SIZE + 8)
     private var dialogShow = false
     private var characterImage = random<CharacterImage>()
-    private var characterPosition = random<CharacterPosition>()
+    private var characterPosition = CharacterPosition.FACE
 
     override fun startScreen()
     {
+        SoundManager.playBackground(BackgroundSound.BATTLE_01)
         this.frame = 0
         this.update()
     }
@@ -101,7 +105,6 @@ class PlayScreen(private val backgroundImage : BackgroundImage,
             if (this.frame > 100)
             {
                 this.characterImage = random<CharacterImage>()
-                this.characterPosition = random<CharacterPosition>()
                 this.frame = - 1
             }
 
@@ -155,6 +158,33 @@ class PlayScreen(private val backgroundImage : BackgroundImage,
 
     private fun playKeyAction(actions : Array<KeyAction>)
     {
-        // TODO
+        if (KeyAction.UP in actions)
+        {
+            this.characterPosition = CharacterPosition.BACK
+            this.y += 4
+        }
+
+        if (KeyAction.DOWN in actions)
+        {
+            this.characterPosition = CharacterPosition.FACE
+            this.y -= 4
+        }
+
+        if (KeyAction.LEFT in actions)
+        {
+            this.characterPosition = CharacterPosition.LEFT
+            this.x += 4
+        }
+
+        if (KeyAction.RIGHT in actions)
+        {
+            this.characterPosition = CharacterPosition.RIGHT
+            this.x -= 4
+        }
+
+        if(KeyAction.ACTION in actions)
+        {
+            SoundManager.playEffect(EffectSound.ELECTRICITY_SPARK_SWORD_ATTACK_01)
+        }
     }
 }

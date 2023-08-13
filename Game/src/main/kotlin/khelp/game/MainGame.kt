@@ -70,5 +70,5 @@ fun main()
 
     game.transition(natureScreen, TransitionScreen.GRAY)
 
-    natureScreen.showDialog("Hello world !\nTo have [long] <text>, <we [can] try> use the long way home song or something else. The content is not really important, it is a test for se if cut long text work that's all ;)")
+    natureScreen.showDialog("Hello world !\nTo have [long] <text>, <we [can] try> use the long way home song or something else. The content is not really important, it is a test for see if cut long text work that's all ;)")
 }

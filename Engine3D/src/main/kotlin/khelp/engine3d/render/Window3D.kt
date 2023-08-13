@@ -356,12 +356,7 @@ class Window3D private constructor()
         {
             // TODO
             // Draw the background and clear Z-Buffer
-            this.scene.drawBackground()
-            GL11.glClear(GL11.GL_COLOR_BUFFER_BIT or GL11.GL_DEPTH_BUFFER_BIT)
-
-            // Draw 2D objects under 3D
-            GL11.glDisable(GL11.GL_DEPTH_TEST)
-            // this.drawUnder3D()
+            this.scene.drawBackground(this.width, this.height)
             GL11.glEnable(GL11.GL_DEPTH_TEST)
 
             // Render the scene

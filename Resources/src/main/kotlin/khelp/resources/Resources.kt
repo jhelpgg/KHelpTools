@@ -7,7 +7,6 @@ import khelp.utilities.extensions.regularExpression
 import java.io.InputStream
 import java.net.URL
 import java.util.Locale
-import java.util.concurrent.atomic.AtomicInteger
 
 class Resources(private val source : ReferenceSource)
 {
@@ -55,11 +54,13 @@ class Resources(private val source : ReferenceSource)
 
     override fun equals(other : Any?) : Boolean
     {
-        if(this===other){
+        if (this === other)
+        {
             return true
         }
 
-        if(null==other || other !is Resources) {
+        if (null == other || other !is Resources)
+        {
             return false
         }
 

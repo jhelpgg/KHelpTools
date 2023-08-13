@@ -23,4 +23,5 @@ include ':Art'
 include ':Neural'
 include 'ObjViewer'
 include 'MobileGameEditor'
+include 'UNO'
 

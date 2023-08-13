@@ -84,14 +84,17 @@ object AnimationManager
 
     fun play(animationName : String)
     {
-        val animation = this.animations[animationName] ?: return
-
-        if (animation.playing)
+        synchronized(this.animations)
         {
-            return
-        }
+            val animation = this.animations[animationName] ?: return
 
-        animation.start()
+            if (animation.playing)
+            {
+                return
+            }
+
+            animation.start()
+        }
 
         if (this.animationPlaying.compareAndSet(false, true))
         {

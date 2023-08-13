@@ -451,6 +451,7 @@ class RuleMatcher(private val stringPositionReader: StringPositionReader,
 
                 if (lastFoundNode == null)
                 {
+                    this.stringPositionReader.setPosition(position)
                     return null
                 }
 
