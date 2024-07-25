@@ -1,6 +1,6 @@
 package khelp.math.formal
 
-import java.util.Optional
+import khelp.utilities.optional.Optional
 
 /**
  * Map that associate a symbol to a function
@@ -12,21 +12,21 @@ interface SymbolsDefinition
      * @param symbol Symbol searched
      * @return Optional that contain the definition if exists. It will be empty if the symbol not defined
      */
-    operator fun get(symbol: String): Optional<Function>
+    operator fun get(symbol : String) : Optional<Function>
 
     /**
      * Associate a symbol to a function
      * @param symbol Symbol to define
      * @param definition Symbol definition
      */
-    operator fun set(symbol: String, definition: Function)
+    operator fun set(symbol : String, definition : Function)
 
     /**
      * Indicates if a symbol is defined
      * @param symbol Symbol searched
      * @return **`true`** if symbol defined
      */
-    operator fun invoke(symbol: String): Boolean
+    operator fun invoke(symbol : String) : Boolean
 }
 
 /**
@@ -34,7 +34,7 @@ interface SymbolsDefinition
  * @param symbol Symbol
  * @param function Definition
  */
-data class Symbol(val symbol: String, val function: Function)
+data class Symbol(val symbol : String, val function : Function)
 
 /**
  * Default symbol association implementation
@@ -51,7 +51,7 @@ class DefaultSymbolsDefinition : SymbolsDefinition
         /**
          * Create a default symbol association map initialized with default association
          */
-        fun createDefaultInitializedSymbolsDefinition(): DefaultSymbolsDefinition
+        fun createDefaultInitializedSymbolsDefinition() : DefaultSymbolsDefinition
         {
             val defaultSymbolsDefinition = DefaultSymbolsDefinition()
             SYMBOLS.forEach { defaultSymbolsDefinition[it.symbol] = it.function }
@@ -67,7 +67,7 @@ class DefaultSymbolsDefinition : SymbolsDefinition
      * @param symbol Symbol to define
      * @param definition Symbol definition
      */
-    override operator fun set(symbol: String, definition: Function)
+    override operator fun set(symbol : String, definition : Function)
     {
         this.symbols[symbol] = definition
     }
@@ -77,12 +77,13 @@ class DefaultSymbolsDefinition : SymbolsDefinition
      * @param symbol Symbol searched
      * @return **`true`** if symbol defined
      */
-    override operator fun invoke(symbol: String) = this.symbols.containsKey(symbol)
+    override operator fun invoke(symbol : String) = this.symbols.containsKey(symbol)
 
     /**
      * Obtain a symbol definition
      * @param symbol Symbol searched
      * @return Optional that contain the definition if exists. It will be empty if the symbol not defined
      */
-    override operator fun get(symbol: String) = Optional.ofNullable(this.symbols[symbol])
+    override operator fun get(symbol : String) : Optional<Function> =
+        this.symbols[symbol]?.let { value -> Optional.value(value) } ?: Optional.empty()
 }

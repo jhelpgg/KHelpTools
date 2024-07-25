@@ -1,7 +1,7 @@
 package khelp.math.formal
 
 /**
- * Special percent function rto be able to do things like:
+ * Special percent function to be able to do things like:
  *
  *     50+10% => 55
  *     50-10% => 45

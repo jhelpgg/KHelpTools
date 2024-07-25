@@ -20,8 +20,8 @@ inline fun <reified T : Any> provideSingle(noinline producer: () -> T) =
     provideSingle("", producer)
 
 /**
- * Provide/Change an instance producer for every code interested by an instance.
- * It give an additional qualifier to be able register several instance and choose the appropriate one later.
+ * Provide/Change an instance producer for every code interested in an instance.
+ * It gives an additional qualifier to be able to register several instance and choose the appropriate one later.
  *
  * The producer is called the first time the instance is called after this method.
  * Then the produced instance is used for all others until this method is called again with same qualifier (to modify the association)
@@ -63,8 +63,8 @@ inline fun <reified T : Any> provideMultiple(noinline producer: () -> T) =
 
 
 /**
- * Provide/Change an instance producer for every code interested by an instance.
- * It give an additional qualifier to be able register several instance and choose the appropriate one later.
+ * Provide/Change an instance producer for every code interested in an instance.
+ * It gives an additional qualifier to be able to register several instance and choose the appropriate one later.
  *
  * The producer is called each time an instance is required, so it may be an different instance each times,
  * depends on the producer itself

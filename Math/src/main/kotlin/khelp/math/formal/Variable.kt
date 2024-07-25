@@ -1,7 +1,6 @@
 package khelp.math.formal
 
 import khelp.utilities.extensions.compareToIgnoreCaseFirst
-import khelp.utilities.extensions.ifElse
 import khelp.utilities.extensions.removeWhiteCharacters
 
 val X = Variable("x")
@@ -32,8 +31,8 @@ class Variable(name : String) : Function()
              * @return Simplified version
              */
             override fun simplify() =
-                Function.symbolsDefinition[this@Variable.name].ifElse({ function -> function.simplify() },
-                                                                      { this@Variable })
+                Function.symbolsDefinition[this@Variable.name].ifPresentElse({ function -> function.simplify() },
+                                                                             { this@Variable })
         }
 
     init
@@ -70,16 +69,16 @@ class Variable(name : String) : Function()
      * Indicates if the variable can be viewed as a constant, that is to say its value is known
      */
     override fun isRealValueNumber() =
-        Function.symbolsDefinition[this.name].ifElse({ it.isRealValueNumber() },
-                                                     { false })
+        Function.symbolsDefinition[this.name].ifPresentElse({ it.isRealValueNumber() },
+                                                            { false })
 
     /**
      * Return function value it its known, else return [Double.NaN]
      * @return Function value
      */
     override fun obtainRealValueNumber() =
-        Function.symbolsDefinition[this.name].ifElse({ it.obtainRealValueNumber() },
-                                                     { Double.NaN })
+        Function.symbolsDefinition[this.name].ifPresentElse({ it.obtainRealValueNumber() },
+                                                            { Double.NaN })
 
     /**
      * Simplifier to use for simplify (resolve) this variable

@@ -125,7 +125,7 @@ class Addition(parameter1 : Function, parameter2 : Function) : BinaryOperator("+
             else (sinus2 * sinus1) + (cosinus2 * cosinus1)
 
         /**
-         * Tries to simplify (cos(f1) * sin(f2)) + (c(f3) * sin(f4))
+         * Tries to simplify (cos(f1) * sin(f2)) + (cos(f3) * sin(f4))
          *
          * @param cosinus1 cos(f1)
          * @param sinus1   sin(f2)

@@ -25,3 +25,5 @@ fun <T : Any> Iterable<T>.select(criteria: (T) -> Boolean): Iterable<T> =
  */
 fun <S : Any, D : Any> Iterable<S>.transform(transformation: (S) -> D): Iterable<D> =
     IterableTransformed(transformation, this)
+
+inline fun <T : Any, reified D : T> Iterable<T>.selectInstance(): Iterable<D> = this.select { element -> element is D }.transform { element -> element as D }

@@ -118,7 +118,7 @@ class Constant private constructor(val real: Double) : Function()
                 this.isNul()       -> Constant.ZERO
                 this.isPositive()  -> this
                 this.isMinusOne()  -> Constant.ONE
-                else               -> Constant(-this.real)
+                else               -> Constant.constant(-this.real)
             }
 
     /**
@@ -168,14 +168,14 @@ class Constant private constructor(val real: Double) : Function()
      *
      * @return Constant divide by Pi
      */
-    fun timesOfPi() = Constant(this.real / 3.1415926535897931)
+    fun timesOfPi() = Constant.constant(this.real / 3.1415926535897931)
 
     /**
      * Return the Neperian logarithm apply to the constant
      *
      * @return Neperian logarithm apply to the constant
      */
-    fun powerOfE() = if (this.isUndefined()) Constant.UNDEFINED else Constant(Math.log(this.real))
+    fun powerOfE() = if (this.isUndefined()) Constant.UNDEFINED else Constant.constant(Math.log(this.real))
 
     /**
      * Constant sign
