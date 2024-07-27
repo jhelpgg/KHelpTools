@@ -13,10 +13,11 @@ import khelp.thread.delay
 import khelp.ui.TextAlignment
 import khelp.ui.extensions.drawText
 import kotlin.math.ceil
+import kotlin.math.max
 import kotlin.math.round
 
-class DelaunaySpyComponent(delaunay : Delaunay) : JComponent(),
-                                                  MouseListener
+class DelaunaySpyComponent(delaunay : Delaunay, animationFPS : Int = 25) : JComponent(),
+                                                                           MouseListener
 {
     companion object
     {
@@ -29,10 +30,11 @@ class DelaunaySpyComponent(delaunay : Delaunay) : JComponent(),
     private var triangles : List<TriangleIndexed> = emptyList()
     private val locker = Locker()
     private val circle : EnclosingCircle
+    private val timePause = if (animationFPS <= 0) 0 else  1000 / animationFPS
 
     init
     {
-        val dimension = Dimension(1024, 1024)
+        val dimension = Dimension(2048, 1024)
         this.preferredSize = dimension
         this.size = dimension
         this.minimumSize = dimension
@@ -62,12 +64,13 @@ class DelaunaySpyComponent(delaunay : Delaunay) : JComponent(),
             for (point in this.points)
             {
                 graphics.color = if (point.index >= 0) Color.RED else Color.GREEN
+                val factor = if (point.index >= 0) 1 else 2
                 val x = round(point.x).toInt()
                 val y = round(point.y).toInt()
-                graphics.fillOval(x - DelaunaySpyComponent.RAY,
-                                  y - DelaunaySpyComponent.RAY,
-                                  DelaunaySpyComponent.DIAMETER,
-                                  DelaunaySpyComponent.DIAMETER)
+                graphics.fillOval(x - DelaunaySpyComponent.RAY/factor,
+                                  y - DelaunaySpyComponent.RAY/factor,
+                                  DelaunaySpyComponent.DIAMETER/factor,
+                                  DelaunaySpyComponent.DIAMETER/factor)
                 graphics.color = Color.WHITE
 
                 for (j in -1..1)
@@ -124,7 +127,11 @@ class DelaunaySpyComponent(delaunay : Delaunay) : JComponent(),
 
         this.repaint()
         this.validate()
-        delay(8, this.locker::unlock)
-        this.locker.lock()
+
+        if (this.timePause > 0)
+        {
+            delay(this.timePause, this.locker::unlock)
+            this.locker.lock()
+        }
     }
 }
