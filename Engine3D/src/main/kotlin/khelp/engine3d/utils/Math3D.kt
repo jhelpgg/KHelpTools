@@ -1,12 +1,12 @@
 package khelp.engine3d.utils
 
+import java.util.concurrent.atomic.AtomicReference
 import khelp.engine3d.geometry.Point2D
 import khelp.engine3d.geometry.Point3D
 import khelp.math.matrix.Matrix
 import khelp.utilities.math.equals
 import khelp.utilities.math.sign
 import khelp.utilities.math.square
-import java.util.concurrent.atomic.AtomicReference
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
@@ -38,7 +38,6 @@ fun pickSame(red1 : Float, green1 : Float, blue1 : Float, red2 : Float, green2 :
  * index=2 => 2 / (2 * 1) = 1
  */
 private val combination2 = floatArrayOf(1f, 2f, 1f)
-
 
 /**
  * 3! / (index! * (3 - index)!)
@@ -78,7 +77,6 @@ private fun cubic(cp : Float, p1 : Float, p2 : Float, p3 : Float, t : Float) =
  * index=2 => 2 / (2 * 1) = 1
  */
 private val combinationDouble2 = doubleArrayOf(1.0, 2.0, 1.0)
-
 
 /**
  * 3! / (index! * (3 - index)!)
@@ -219,7 +217,7 @@ fun segmentIntersection(segment1x1 : Float, segment1y1 : Float, segment1x2 : Flo
 
     val result = AtomicReference<Point2D>(null)
 
-    if (! Matrix.isNul(matrix.determinant()))
+    if (!Matrix.isNul(matrix.determinant()))
     {
         val future =
             matrix
@@ -232,7 +230,7 @@ fun segmentIntersection(segment1x1 : Float, segment1y1 : Float, segment1x2 : Flo
                     val factor1 = m00 * (segment2x1 - segment1x1) + m10 * (segment2y1 - segment1y1)
                     val factor2 = m01 * (segment2x1 - segment1x1) + m11 * (segment2y1 - segment1y1)
 
-                    if ((factor1 in 0f .. 1f) && (factor2 in 0f .. 1f))
+                    if ((factor1 in 0f..1f) && (factor2 in 0f..1f))
                     {
                         result.set(Point2D(segment1x1 + factor1 * (segment1x2 - segment1x1),
                                            segment1y1 + factor1 * (segment1y2 - segment1y1)))
@@ -308,3 +306,13 @@ fun convex(vararg points : Point2D) : Boolean
 
 fun distance(point1 : Point3D, point2 : Point3D) : Float =
     sqrt(square(point2.x - point1.x) + square(point2.y - point1.y) + square(point2.z - point1.z))
+
+fun scalarProduct(x1 : Float, y1 : Float, z1 : Float, x2 : Float, y2 : Float, z2 : Float) : Point3D =
+    /*
+        | x1 |   | x2 |   | y1*z2 - z1*y2 |
+        | y1 | . | y2 | = | x1*z2 - z1*x2 |
+        | z1 |   | z2 |   | x1*y2 - y1*x2 |
+     */
+    Point3D(y1 * z2 - z1 * y2, x1 * z2 - z1 * x2, x1 * y2 - y1 * x2)
+//                    y1                   x1               0
+

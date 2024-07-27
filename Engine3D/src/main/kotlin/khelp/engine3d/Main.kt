@@ -17,8 +17,57 @@ import khelp.thread.TaskContext
 import khelp.ui.game.AnimatedImage
 import khelp.ui.game.GameImage
 import java.util.concurrent.atomic.AtomicBoolean
+import khelp.engine3d.font.Font3D
+import khelp.engine3d.render.window3DFull
 
-fun main()
+fun main() {
+    //animation()
+    font3DTest()
+}
+
+private fun font3DTest()
+{
+    val node = Font3D.text("Hello world !")
+    val image= GameImage.load("textures/PostTown.jpg", Resources3D.resources)
+    val texture = Texture(image)
+    val material = Material()
+    material.textureDiffuse = texture
+    node.applyMaterialHierarchically(material)
+
+    window3DFull("Font3D") {
+        scene.backgroundColor = WHITE
+        scene.root {
+            addChild(node)
+        }
+
+        actionManager.actionObservable.observedBy(TaskContext.INDEPENDENT) { list ->
+            for (actionCode in list)
+            {
+                when (actionCode)
+                {
+                    ActionCode.ACTION_UP       -> node.y += 0.1f
+                    ActionCode.ACTION_DOWN     -> node.y -= 0.1f
+                    ActionCode.ACTION_LEFT     -> node.x -= 0.1f
+                    ActionCode.ACTION_RIGHT    -> node.x += 0.1f
+
+                    ActionCode.ACTION_BUTTON_1 -> node.z -= 0.1f
+                    ActionCode.ACTION_BUTTON_2 -> node.z += 0.1f
+
+                    ActionCode.ACTION_BUTTON_3 -> node.angleY += 5f
+                    ActionCode.ACTION_BUTTON_4 -> node.angleY -= 5f
+
+                    ActionCode.ACTION_BUTTON_5 -> node.angleX += 5f
+                    ActionCode.ACTION_BUTTON_6 -> node.angleX -= 5f
+
+                    ActionCode.ACTION_EXIT -> close()
+                    else                       -> Unit
+                }
+            }
+        }
+    }
+}
+
+private fun animation()
 {
     val toy = "sheep"
     val animationTime = 512L

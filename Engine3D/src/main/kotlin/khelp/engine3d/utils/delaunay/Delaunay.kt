@@ -5,6 +5,7 @@ import java.util.Stack
 import java.util.concurrent.atomic.AtomicBoolean
 import khelp.engine3d.utils.delaunay.adjacent.AdjacentSide
 import khelp.engine3d.utils.delaunay.adjacent.adjacent
+import kotlin.math.abs
 
 class Delaunay
 {
@@ -19,6 +20,12 @@ class Delaunay
     {
         this.needCompute.set(true)
         this.points.add(PointIndexed(this.points.size, x, y))
+    }
+
+    fun addIgnorePoint(x : Float, y : Float)
+    {
+        this.needCompute.set(true)
+        this.points.add(PointIndexed(-10 - this.points.size, x, y))
     }
 
     fun triangles(spy : (points : List<PointIndexed>, triangles : List<TriangleIndexed>) -> Unit = { _, _ -> }) : List<TriangleIndexed>

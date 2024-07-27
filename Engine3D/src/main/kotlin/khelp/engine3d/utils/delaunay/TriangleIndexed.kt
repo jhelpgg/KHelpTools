@@ -8,7 +8,7 @@ class TriangleIndexed(val point1 : PointIndexed, point2 : PointIndexed, point3 :
 {
     val point2 : PointIndexed
     val point3 : PointIndexed
-    private val polygon : Path2D.Float
+    val polygon : Path2D.Float
     private val inCircumscribedCircleMatrix : Matrix
 
     init

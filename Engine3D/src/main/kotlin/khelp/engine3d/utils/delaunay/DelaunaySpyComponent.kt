@@ -7,9 +7,9 @@ import java.awt.Graphics
 import java.awt.Graphics2D
 import java.awt.event.MouseEvent
 import java.awt.event.MouseListener
-import java.util.concurrent.atomic.AtomicBoolean
 import javax.swing.JComponent
 import khelp.thread.Locker
+import khelp.thread.delay
 import khelp.ui.TextAlignment
 import khelp.ui.extensions.drawText
 import kotlin.math.ceil
@@ -22,11 +22,11 @@ class DelaunaySpyComponent(delaunay : Delaunay) : JComponent(),
     {
         const val RAY = 16
         const val DIAMETER = DelaunaySpyComponent.RAY * 2
+        val COLOR_TRIANGLE = Color(184, 184, 255, 64)
     }
 
     private var points : List<PointIndexed> = emptyList()
     private var triangles : List<TriangleIndexed> = emptyList()
-    private val locked = AtomicBoolean(false)
     private val locker = Locker()
     private val circle : EnclosingCircle
 
@@ -61,7 +61,7 @@ class DelaunaySpyComponent(delaunay : Delaunay) : JComponent(),
         {
             for (point in this.points)
             {
-                graphics.color = Color.RED
+                graphics.color = if (point.index >= 0) Color.RED else Color.GREEN
                 val x = round(point.x).toInt()
                 val y = round(point.y).toInt()
                 graphics.fillOval(x - DelaunaySpyComponent.RAY,
@@ -96,26 +96,15 @@ class DelaunaySpyComponent(delaunay : Delaunay) : JComponent(),
 
             for (triangle in this.triangles)
             {
-                val x1 = round(triangle.point1.x).toInt()
-                val y1 = round(triangle.point1.y).toInt()
-                val x2 = round(triangle.point2.x).toInt()
-                val y2 = round(triangle.point2.y).toInt()
-                val x3 = round(triangle.point3.x).toInt()
-                val y3 = round(triangle.point3.y).toInt()
-                graphics.drawLine(x1, y1, x2, y2)
-                graphics.drawLine(x2, y2, x3, y3)
-                graphics.drawLine(x3, y3, x1, y1)
+                graphics.color = DelaunaySpyComponent.COLOR_TRIANGLE
+                graphics.fill(triangle.polygon)
+                graphics.color = Color.BLACK
+                graphics.draw(triangle.polygon)
             }
         }
     }
 
-    override fun mouseClicked(mouseEvent : MouseEvent)
-    {
-        if (this.locked.compareAndSet(true, false))
-        {
-            this.locker.unlock()
-        }
-    }
+    override fun mouseClicked(mouseEvent : MouseEvent) = Unit
 
     override fun mousePressed(mouseEvent : MouseEvent) = Unit
 
@@ -129,13 +118,13 @@ class DelaunaySpyComponent(delaunay : Delaunay) : JComponent(),
     {
         synchronized(this.locker)
         {
-            this.points = points
-            this.triangles = triangles
+            this.points = ArrayList(points)
+            this.triangles = ArrayList(triangles)
         }
 
         this.repaint()
         this.validate()
-        this.locked.set(true)
+        delay(8, this.locker::unlock)
         this.locker.lock()
     }
 }
