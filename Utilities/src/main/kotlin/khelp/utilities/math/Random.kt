@@ -44,7 +44,7 @@ fun random(bound1 : Long, bound2 : Long) : Long
 /**
  * Give a number randomly choose in given bounds.
  *
- * The minimum of bound i include, the maximum exclude.
+ * The minimum of bound is include, the maximum exclude.
  * That is to say, where  :
  * ````
  * min = min(bounds1, bounds2)
@@ -62,7 +62,7 @@ fun random(bound1 : Float, bound2 : Float) : Float
 /**
  * Give a number randomly choose in given bounds.
  *
- * The minimum of bound i include, the maximum exclude.
+ * The minimum of bound is include, the maximum exclude.
  * That is to say, where  :
  * ````
  * min = min(bounds1, bounds2)

@@ -23,6 +23,11 @@ const val DEFAULT_SEPARATORS = " \n\t\r"
 const val DEFAULT_STRING_LIMITERS = "\"'"
 
 /**
+ * Represents the infinite character (∞).
+ */
+const val INFINITE_CHARACTER = '\u221E'
+
+/**
  * Compute the last index <= of given offset in the char sequence of one of given characters
  *
  * @param charSequence Char sequence where search one character

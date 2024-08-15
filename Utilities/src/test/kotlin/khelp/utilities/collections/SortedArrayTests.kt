@@ -9,7 +9,7 @@ class SortedArrayTests
     @Test
     fun naturalOrderNotUnique()
     {
-        val sortedArray = sortedArray<String>()
+        val sortedArray = SortedArray<String>()
         Assertions.assertTrue(sortedArray.empty)
         Assertions.assertFalse(sortedArray.notEmpty)
         sortedArray += "hello"
@@ -30,7 +30,7 @@ class SortedArrayTests
     @Test
     fun naturalOrderUnique()
     {
-        val sortedArray = sortedArray<String>(true)
+        val sortedArray = SortedArray<String>(true)
         sortedArray += "hello"
         sortedArray += "world"
         sortedArray += "hello"
@@ -62,7 +62,7 @@ class SortedArrayTests
     @Test
     fun indexOfTest()
     {
-        val sortedArray = sortedArray<String>(true)
+        val sortedArray = SortedArray<String>(true)
         Assertions.assertTrue(sortedArray.empty)
         Assertions.assertFalse(sortedArray.notEmpty)
         sortedArray += "hello"
@@ -82,7 +82,7 @@ class SortedArrayTests
     @Test
     fun containsTest()
     {
-        val sortedArray = sortedArray<String>(true)
+        val sortedArray = SortedArray<String>(true)
         Assertions.assertTrue(sortedArray.empty)
         Assertions.assertFalse(sortedArray.notEmpty)
         sortedArray += "hello"
@@ -99,7 +99,7 @@ class SortedArrayTests
     @Test
     fun toStringTest()
     {
-        val sortedArray = sortedArray<String>(true)
+        val sortedArray = SortedArray<String>(true)
         Assertions.assertTrue(sortedArray.empty)
         Assertions.assertFalse(sortedArray.notEmpty)
         sortedArray += "the"
@@ -113,7 +113,7 @@ class SortedArrayTests
     @Test
     fun plusAssignTest()
     {
-        val sortedArray = sortedArray<String>(true)
+        val sortedArray = SortedArray<String>(true)
         Assertions.assertTrue(sortedArray.empty)
         Assertions.assertFalse(sortedArray.notEmpty)
         sortedArray += "hello"
@@ -131,7 +131,7 @@ class SortedArrayTests
     @Test
     fun minusAssignTest()
     {
-        val sortedArray = sortedArray<String>(true)
+        val sortedArray = SortedArray<String>(true)
         Assertions.assertTrue(sortedArray.empty)
         Assertions.assertFalse(sortedArray.notEmpty)
         sortedArray += "hello"
@@ -150,7 +150,7 @@ class SortedArrayTests
     @Test
     fun remAssignTest()
     {
-        val sortedArray = sortedArray<String>(true)
+        val sortedArray = SortedArray<String>(true)
         sortedArray += "hello"
         sortedArray += "world"
         sortedArray += "array"
@@ -165,7 +165,7 @@ class SortedArrayTests
     @Test
     fun removeIfTest()
     {
-        val sortedArray = sortedArray<Int>(true)
+        val sortedArray = SortedArray<Int>(true)
         sortedArray += 42
         sortedArray += 73
         sortedArray += 666
@@ -179,7 +179,7 @@ class SortedArrayTests
     @Test
     fun clearTest()
     {
-        val sortedArray = sortedArray<String>(true)
+        val sortedArray = SortedArray<String>(true)
         sortedArray += "hello"
         sortedArray += "world"
         sortedArray += "array"
@@ -192,7 +192,7 @@ class SortedArrayTests
     @Test
     fun containsAllTest()
     {
-        val sortedArray = sortedArray<String>(true)
+        val sortedArray = SortedArray<String>(true)
         sortedArray += "hello"
         sortedArray += "world"
         sortedArray += "array"
@@ -204,7 +204,7 @@ class SortedArrayTests
     @Test
     fun subListTest()
     {
-        val sortedArray = sortedArray<String>(true)
+        val sortedArray = SortedArray<String>(true)
         sortedArray += "array"
         sortedArray += "hello"
         sortedArray += "iterator"
@@ -219,7 +219,7 @@ class SortedArrayTests
     @Test
     fun immutableListTest()
     {
-        val sortedArray = sortedArray<String>(true)
+        val sortedArray = SortedArray<String>(true)
         sortedArray += "array"
         sortedArray += "hello"
         sortedArray += "iterator"

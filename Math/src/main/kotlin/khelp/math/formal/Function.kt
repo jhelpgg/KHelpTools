@@ -2,7 +2,6 @@ package khelp.math.formal
 
 import khelp.math.extensions.toFunction
 import khelp.utilities.collections.SortedArray
-import khelp.utilities.collections.sortedArray
 import khelp.utilities.comparators.ComparableNaturalOrderComparator
 import khelp.utilities.extensions.removeWhiteCharacters
 import java.io.PrintStream
@@ -70,10 +69,10 @@ abstract class Function : Comparable<Function>
                 else ->
                     Addition(Function.createAddition(functions.subPart(0,
                                                                        functions.size / 2,
-                                                                       sortedArray<Function>(false))),
+                                                                       SortedArray<Function>(false))),
                              Function.createAddition(functions.subPart(functions.size / 2,
                                                                        functions.size,
-                                                                       sortedArray<Function>(false))))
+                                                                       SortedArray<Function>(false))))
             }
 
         /**
@@ -149,10 +148,10 @@ abstract class Function : Comparable<Function>
                 else ->
                     Addition(Function.createMultiplication(functions.subPart(0,
                                                                              functions.size / 2,
-                                                                             sortedArray<Function>(false))),
+                                                                             SortedArray<Function>(false))),
                              Function.createMultiplication(functions.subPart(functions.size / 2,
                                                                              functions.size,
-                                                                             sortedArray<Function>(false))))
+                                                                             SortedArray<Function>(false))))
             }
 
         /**Binary operators*/
@@ -842,7 +841,7 @@ abstract class Function : Comparable<Function>
  */
 fun functionListOf(vararg functions : Function) : SortedArray<Function>
 {
-    val list = sortedArray<Function>(unique = false)
+    val list = SortedArray<Function>(unique = false)
     functions.forEach { function -> list += function }
     return list
 }

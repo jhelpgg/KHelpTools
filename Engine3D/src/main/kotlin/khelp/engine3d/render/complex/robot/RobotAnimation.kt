@@ -4,12 +4,12 @@ import khelp.engine3d.animation.Animation
 import khelp.engine3d.animation.Interpolation
 import khelp.engine3d.animation.LinearInterpolation
 import khelp.engine3d.render.AnimationDSL
-import khelp.utilities.collections.sortedArray
+import khelp.utilities.collections.SortedArray
 import kotlin.math.max
 
 class RobotAnimation(private val robot : Robot) : Animation()
 {
-    private val elements = sortedArray<RobotAnimationElement>(unique = true)
+    private val elements = SortedArray<RobotAnimationElement>(unique = true)
     private lateinit var startPosition : RobotPosition
 
     @AnimationDSL

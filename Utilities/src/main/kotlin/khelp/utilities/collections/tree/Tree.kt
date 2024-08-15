@@ -44,6 +44,9 @@ class Tree<V : Any> : Iterable<Tree<V>>
         return branch
     }
 
+    fun indexOf(child:Tree<V>) : Int =
+        this.branches.indexOf(child)
+
     /**
      * Visit the tree from root left to right in going depth.
      *
@@ -371,7 +374,7 @@ class Tree<V : Any> : Iterable<Tree<V>>
     /**
      * Collect elements that match a condition.
      *
-     * Thea way of search is left to right in going depth.
+     * The way of search is left to right in going depth.
      *
      *  If tree is
      *
@@ -523,4 +526,6 @@ class Tree<V : Any> : Iterable<Tree<V>>
             }
         }
     }
+
+    override fun toString() : String = this.value.toString()
 }

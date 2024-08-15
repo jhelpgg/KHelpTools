@@ -7,7 +7,7 @@ import khelp.utilities.extensions.forEachReversed
 /**
  * Create an array of [Comparable] sorted on their "natural order"
  */
-fun <C : Comparable<C>> sortedArray(unique : Boolean = false) =
+fun <C : Comparable<C>> SortedArray(unique : Boolean = false) =
     SortedArray<C>(ComparableNaturalOrderComparator(), unique)
 
 /**
@@ -17,7 +17,7 @@ fun <C : Comparable<C>> sortedArray(unique : Boolean = false) =
  *
  * * Addition, indexOf, contains and remove are on O(log(N))
  */
-class SortedArray<T>(private val comparator : Comparator<T>, val unique : Boolean = false) : Collection<T>
+class SortedArray<T>(private val comparator : Comparator<T>, val unique : Boolean = false) : MutableSet<T>
 {
     private val list = ArrayList<T>()
 
@@ -28,7 +28,7 @@ class SortedArray<T>(private val comparator : Comparator<T>, val unique : Boolea
     /**
      * Iterator in sorted elements order
      */
-    override fun iterator() : Iterator<T> =
+    override fun iterator() : MutableIterator<T> =
         this.list.iterator()
 
     /**
@@ -116,6 +116,7 @@ class SortedArray<T>(private val comparator : Comparator<T>, val unique : Boolea
                 {
                     iterable::contains
                 }
+
                 else          ->
                 {
                     { element -> iterable.indexOf(element) >= 0 }
@@ -126,7 +127,7 @@ class SortedArray<T>(private val comparator : Comparator<T>, val unique : Boolea
 
         while (iterator.hasNext())
         {
-            if (! contains(iterator.next()))
+            if (!contains(iterator.next()))
             {
                 iterator.remove()
             }
@@ -156,7 +157,7 @@ class SortedArray<T>(private val comparator : Comparator<T>, val unique : Boolea
     /**
      * Make array empty on removing all
      */
-    fun clear()
+    override fun clear()
     {
         this.list.clear()
     }
@@ -185,9 +186,49 @@ class SortedArray<T>(private val comparator : Comparator<T>, val unique : Boolea
     override fun isEmpty() : Boolean =
         this.list.isEmpty()
 
+    override fun add(element : T) : Boolean
+    {
+        val indexInsert = this.indexFor(true, element)
+
+        if (indexInsert >= this.list.size)
+        {
+            this.list.add(element)
+            return true
+        }
+
+        if (indexInsert >= 0)
+        {
+            this.list.add(indexInsert, element)
+            return true
+        }
+
+        return false
+    }
+
+    override fun remove(element : T) : Boolean =
+        this.list.remove(element)
+
+    override fun addAll(elements : Collection<T>) : Boolean
+    {
+        var added = false
+
+        for (element in elements)
+        {
+            added = this.add(element) || added
+        }
+
+        return added
+    }
+
+    override fun removeAll(elements : Collection<T>) : Boolean =
+        this.list.removeAll(elements.toSet())
+
+    override fun retainAll(elements : Collection<T>) : Boolean =
+        this.list.retainAll(elements.toSet())
+
     /**
-     * Searech an element index
-     * @param add Indicates we want use this index for insert in array
+     * Search an element index
+     * @param add Indicates we want to use this index for insert in array
      */
     private fun indexFor(add : Boolean, element : T) : Int
     {
@@ -199,7 +240,7 @@ class SortedArray<T>(private val comparator : Comparator<T>, val unique : Boolea
             }
             else
             {
-                - 1
+                -1
             }
         }
 
@@ -258,7 +299,7 @@ class SortedArray<T>(private val comparator : Comparator<T>, val unique : Boolea
             {
                 comparison < 0  -> maximum = middle
                 comparison == 0 -> return sameDelta + middle
-                comparison > 0  -> minimum = middle
+                else            -> minimum = middle
             }
         }
 
@@ -331,14 +372,14 @@ class SortedArray<T>(private val comparator : Comparator<T>, val unique : Boolea
     {
         if (this.list.isEmpty())
         {
-            return Pair<Int, Int>(0, - 1)
+            return Pair<Int, Int>(0, -1)
         }
 
         var comparison = this.comparator.compare(element, this.list[0])
 
         if (comparison < 0)
         {
-            return Pair<Int, Int>(- 1, 0)
+            return Pair<Int, Int>(-1, 0)
         }
 
         if (comparison == 0)
@@ -351,7 +392,7 @@ class SortedArray<T>(private val comparator : Comparator<T>, val unique : Boolea
 
         if (comparison > 0)
         {
-            return Pair<Int, Int>(this.list.size, - 1)
+            return Pair<Int, Int>(this.list.size, -1)
         }
 
         if (comparison == 0)
@@ -369,4 +410,6 @@ class SortedArray<T>(private val comparator : Comparator<T>, val unique : Boolea
         index = this.indexFor(true, element)
         return Pair<Int, Int>(index - 1, index)
     }
+
+
 }

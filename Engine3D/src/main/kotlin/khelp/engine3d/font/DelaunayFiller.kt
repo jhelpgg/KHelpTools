@@ -48,7 +48,7 @@ internal class DelaunayFiller(private val shape : Shape, private val delaunay : 
     {
         val centerX = (this.x2 + this.x1) / 2f
         val centerY = (this.y2 + this.y1) / 2f
-        val ray = sqrt(square(centerX - this.x1) + square(centerY - this.y1))
+        val ray = sqrt(square(centerX - this.x1) + square(centerY - this.y1)) * 1.1f
         val angle = atan2(this.y2 - this.y1, this.x2 - this.x1) + PI_FLOAT / 2f
         var px = centerX + ray * cos(angle)
         var py = centerY + ray * sin(angle)

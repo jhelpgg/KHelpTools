@@ -14,7 +14,7 @@ import khelp.ui.font.JHelpFont
 import khelp.ui.utilities.AFFINE_TRANSFORM
 import khelp.ui.utilities.FLATNESS
 import khelp.utilities.collections.queue.Queue
-import khelp.utilities.collections.sortedArray
+import khelp.utilities.collections.SortedArray
 import khelp.utilities.extensions.alpha
 import khelp.utilities.extensions.blue
 import khelp.utilities.extensions.bounds
@@ -949,7 +949,7 @@ class JHelpImage(
             throw IllegalStateException("Must be in draw mode !")
         }
 
-        val colors = sortedArray<Color>()
+        val colors = SortedArray<Color>()
         val size = this.pixels.size - 1
         Color.precision = precision
         var index : Int
@@ -1058,7 +1058,7 @@ class JHelpImage(
             throw IllegalStateException("Must be in draw mode !")
         }
 
-        val colors = sortedArray<Color>()
+        val colors = SortedArray<Color>()
         val size = this.pixels.size - 1
         Color.precision = precision
         var color : Color

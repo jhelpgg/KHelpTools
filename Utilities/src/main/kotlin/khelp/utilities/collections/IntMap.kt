@@ -4,7 +4,7 @@ import khelp.utilities.extensions.transform
 
 class IntMap<T> : Iterable<Pair<Int, T>>
 {
-    private val map = sortedArray<IntMapElement<T>>(true)
+    private val map = SortedArray<IntMapElement<T>>(true)
 
     val size : Int get() = this.map.size
 

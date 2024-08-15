@@ -1,6 +1,6 @@
 package khelp.math.formal
 
-import khelp.utilities.collections.sortedArray
+import khelp.utilities.collections.SortedArray
 
 
 /**
@@ -11,7 +11,7 @@ import khelp.utilities.collections.sortedArray
 class VariableList : Iterable<Variable>
 {
     /**Variables list*/
-    private val list = sortedArray<Variable>(true)
+    private val list = SortedArray<Variable>(true)
 
     /**Lists size*/
     val size get() = this.list.size

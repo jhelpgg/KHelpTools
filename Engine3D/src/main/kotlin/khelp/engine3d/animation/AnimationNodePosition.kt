@@ -3,12 +3,12 @@ package khelp.engine3d.animation
 import khelp.engine3d.extensions.position
 import khelp.engine3d.render.AnimationDSL
 import khelp.engine3d.render.Node
-import khelp.utilities.collections.sortedArray
+import khelp.utilities.collections.SortedArray
 import kotlin.math.max
 
 class AnimationNodePosition(private val node : Node) : Animation()
 {
-    private val elements = sortedArray<AnimationNodePositionElement>(unique = true)
+    private val elements = SortedArray<AnimationNodePositionElement>(unique = true)
     private lateinit var startPosition : NodePosition
 
     @AnimationDSL

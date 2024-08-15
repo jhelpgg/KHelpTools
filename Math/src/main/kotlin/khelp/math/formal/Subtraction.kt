@@ -1,6 +1,6 @@
 package khelp.math.formal
 
-import khelp.utilities.collections.sortedArray
+import khelp.utilities.collections.SortedArray
 
 /**
  * Subtraction of two functions
@@ -53,7 +53,7 @@ class Subtraction(parameter1 : Function, parameter2 : Function) : BinaryOperator
                     value = multiplications1[0].obtainRealValueNumber()
                     parameter1 = Function.createMultiplication(multiplications1.subPart(1,
                                                                                         multiplications1.size - 1,
-                                                                                        sortedArray<Function>(false)))
+                                                                                        SortedArray<Function>(false)))
                 }
                 else
                 {
@@ -67,7 +67,7 @@ class Subtraction(parameter1 : Function, parameter2 : Function) : BinaryOperator
                     parameter2 = Function
                         .createMultiplication(multiplications2.subPart(1,
                                                                        multiplications2.size - 1,
-                                                                       sortedArray<Function>(false)))
+                                                                       SortedArray<Function>(false)))
                 }
                 else
                 {
@@ -344,12 +344,12 @@ class Subtraction(parameter1 : Function, parameter2 : Function) : BinaryOperator
                             {
                                 return function.simplify() +
                                        Function.createAddition(additions1.subPart(o, n - o,
-                                                                                  sortedArray<Function>(false)))
+                                                                                  SortedArray<Function>(false)))
                             }
 
                             return function.simplify() -
                                    Function.createAddition(additions2.subPart(o, m - o,
-                                                                              sortedArray<Function>(false)))
+                                                                              SortedArray<Function>(false)))
                         }
 
                         val simplified = this@Subtraction.simplifyMultipleMultiplication(function1, function2)

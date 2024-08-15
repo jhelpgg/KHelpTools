@@ -1,6 +1,6 @@
 package khelp.utilities.extensions
 
-import khelp.utilities.collections.sortedArray
+import khelp.utilities.collections.SortedArray
 import khelp.utilities.math.max
 import khelp.utilities.math.min
 import khelp.utilities.regex.RegularExpression
@@ -22,7 +22,7 @@ operator fun CharactersInterval.plus(charactersInterval: CharactersInterval): Ch
         return this
     }
 
-    val simpleIntervals = sortedArray<SimpleCharactersInterval>(true)
+    val simpleIntervals = SortedArray<SimpleCharactersInterval>(true)
 
     if (this is SimpleCharactersInterval)
     {
@@ -62,7 +62,7 @@ operator fun CharactersInterval.plus(charactersInterval: CharactersInterval): Ch
         return currentInterval
     }
 
-    val collectIntervals = sortedArray<SimpleCharactersInterval>(true)
+    val collectIntervals = SortedArray<SimpleCharactersInterval>(true)
     var observedInterval: SimpleCharactersInterval
 
     for (index in 1 until size)

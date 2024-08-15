@@ -24,7 +24,7 @@ import khelp.thread.delay
 import khelp.thread.flow.Flow
 import khelp.ui.extensions.drawText
 import khelp.ui.game.GameImage
-import khelp.utilities.collections.sortedArray
+import khelp.utilities.collections.SortedArray
 import khelp.utilities.provider.provided
 import khelp.utilities.thread.atomic
 import java.awt.BasicStroke
@@ -56,8 +56,8 @@ object GameScreen
     private var numberOfDifferentGem = MINIMUM_NUMBER_DIFFERENT_GEM
     private val possibleGems = ArrayList<Gem>()
     private var gameScreenState by atomic(GameScreenState.FALLING_CELLS)
-    private val fallingCells = sortedArray<FallingCell>()
-    private val explosions = sortedArray<ExplodeCell>()
+    private val fallingCells = SortedArray<FallingCell>()
+    private val explosions = SortedArray<ExplodeCell>()
     private var afterExplosion by atomic(GameScreenState.WAITING_USER_ACTION)
     private var pointsPrint by atomic(0)
     private var points by atomic(0)

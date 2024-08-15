@@ -1,7 +1,7 @@
 package khelp.image.gradient
 
 import khelp.image.JHelpPaint
-import khelp.utilities.collections.sortedArray
+import khelp.utilities.collections.SortedArray
 import khelp.utilities.extensions.alpha
 import khelp.utilities.extensions.blue
 import khelp.utilities.extensions.green
@@ -40,7 +40,7 @@ import khelp.utilities.extensions.red
 class JHelpGradientVertical(colorStart: Int, colorEnd: Int) : JHelpPaint
 {
     /**Percentage and colors*/
-    private val percents = sortedArray<Percent>()
+    private val percents = SortedArray<Percent>()
     /**Current painting area height*/
     private var height = 0
 
