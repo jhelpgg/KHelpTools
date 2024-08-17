@@ -1,15 +1,14 @@
 package khelp.image.ui
 
-import khelp.image.JHelpImage
 import java.awt.Dimension
 import java.awt.Graphics
 import javax.swing.JComponent
+import khelp.image.JHelpImage
 import kotlin.math.max
 
-class JHelpImageComponent(width : Int, height : Int) : JComponent()
+class JHelpImageComponent(width : Int, height : Int,
+                          val image : JHelpImage = JHelpImage(max(1, width), max(1, height))) : JComponent()
 {
-    val image = JHelpImage(max(1, width), max(1, height))
-
     init
     {
         val size = Dimension(width, height)

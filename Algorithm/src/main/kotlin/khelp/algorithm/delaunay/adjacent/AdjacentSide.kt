@@ -1,6 +1,6 @@
-package khelp.engine3d.utils.delaunay.adjacent
+package khelp.algorithm.delaunay.adjacent
 
-import khelp.engine3d.utils.delaunay.PointIndexed
+import khelp.algorithm.delaunay.PointIndexed
 
 data class AdjacentSide(val firstFree : PointIndexed,
                         val side1 : PointIndexed,

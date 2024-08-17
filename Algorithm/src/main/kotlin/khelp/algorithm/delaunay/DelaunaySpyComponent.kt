@@ -1,4 +1,4 @@
-package khelp.engine3d.utils.delaunay
+package khelp.algorithm.delaunay
 
 import java.awt.BasicStroke
 import java.awt.Color
@@ -13,7 +13,6 @@ import khelp.thread.delay
 import khelp.ui.TextAlignment
 import khelp.ui.extensions.drawText
 import kotlin.math.ceil
-import kotlin.math.max
 import kotlin.math.round
 
 class DelaunaySpyComponent(delaunay : Delaunay, animationFPS : Int = 25) : JComponent(),
@@ -22,7 +21,7 @@ class DelaunaySpyComponent(delaunay : Delaunay, animationFPS : Int = 25) : JComp
     companion object
     {
         const val RAY = 16
-        const val DIAMETER = DelaunaySpyComponent.RAY * 2
+        const val DIAMETER = RAY * 2
         val COLOR_TRIANGLE = Color(184, 184, 255, 64)
     }
 
@@ -30,7 +29,7 @@ class DelaunaySpyComponent(delaunay : Delaunay, animationFPS : Int = 25) : JComp
     private var triangles : List<TriangleIndexed> = emptyList()
     private val locker = Locker()
     private val circle : EnclosingCircle
-    private val timePause = if (animationFPS <= 0) 0 else  1000 / animationFPS
+    private val timePause = if (animationFPS <= 0) 0 else 1000 / animationFPS
 
     init
     {
@@ -67,10 +66,10 @@ class DelaunaySpyComponent(delaunay : Delaunay, animationFPS : Int = 25) : JComp
                 val factor = if (point.index >= 0) 1 else 2
                 val x = round(point.x).toInt()
                 val y = round(point.y).toInt()
-                graphics.fillOval(x - DelaunaySpyComponent.RAY/factor,
-                                  y - DelaunaySpyComponent.RAY/factor,
-                                  DelaunaySpyComponent.DIAMETER/factor,
-                                  DelaunaySpyComponent.DIAMETER/factor)
+                graphics.fillOval(x - RAY / factor,
+                                  y - RAY / factor,
+                                  DIAMETER / factor,
+                                  DIAMETER / factor)
                 graphics.color = Color.WHITE
 
                 for (j in -1..1)
@@ -99,7 +98,7 @@ class DelaunaySpyComponent(delaunay : Delaunay, animationFPS : Int = 25) : JComp
 
             for (triangle in this.triangles)
             {
-                graphics.color = DelaunaySpyComponent.COLOR_TRIANGLE
+                graphics.color = COLOR_TRIANGLE
                 graphics.fill(triangle.polygon)
                 graphics.color = Color.BLACK
                 graphics.draw(triangle.polygon)

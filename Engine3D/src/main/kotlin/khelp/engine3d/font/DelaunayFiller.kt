@@ -1,8 +1,8 @@
 package khelp.engine3d.font
 
 import java.awt.Shape
+import khelp.algorithm.delaunay.Delaunay
 import khelp.engine3d.extensions.PI_FLOAT
-import khelp.engine3d.utils.delaunay.Delaunay
 import khelp.utilities.math.square
 import kotlin.math.atan2
 import kotlin.math.cos

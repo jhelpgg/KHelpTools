@@ -1,11 +1,10 @@
-package khelp.engine3d.utils.delaunay
+package khelp.algorithm.delaunay
 
 import java.util.Collections
 import java.util.Stack
 import java.util.concurrent.atomic.AtomicBoolean
-import khelp.engine3d.utils.delaunay.adjacent.AdjacentSide
-import khelp.engine3d.utils.delaunay.adjacent.adjacent
-import kotlin.math.abs
+import khelp.algorithm.delaunay.adjacent.AdjacentSide
+import khelp.algorithm.delaunay.adjacent.adjacent
 
 class Delaunay
 {

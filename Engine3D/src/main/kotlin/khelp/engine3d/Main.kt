@@ -19,8 +19,16 @@ import khelp.ui.game.GameImage
 import java.util.concurrent.atomic.AtomicBoolean
 import khelp.engine3d.font.Font3D
 import khelp.engine3d.render.window3DFull
+import khelp.engine3d.utils.delaunay.PointIndexed
+import khelp.engine3d.utils.delaunay.TriangleIndexed
 
 fun main() {
+    val triangle = TriangleIndexed(PointIndexed(0, 50f,0f),
+                                   PointIndexed(1, 100f, 100f),
+                                   PointIndexed(2,0f,100f))
+    println( "50, 50 : " + triangle.coefficients(50f, 50f))
+    println( "150, 50 : " + triangle.coefficients(150f, 50f))
+    println( "50, 100 : " + triangle.coefficients(50f, 100f))
     //animation()
     font3DTest()
 }

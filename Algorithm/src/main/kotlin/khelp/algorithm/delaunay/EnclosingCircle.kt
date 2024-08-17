@@ -1,4 +1,4 @@
-package khelp.engine3d.utils.delaunay
+package khelp.algorithm.delaunay
 
 import khelp.utilities.math.square
 import kotlin.math.max

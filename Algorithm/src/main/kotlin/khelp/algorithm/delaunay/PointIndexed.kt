@@ -1,4 +1,4 @@
-package khelp.engine3d.utils.delaunay
+package khelp.algorithm.delaunay
 
 class PointIndexed(val index : Int, val x : Float, val y : Float)
 {

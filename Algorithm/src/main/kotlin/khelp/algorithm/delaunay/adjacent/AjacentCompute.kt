@@ -1,6 +1,6 @@
-package khelp.engine3d.utils.delaunay.adjacent
+package khelp.algorithm.delaunay.adjacent
 
-import khelp.engine3d.utils.delaunay.TriangleIndexed
+import khelp.algorithm.delaunay.TriangleIndexed
 
 fun adjacent(triangleFirst : TriangleIndexed, triangleSecond : TriangleIndexed) : Adjacent =
     when

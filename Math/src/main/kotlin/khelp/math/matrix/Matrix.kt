@@ -61,7 +61,7 @@ class Matrix(val width : Int, val height : Int, random : Boolean = false)
 
         this.size = this.width * this.height
         this.matrix = if (random) DoubleArray(this.size) { Math.random() } else DoubleArray(this.size)
-        this.determinantKnown = this.width == this.height
+        this.determinantKnown = this.width == this.height && random.not()
         this.determinant = 0.0
     }
 

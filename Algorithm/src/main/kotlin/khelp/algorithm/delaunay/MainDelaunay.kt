@@ -1,4 +1,4 @@
-package khelp.engine3d.utils.delaunay
+package khelp.algorithm.delaunay
 
 import javax.swing.JFrame
 import khelp.ui.utilities.takeAllScreen

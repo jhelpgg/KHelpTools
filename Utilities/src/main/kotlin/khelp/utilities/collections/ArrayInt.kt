@@ -17,14 +17,18 @@ class ArrayInt(initialSize : Int = 128) : Iterable<Int>
         private set
 
     /**
-     * Indicates if array is sorted.
-     *
-     * **`true`** means the array is sorted for sure
-     *
-     * **`false`** means not sure if array is sorted or not
+     * Indicates the array sorted status
      */
-    var sorted = true
+    var sorted : SortedStatus = SortedStatus.SORTED
         private set
+
+    constructor(vararg integers:Int) : this(integers.size)
+    {
+        for(integer in integers)
+        {
+            this.add(integer)
+        }
+    }
 
     /**
      * Check if an index is valid
@@ -68,10 +72,18 @@ class ArrayInt(initialSize : Int = 128) : Iterable<Int>
     {
         this.expand(1)
 
-        this.sorted = this.size == 0 || (this.sorted && this.array[this.size - 1] <= integer)
+        this.sorted =
+            when
+            {
+                this.size == 0                                                             -> SortedStatus.SORTED
+                this.sorted == SortedStatus.SORTED && this.array[this.size - 1] <= integer -> SortedStatus.SORTED
+                this.sorted == SortedStatus.SORTED                                         -> SortedStatus.NOT_SORTED
+                else                                                                       -> this.sorted
+            }
+
 
         this.array[this.size] = integer
-        this.size ++
+        this.size++
     }
 
     /***
@@ -96,28 +108,18 @@ class ArrayInt(initialSize : Int = 128) : Iterable<Int>
     fun clear()
     {
         this.size = 0
-        this.sorted = true
+        this.sorted = SortedStatus.SORTED
     }
 
     /**
      * Indicates if an integer is in the array.
      *
-     * Search is on O(n)
+     * Search is on O(n) or O(LN(n)) if sorted
      *
      * @param integer Integer search
      * @return `true` if the integer is inside
      */
     operator fun contains(integer : Int) = this.index(integer) >= 0
-
-    /**
-     * Indicates if an integer is in the array.
-     *
-     * Search is in O(LN(n)) but work only if the array is sorted
-     *
-     * @param integer Integer search
-     * @return `true` if the integer is inside
-     */
-    fun containsSupposeSorted(integer : Int) = this.indexSupposeSorted(integer) >= 0
 
     /**
      * Create a copy of the array
@@ -141,14 +143,14 @@ class ArrayInt(initialSize : Int = 128) : Iterable<Int>
     /**
      * Index of an integer or -1 if integer not in the array.
      *
-     * Search is on O(n)
+     * Search is on O(n) or O(LN(n)) if sorted
      *
      * @param integer Integer search
      * @return Integer index or -1 if integer not in the array
      */
     fun index(integer : Int) : Int
     {
-        if (this.sorted)
+        if (this.sorted == SortedStatus.SORTED)
         {
             return this.indexSupposeSorted(integer)
         }
@@ -161,7 +163,7 @@ class ArrayInt(initialSize : Int = 128) : Iterable<Int>
             }
         }
 
-        return - 1
+        return -1
     }
 
     /**
@@ -172,18 +174,18 @@ class ArrayInt(initialSize : Int = 128) : Iterable<Int>
      * @param integer Integer search
      * @return Integer index or -1 if integer not in the array
      */
-    fun indexSupposeSorted(integer : Int) : Int
+    private fun indexSupposeSorted(integer : Int) : Int
     {
         if (this.size <= 0)
         {
-            return - 1
+            return -1
         }
 
         var actual = this.array[0]
 
         if (integer < actual)
         {
-            return - 1
+            return -1
         }
 
         if (integer == actual)
@@ -198,7 +200,7 @@ class ArrayInt(initialSize : Int = 128) : Iterable<Int>
 
         if (integer > actual)
         {
-            return - 1
+            return -1
         }
 
         if (integer == actual)
@@ -227,7 +229,7 @@ class ArrayInt(initialSize : Int = 128) : Iterable<Int>
             }
         }
 
-        return - 1
+        return -1
     }
 
     /**
@@ -266,12 +268,20 @@ class ArrayInt(initialSize : Int = 128) : Iterable<Int>
             return
         }
 
-        this.sorted = this.sorted && (index == 0 || integer >= this.array[index - 1]) && integer <= this.array[index]
+        this.sorted =
+            when
+            {
+                this.sorted == SortedStatus.SORTED
+                && (index == 0 || integer >= this.array[index - 1]) && integer <= this.array[index] -> SortedStatus.SORTED
+
+                this.sorted == SortedStatus.SORTED                                                  -> SortedStatus.NOT_SORTED
+                else                                                                                -> this.sorted
+            }
 
         System.arraycopy(this.array, index, this.array, index + 1, this.array.size - index - 1)
 
         this.array[index] = integer
-        this.size ++
+        this.size++
     }
 
     /**Indicates if array is empty*/
@@ -281,16 +291,13 @@ class ArrayInt(initialSize : Int = 128) : Iterable<Int>
     /**
      * Indicates if array is sorted.
      *
-     * It is a slower method than [sorted] but the answer is accurate, that means if **`false`** is answer, it
-     * is sure that the array is not sorted
-     *
-     * @return **`true`** if array is sorted. **`false`** if array not sorted
+     * If the sorted status is unknown, it takes the time to compute and update the sorted status
      */
-    fun sortedSlow() : Boolean
+    fun sorted() : SortedStatus
     {
-        if (this.sorted)
+        if (this.sorted != SortedStatus.UNKNOWN)
         {
-            return true
+            return this.sorted
         }
 
         var previous = this.array[0]
@@ -302,14 +309,15 @@ class ArrayInt(initialSize : Int = 128) : Iterable<Int>
 
             if (previous > actual)
             {
-                return false
+                this.sorted = SortedStatus.NOT_SORTED
+                return SortedStatus.NOT_SORTED
             }
 
             previous = actual
         }
 
-        this.sorted = true
-        return true
+        this.sorted = SortedStatus.SORTED
+        return SortedStatus.SORTED
     }
 
     /**
@@ -329,11 +337,11 @@ class ArrayInt(initialSize : Int = 128) : Iterable<Int>
         this.checkIndex(index)
 
         System.arraycopy(this.array, index + 1, this.array, index, this.size - index - 1)
-        this.size --
+        this.size--
 
         if (this.size < 2)
         {
-            this.sorted = true
+            this.sorted = SortedStatus.SORTED
         }
     }
 
@@ -349,8 +357,15 @@ class ArrayInt(initialSize : Int = 128) : Iterable<Int>
 
         this.array[index] = integer
 
-        this.sorted = (this.sorted && (index == 0 || integer >= this.array[index - 1])
-                       && (index == this.size - 1 || integer <= this.array[index + 1]))
+        this.sorted =
+            when
+            {
+                (this.sorted == SortedStatus.SORTED && (index == 0 || integer >= this.array[index - 1])
+                 && (index == this.size - 1 || integer <= this.array[index + 1])) -> SortedStatus.SORTED
+
+                this.sorted == SortedStatus.SORTED                                -> SortedStatus.NOT_SORTED
+                else                                                              -> SortedStatus.UNKNOWN
+            }
     }
 
     /**
@@ -360,13 +375,13 @@ class ArrayInt(initialSize : Int = 128) : Iterable<Int>
      */
     fun sort()
     {
-        if (this.sorted)
+        if (this.sorted == SortedStatus.SORTED)
         {
             return
         }
 
         Arrays.sort(this.array, 0, this.size)
-        this.sorted = true
+        this.sorted = SortedStatus.SORTED
     }
 
     /**
@@ -394,7 +409,7 @@ class ArrayInt(initialSize : Int = 128) : Iterable<Int>
             if (actual == previous)
             {
                 System.arraycopy(this.array, index + 1, this.array, index, this.size - index - 1)
-                this.size --
+                this.size--
             }
 
             previous = actual
@@ -434,7 +449,7 @@ class ArrayInt(initialSize : Int = 128) : Iterable<Int>
             }
         }
 
-        stringBuilder.append(']')
+        stringBuilder.append("] : ${this.sorted}")
 
         return stringBuilder.toString()
     }

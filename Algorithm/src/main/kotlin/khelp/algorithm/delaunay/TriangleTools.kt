@@ -1,17 +1,19 @@
-package khelp.engine3d.utils.delaunay
+package khelp.algorithm.delaunay
 
-import khelp.engine3d.extensions.PI_FLOAT
+import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
+
+const val PI_FLOAT = PI.toFloat()
 
 val cos2PI3 = cos(2f * PI_FLOAT / 3f)
 val sin2PI3 = sin(2f * PI_FLOAT / 3f)
 val cos4PI3 = cos(4f * PI_FLOAT / 3f)
 val sin4PI3 = sin(4f * PI_FLOAT / 3f)
 
-fun triangleOfInscribedCircle(enclosingCircle : EnclosingCircle, factor : Float = 1f) : TriangleIndexed
+fun triangleOfInscribedCircle(enclosingCircle : EnclosingCircle, scale : Float = 1f) : TriangleIndexed
 {
-    val ray = enclosingCircle.ray * factor * 2f
+    val ray = enclosingCircle.ray * 2f * scale
     val centerX = enclosingCircle.centerX
     val centerY = enclosingCircle.centerY
     val point1 = PointIndexed(-1, centerX + ray, centerY)

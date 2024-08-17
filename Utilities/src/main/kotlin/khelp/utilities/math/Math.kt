@@ -8,20 +8,19 @@ import kotlin.math.exp
 import kotlin.math.max
 import kotlin.math.min
 
-
 /**
  * Double precision, the "zero"
  */
 val EPSILON = maxOf(Double.MIN_VALUE,
                     abs(Math.E - exp(1.0)),
-                    abs(Math.PI - acos(- 1.0)))
+                    abs(Math.PI - acos(-1.0)))
 
 /**
  * Float precision, the "zero"
  */
 val EPSILON_FLOAT = maxOf(Float.MIN_VALUE,
                           abs(Math.E.toFloat() - exp(1.0).toFloat()),
-                          abs(Math.PI.toFloat() - acos(- 1.0).toFloat()))
+                          abs(Math.PI.toFloat() - acos(-1.0).toFloat()))
 
 const val CENTIMETER_IN_PICA = 6.0 / 2.54
 
@@ -79,7 +78,7 @@ fun compare(value1 : Float, value2 : Float) : Int
     {
         isNul(diff) -> 0
         diff > 0f   -> 1
-        else        -> - 1
+        else        -> -1
     }
 }
 
@@ -91,7 +90,7 @@ fun compare(value1 : Double, value2 : Double) : Int
     {
         isNul(diff) -> 0
         diff > 0.0  -> 1
-        else        -> - 1
+        else        -> -1
     }
 }
 
@@ -136,16 +135,15 @@ fun max(char1 : Char, char2 : Char) : Char =
 fun sign(int : Int) : Int =
     when
     {
-        int < 0  -> - 1
+        int < 0  -> -1
         int == 0 -> 0
         else     -> 1
     }
 
-
 fun sign(long : Long) : Int =
     when
     {
-        long < 0L  -> - 1
+        long < 0L  -> -1
         long == 0L -> 0
         else       -> 1
     }
@@ -154,16 +152,15 @@ fun sign(float : Float) : Int =
     when
     {
         isNul(float) -> 0
-        float < 0f   -> - 1
+        float < 0f   -> -1
         else         -> 1
     }
-
 
 fun sign(double : Double) : Int =
     when
     {
         isNul(double) -> 0
-        double < 0.0  -> - 1
+        double < 0.0  -> -1
         else          -> 1
     }
 
@@ -283,7 +280,6 @@ fun degreeToRadian(degree : Double) : Double = degree * PI / 180.0
  */
 fun gradeToDegree(grade : Double) : Double = grade / GRADE_IN_DEGREE
 
-
 /**
  * Convert grade to radian
  *
@@ -302,7 +298,6 @@ fun gradeToRadian(grade : Double) : Double = grade * Math.PI / 200.0
  */
 fun inchToCentimeter(inch : Double) : Double = inch * INCH_IN_CENTIMETER
 
-
 /**
  * Convert inch to millimeter
  *
@@ -311,7 +306,6 @@ fun inchToCentimeter(inch : Double) : Double = inch * INCH_IN_CENTIMETER
  * @return Converted millimeter
  */
 fun inchToMillimeter(inch : Double) : Double = inch * INCH_IN_MILLIMETER
-
 
 /**
  * Convert inch to pica
@@ -412,7 +406,6 @@ fun picaToPoint(pica : Double) : Double = pica * PICA_IN_POINT
  */
 fun pointToCentimeter(point : Double) : Double = point / CENTIMETER_IN_POINT
 
-
 /**
  * Convert point to inch
  *
@@ -440,7 +433,6 @@ fun pointToMillimeter(point : Double) : Double = point / MILLIMETER_IN_POINT
  */
 fun pointToPica(point : Double) : Double = point / PICA_IN_POINT
 
-
 /**
  * Convert radian to degree
  *
@@ -451,7 +443,6 @@ fun pointToPica(point : Double) : Double = point / PICA_IN_POINT
 fun radianToDegree(radian : Double) : Double = radian * 180.0 / Math.PI
 fun radianToDegree(radian : Float) : Float = radian * 180.0f / Math.PI.toFloat()
 
-
 /**
  * Convert radian to grade
  *
@@ -461,9 +452,67 @@ fun radianToDegree(radian : Float) : Float = radian * 180.0f / Math.PI.toFloat()
  */
 fun radianToGrade(radian : Double) : Double = radian * 200.0 / Math.PI
 
-fun gauss(c00: Int, c10: Int, c20: Int,
-          c01: Int, c11: Int, c21: Int,
-          c02: Int, c12: Int, c22: Int) =
+/**
+ * Calculates the Gaussian value for the given 3x3 matrix of integer values.
+ *
+ * @return The calculated Gaussian value.
+ */
+fun gauss(c00 : Int, c10 : Int, c20 : Int,
+          c01 : Int, c11 : Int, c21 : Int,
+          c02 : Int, c12 : Int, c22 : Int) =
     (c00 + (c10 shl 1) + c20 +
      (c01 shl 1) + (c11 shl 2) + (c21 shl 1) +
      c02 + (c12 shl 1) + c22) shr 4
+
+/**
+ * Calculates the area of a triangle given the coordinates of its three vertices.
+ *
+ * @param x1 the x-coordinate of vertex 1
+ * @param y1 the y-coordinate of vertex 1
+ * @param x2 the x-coordinate of vertex 2
+ * @param y2 the y-coordinate of vertex 2
+ * @param x3 the x-coordinate of vertex 3
+ * @param y3 the y-coordinate of vertex 3
+ * @return the area of the triangle
+ */
+fun area(x1 : Double, y1 : Double, x2 : Double, y2 : Double, x3 : Double, y3 : Double) : Double =
+    abs(x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2)) / 2.0
+
+/**
+ * Calculates the area of a triangle given the coordinates of its three vertices.
+ *
+ * @param x1 the x-coordinate of vertex 1
+ * @param y1 the y-coordinate of vertex 1
+ * @param x2 the x-coordinate of vertex 2
+ * @param y2 the y-coordinate of vertex 2
+ * @param x3 the x-coordinate of vertex 3
+ * @param y3 the y-coordinate of vertex 3
+ * @return the area of the triangle
+ */
+fun area(x1 : Float, y1 : Float, x2 : Float, y2 : Float, x3 : Float, y3 : Float) : Float =
+    abs(x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2)) / 2f
+
+/**
+ * Determines whether three given points are in a trigonometric order.
+ * That is to say if follow the path 1, 2, then 3, it wil turn in the same way as the trigonometric circle (counter clock wize)
+ *
+ * @param x1 the x-coordinate of the first point
+ * @param y1 the y-coordinate of the first point
+ * @param x2 the x-coordinate of the second point
+ * @param y2 the y-coordinate of the second point
+ * @param x3 the x-coordinate of the third point
+ * @param y3 the y-coordinate of the third point
+ * @return true if the points are in a trigonometric order, false otherwise
+ */
+fun isTrigonometricWay(x1 : Float, y1 : Float, x2 : Float, y2 : Float, x3 : Float, y3 : Float) : Boolean
+{
+    val vx21 = x1 - x2
+    val vy21 = y1 - y2
+    val vx23 = x3 - x2
+    val vy23 = y3 - y2
+    /*
+        | vx21 vx23 |
+        | vy21 vy23 | = (vx21 * vy23) - (vy21*vx23)
+     */
+    return (vx21 * vy23) - (vy21 * vx23) <= 0f
+}

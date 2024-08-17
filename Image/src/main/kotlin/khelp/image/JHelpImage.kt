@@ -3153,7 +3153,7 @@ class JHelpImage(
     }
 
     /**
-     * Draw round rectangle rectangle with thick border
+     * Draw round rectangle with thick border
      *
      * @param x         Up left corner X
      * @param y         Up left corner Y

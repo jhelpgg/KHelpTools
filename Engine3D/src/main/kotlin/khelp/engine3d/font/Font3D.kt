@@ -1,11 +1,11 @@
 package khelp.engine3d.font
 
 import java.awt.geom.PathIterator
+import khelp.algorithm.delaunay.Delaunay
 import khelp.engine3d.render.Node
 import khelp.engine3d.render.NodeWithMaterial
 import khelp.engine3d.render.Object3D
 import khelp.engine3d.render.ObjectClone
-import khelp.engine3d.utils.delaunay.Delaunay
 import khelp.ui.utilities.AFFINE_TRANSFORM
 import khelp.ui.utilities.BUTTON_FONT
 import khelp.utilities.collections.Cache
