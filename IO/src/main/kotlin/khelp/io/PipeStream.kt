@@ -10,8 +10,8 @@ class PipeStream()
     private val cycleByteArray = CycleByteArray()
     private val lock = Object()
     private var closed = false
-    val inputStream: InputStream = PipeInputStream(this)
-    val outputStream:OutputStream = PipeOutputStream(this)
+    val inputStream : InputStream = PipeInputStream(this)
+    val outputStream : OutputStream = PipeOutputStream(this)
 
     internal fun close()
     {
@@ -23,7 +23,7 @@ class PipeStream()
         }
     }
 
-    internal fun read(): Int =
+    internal fun read() : Int =
         synchronized(this.lock)
         {
             while (!this.closed && this.cycleByteArray.empty)
@@ -37,12 +37,11 @@ class PipeStream()
             }
             else
             {
-                this.cycleByteArray.read()
-                    .toInt() and 0xFF
+                this.cycleByteArray.read().toInt() and 0xFF
             }
         }
 
-    internal fun read(byteArray: ByteArray, offset: Int = 0, length: Int = byteArray.size - offset): Int
+    internal fun read(byteArray : ByteArray, offset : Int = 0, length : Int = byteArray.size - offset) : Int
     {
         var len = length
         var off = offset
@@ -78,7 +77,7 @@ class PipeStream()
         }
     }
 
-    internal fun write(byte: Int)
+    internal fun write(byte : Int)
     {
         synchronized(this.lock)
         {
@@ -87,7 +86,7 @@ class PipeStream()
         }
     }
 
-    internal fun write(byteArray: ByteArray, offset: Int = 0, length: Int = byteArray.size - offset): Int
+    internal fun write(byteArray : ByteArray, offset : Int = 0, length : Int = byteArray.size - offset) : Int
     {
         var len = length
         var off = offset

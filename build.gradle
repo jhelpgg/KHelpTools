@@ -6,13 +6,13 @@ buildscript {
         google()
     }
     dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.10"
     }
 }
 
 plugins {
     id 'maven-publish'
-    id 'org.jetbrains.kotlin.jvm' version "$kotlin_version"
+    id 'org.jetbrains.kotlin.jvm' version "1.5.10"
 }
 
 allprojects {

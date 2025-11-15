@@ -58,7 +58,7 @@ class RSAKeyPair
         }
         catch (exception: Exception)
         {
-            throw LoginPasswordInvalidException
+            throw LoginPasswordInvalidException()
         }
     }
 
@@ -73,7 +73,7 @@ class RSAKeyPair
         else if (!actualTripleDES.sameKeys(tripleDES))
         {
             Thread.sleep((128L..1024L).random())
-            throw LoginPasswordInvalidException
+            throw LoginPasswordInvalidException()
         }
 
         val byteArrayOutputStream = ByteArrayOutputStream()

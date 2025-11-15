@@ -1,9 +1,11 @@
 package khelp.engine3d
 
+import java.util.concurrent.atomic.AtomicBoolean
 import khelp.engine3d.animation.AccelerationInterpolation
 import khelp.engine3d.animation.AnimationGroup
 import khelp.engine3d.animation.AnimationManager
 import khelp.engine3d.event.ActionCode
+import khelp.engine3d.font.Font3D
 import khelp.engine3d.format.obj.options.ObjUseNormalMap
 import khelp.engine3d.render.Material
 import khelp.engine3d.render.Texture
@@ -12,31 +14,22 @@ import khelp.engine3d.render.WHITE
 import khelp.engine3d.render.prebuilt.FaceUV
 import khelp.engine3d.render.prebuilt.Plane
 import khelp.engine3d.render.window3D
+import khelp.engine3d.render.window3DFull
 import khelp.engine3d.resource.Resources3D
 import khelp.thread.TaskContext
 import khelp.ui.game.AnimatedImage
 import khelp.ui.game.GameImage
-import java.util.concurrent.atomic.AtomicBoolean
-import khelp.engine3d.font.Font3D
-import khelp.engine3d.render.window3DFull
-import khelp.engine3d.utils.delaunay.PointIndexed
-import khelp.engine3d.utils.delaunay.TriangleIndexed
 
-fun main() {
-    val triangle = TriangleIndexed(PointIndexed(0, 50f,0f),
-                                   PointIndexed(1, 100f, 100f),
-                                   PointIndexed(2,0f,100f))
-    println( "50, 50 : " + triangle.coefficients(50f, 50f))
-    println( "150, 50 : " + triangle.coefficients(150f, 50f))
-    println( "50, 100 : " + triangle.coefficients(50f, 100f))
-    //animation()
+fun main()
+{
+    // animation()
     font3DTest()
 }
 
 private fun font3DTest()
 {
     val node = Font3D.text("Hello world !")
-    val image= GameImage.load("textures/PostTown.jpg", Resources3D.resources)
+    val image = GameImage.load("textures/PostTown.jpg", Resources3D.resources)
     val texture = Texture(image)
     val material = Material()
     material.textureDiffuse = texture
@@ -67,7 +60,7 @@ private fun font3DTest()
                     ActionCode.ACTION_BUTTON_5 -> node.angleX += 5f
                     ActionCode.ACTION_BUTTON_6 -> node.angleX -= 5f
 
-                    ActionCode.ACTION_EXIT -> close()
+                    ActionCode.ACTION_EXIT     -> close()
                     else                       -> Unit
                 }
             }
@@ -82,7 +75,7 @@ private fun animation()
     val animationDivideByZero =
         AnimatedImage(512, 512, GameImage.load("divideBy0/DivideBy0_0.png", Resources3D.resources))
 
-    for (index in 1 .. 10)
+    for (index in 1..10)
     {
         animationDivideByZero.appendImage(animationTime,
                                           GameImage.load("divideBy0/DivideBy0_$index.png", Resources3D.resources))
@@ -97,19 +90,19 @@ private fun animation()
     val animationGroupTime = 4096L
     val animationGroup = AnimationGroup()
 
-    for (y in 2 downTo - 2)
+    for (y in 2 downTo -2)
     {
         var uMin = 0f
         var uMax = 0.2f
         val yy = y.toFloat()
 
-        for (x in - 2 .. 2)
+        for (x in -2..2)
         {
             val plane = Plane("plane ($x,$y)", FaceUV(uMin, uMax, vMin, vMax))
             plane.material = material
             plane.x = x.toFloat()
             plane.y = yy
-            plane.z = - 1f
+            plane.z = -1f
             plane.twoSidedRule = TwoSidedRule.FORCE_TWO_SIDE
             planes.add(plane)
 
@@ -150,21 +143,21 @@ private fun animation()
                                ObjUseNormalMap("textures/toy${toy}_Default_nmap.jpg", Resources3D.resources))
             nodeBear.applyMaterialHierarchically(materialBear)
 
-//            val colors = arrayOf(BLACK, BLUE, RED, GREEN, YELLOW, ORANGE)
-//
-//            for (childIndex in 0 until nodeGate.numberOfChild)
-//            {
-//                val materialChild = Material()
-//                materialChild.colorEmissive = GRAY
-//                materialChild.colorDiffuse = colors[childIndex % colors.size]
-//                materialChild.textureSpheric = Texture(Resources3D.loadImage("textures/emerald.jpg"))
-//                materialChild.sphericRate = 0.5f
-//                nodeGate.child(childIndex)
-//                    .applyMaterialHierarchically(materialChild)
-//            }
+            //            val colors = arrayOf(BLACK, BLUE, RED, GREEN, YELLOW, ORANGE)
+            //
+            //            for (childIndex in 0 until nodeGate.numberOfChild)
+            //            {
+            //                val materialChild = Material()
+            //                materialChild.colorEmissive = GRAY
+            //                materialChild.colorDiffuse = colors[childIndex % colors.size]
+            //                materialChild.textureSpheric = Texture(Resources3D.loadImage("textures/emerald.jpg"))
+            //                materialChild.sphericRate = 0.5f
+            //                nodeGate.child(childIndex)
+            //                    .applyMaterialHierarchically(materialChild)
+            //            }
 
-            nodeBear.y = - 34.5f
-            nodeBear.z = - 275f
+            nodeBear.y = -34.5f
+            nodeBear.z = -275f
 
             /*
                 bunny :
@@ -196,6 +189,7 @@ private fun animation()
                             {
                                 animationDivideByZero.play(false)
                             }
+
                         else                       -> Unit
                     }
                 }

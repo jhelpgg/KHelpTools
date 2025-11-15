@@ -6,7 +6,7 @@ import java.util.StringTokenizer
  * Cut string with separator, like [StringTokenizer], but in addition it can detect Strings and not cut on them,
  * it can also ignore escaped character.
  *
- * By example :
+ * For example :
  *
  *     val extractor = StringExtractor("Hello world ! 'This is a phrase'")
  *     println(extractor.next())

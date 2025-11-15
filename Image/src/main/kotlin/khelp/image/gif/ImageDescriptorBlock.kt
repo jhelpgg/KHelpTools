@@ -367,7 +367,7 @@ internal class ImageDescriptorBlock internal constructor(val colorResolution : I
      * @see Block.read
      */
     @Throws(IOException::class)
-    override internal fun read(inputStream : InputStream)
+    override fun read(inputStream : InputStream)
     {
         this.x = read2ByteInt(inputStream)
         this.y = read2ByteInt(inputStream)

@@ -805,7 +805,6 @@ open class Node(val id : String) : Iterable<Node>
             if (this.children.remove(node))
             {
                 node.parent = null
-                this.root.addChild(node)
             }
         }
     }
@@ -865,8 +864,7 @@ open class Node(val id : String) : Iterable<Node>
 
         while (! stack.isEmpty())
         {
-            stack.pop()
-                .matrix()
+            stack.pop()                .matrix()
         }
     }
 

@@ -3,6 +3,7 @@ package khelp.security.rsa
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import khelp.security.des.TripleDES
+import khelp.security.exception.LOGIN_PASSWORD_INVALID_MESSAGE
 import khelp.security.exception.LoginPasswordInvalidException
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -26,7 +27,7 @@ class RSAKeyPairTests
         }
         catch (exception: LoginPasswordInvalidException)
         {
-            Assertions.assertSame(LoginPasswordInvalidException, exception)
+            Assertions.assertEquals(LOGIN_PASSWORD_INVALID_MESSAGE, exception.message)
         }
 
 
@@ -37,7 +38,7 @@ class RSAKeyPairTests
         }
         catch (exception: LoginPasswordInvalidException)
         {
-            Assertions.assertSame(LoginPasswordInvalidException, exception)
+            Assertions.assertEquals(LOGIN_PASSWORD_INVALID_MESSAGE, exception.message)
         }
 
         try
@@ -47,7 +48,7 @@ class RSAKeyPairTests
         }
         catch (exception: LoginPasswordInvalidException)
         {
-            Assertions.assertSame(LoginPasswordInvalidException, exception)
+            Assertions.assertEquals(LOGIN_PASSWORD_INVALID_MESSAGE, exception.message)
         }
     }
 }

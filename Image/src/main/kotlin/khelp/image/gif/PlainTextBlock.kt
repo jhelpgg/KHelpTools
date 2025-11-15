@@ -61,7 +61,7 @@ internal class PlainTextBlock : BlockExtension()
      * @see Block.read
      */
     @Throws(IOException::class)
-    override internal fun read(inputStream: InputStream)
+    override fun read(inputStream: InputStream)
     {
         val size = inputStream.read()
 

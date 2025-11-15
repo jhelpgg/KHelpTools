@@ -87,7 +87,7 @@ class Database private constructor(login: String, password: String, val path: St
 
                 if (!database.valid(login, password))
                 {
-                    throw LoginPasswordInvalidException
+                    throw LoginPasswordInvalidException()
                 }
 
                 return database

@@ -19,6 +19,7 @@ import khelp.thread.parallel
 import khelp.ui.events.MouseStatus
 import khelp.utilities.log.verbose
 import khelp.utilities.log.warning
+import kotlin.math.max
 import org.lwjgl.glfw.Callbacks
 import org.lwjgl.glfw.GLFW
 import org.lwjgl.glfw.GLFWErrorCallback
@@ -27,13 +28,11 @@ import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL12
 import org.lwjgl.system.MemoryStack
 import org.lwjgl.system.MemoryUtil
-import kotlin.math.max
-
 
 @WindowDSL
 fun window3D(width : Int, height : Int, title : String, windowCreator : Window3D.() -> Unit)
 {
-    val window3D = Window3D.createWindow3D(- 1, - 1, width, height, title, true, false, false)
+    val window3D = Window3D.createWindow3D(-1, -1, width, height, title, true, false, false)
     windowCreator(window3D)
     window3D.waitWindowClose()
 }
@@ -41,7 +40,7 @@ fun window3D(width : Int, height : Int, title : String, windowCreator : Window3D
 @WindowDSL
 fun window3DFull(title : String, windowCreator : Window3D.() -> Unit)
 {
-    val window3D = Window3D.createWindow3D(- 1, - 1, 800, 600, title, false, true, false)
+    val window3D = Window3D.createWindow3D(-1, -1, 800, 600, title, false, true, false)
     windowCreator(window3D)
     window3D.waitWindowClose()
 }
@@ -73,7 +72,7 @@ class Window3D private constructor()
                     .set()
 
                 // Initialize GLFW. Most GLFW functions will not work before doing this.
-                if (! GLFW.glfwInit())
+                if (!GLFW.glfwInit())
                 {
                     throw Window3DCantBeCreatedException("Initialization of GLFW failed")
                 }
@@ -97,7 +96,7 @@ class Window3D private constructor()
                 }
 
                 window3D.windowId = window
-                //Register UI events
+                // Register UI events
                 GLFW.glfwSetKeyCallback(window) { _, key, _, action, _ ->
                     window3D.keyEvent(key, action)
                 }
@@ -139,7 +138,6 @@ class Window3D private constructor()
                 }
 
                 MemoryStack.stackPop()
-
 
                 // Make the window visible
                 GLFW.glfwShowWindow(window)
@@ -210,7 +208,6 @@ class Window3D private constructor()
      */
     val soundManager : SoundManager by lazy { SoundManager() }
 
-
     fun <N : Node> findById(id : String) : N? = this.scene.findById(id)
 
     fun close()
@@ -225,14 +222,14 @@ class Window3D private constructor()
 
     private fun closeWindow()
     {
-        if (! this.canCloseNow())
+        if (!this.canCloseNow())
         {
-            //Avoid the closing
+            // Avoid the closing
             GLFW.glfwSetWindowShouldClose(this.windowId, false)
             return
         }
 
-        //Closing
+        // Closing
         FrameInputText.close()
         FrameFileChooser.close()
         GLFW.glfwSetWindowShouldClose(this.windowId, true)
@@ -270,8 +267,8 @@ class Window3D private constructor()
 
     private fun joystickConnected(joystickID : Int, event : Int)
     {
-        //GLFW_CONNECTED
-        //GLFW_DISCONNECTED
+        // GLFW_CONNECTED
+        // GLFW_DISCONNECTED
         // TODO
     }
 
@@ -288,7 +285,9 @@ class Window3D private constructor()
         // LWJGL detects the context that is current in the current thread,
         // creates the GLCapabilities instance and makes the OpenGL
         // bindings available for use.
-        GL.createCapabilities()
+        glCapabilities(GL.createCapabilities())
+
+        println("VERSION OPEN GL = $versionOpenGL")
 
         // TODO : Lights
         /*
@@ -451,7 +450,7 @@ class Window3D private constructor()
 
         this.readyLocker.unlock()
 
-        while (! GLFW.glfwWindowShouldClose(this.windowId))
+        while (!GLFW.glfwWindowShouldClose(this.windowId))
         {
             // clear the framebuffer
             GL11.glClear(GL11.GL_COLOR_BUFFER_BIT or GL11.GL_DEPTH_BUFFER_BIT)
@@ -475,8 +474,7 @@ class Window3D private constructor()
 
         // Terminate GLFW and free the error callback
         GLFW.glfwTerminate()
-        GLFW.glfwSetErrorCallback(null)
-            ?.free()
+        GLFW.glfwSetErrorCallback(null)?.free()
         verbose("Good bye !")
     }
 

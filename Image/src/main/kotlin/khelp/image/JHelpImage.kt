@@ -1,28 +1,5 @@
 package khelp.image
 
-import khelp.image.extensions.computeTextLinesAlpha
-import khelp.image.path.Path
-import khelp.image.path.Segment
-import khelp.image.raster.RasterImage
-import khelp.image.raster.RasterImageType
-import khelp.image.shape.ring
-import khelp.image.transformation.Transformation
-import khelp.image.transformation.Vector
-import khelp.thread.Mutex
-import khelp.ui.TextAlignment
-import khelp.ui.font.JHelpFont
-import khelp.ui.utilities.AFFINE_TRANSFORM
-import khelp.ui.utilities.FLATNESS
-import khelp.utilities.collections.queue.Queue
-import khelp.utilities.collections.SortedArray
-import khelp.utilities.extensions.alpha
-import khelp.utilities.extensions.blue
-import khelp.utilities.extensions.bounds
-import khelp.utilities.extensions.green
-import khelp.utilities.extensions.limit_0_255
-import khelp.utilities.extensions.red
-import khelp.utilities.math.isNul
-import khelp.utilities.math.sign
 import java.awt.Component
 import java.awt.Graphics
 import java.awt.Image
@@ -42,6 +19,29 @@ import java.awt.image.MemoryImageSource
 import java.util.Arrays
 import java.util.Stack
 import javax.swing.Icon
+import khelp.image.extensions.computeTextLinesAlpha
+import khelp.image.path.Path
+import khelp.image.path.Segment
+import khelp.image.raster.RasterImage
+import khelp.image.raster.RasterImageType
+import khelp.image.shape.ring
+import khelp.image.transformation.Transformation
+import khelp.image.transformation.Vector
+import khelp.thread.Mutex
+import khelp.ui.TextAlignment
+import khelp.ui.font.JHelpFont
+import khelp.ui.utilities.AFFINE_TRANSFORM
+import khelp.ui.utilities.FLATNESS
+import khelp.utilities.collections.SortedArray
+import khelp.utilities.collections.queue.Queue
+import khelp.utilities.extensions.alpha
+import khelp.utilities.extensions.blue
+import khelp.utilities.extensions.bounds
+import khelp.utilities.extensions.green
+import khelp.utilities.extensions.limit_0_255
+import khelp.utilities.extensions.red
+import khelp.utilities.math.isNul
+import khelp.utilities.math.sign
 import kotlin.math.PI
 import kotlin.math.abs
 
@@ -197,8 +197,7 @@ class JHelpImage(
         this.memoryImageSource.setAnimated(true)
         this.memoryImageSource.setFullBufferUpdates(true)
 
-        this.image = Toolkit.getDefaultToolkit()
-            .createImage(this.memoryImageSource)
+        this.image = Toolkit.getDefaultToolkit().createImage(this.memoryImageSource)
 
         this.clip = Clip(0, this.width - 1, 0, this.height - 1)
         this.clips = Stack<Clip>()
@@ -282,7 +281,7 @@ class JHelpImage(
      */
     private fun drawShapeCenter(shape : Shape, color : Int, doAlphaMix : Boolean)
     {
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -301,7 +300,7 @@ class JHelpImage(
         val vx = bounds.width shr 1
         val vy = bounds.height shr 1
 
-        while (! pathIterator.isDone)
+        while (!pathIterator.isDone)
         {
             when (pathIterator.currentSegment(info))
             {
@@ -314,6 +313,7 @@ class JHelpImage(
                         .toInt()
                     yStart = y
                 }
+
                 PathIterator.SEG_LINETO ->
                 {
                     xx = Math.round(info[0])
@@ -326,6 +326,7 @@ class JHelpImage(
                     x = xx
                     y = yy
                 }
+
                 PathIterator.SEG_CLOSE  ->
                 {
                     this.drawLine(x - vx, y - vy, xStart - vx, yStart - vy, color, doAlphaMix)
@@ -392,15 +393,15 @@ class JHelpImage(
             while (xx < endX)
             {
                 this.pixels[pix] = pixels[pixTexture + xTexture]
-                xx ++
-                xt ++
-                pix ++
+                xx++
+                xt++
+                pix++
                 xTexture = xt * pixelsWidth / w
             }
 
             line += this.width
-            yy ++
-            yt ++
+            yy++
+            yt++
             yTexture = yt * pixelsHeight / h
         }
     }
@@ -416,7 +417,7 @@ class JHelpImage(
         this.mutexVisibilities {
             if (this.drawMode)
             {
-                this.visibilities !![index] = visible
+                this.visibilities!![index] = visible
                 return@mutexVisibilities
             }
 
@@ -485,7 +486,6 @@ class JHelpImage(
                 (((red * alpha + colorThis.red * ahpla) shr 8) shl 16) or
                 (((green * alpha + colorThis.green * ahpla) shr 8) shl 8) or
                 ((blue * alpha + colorThis.blue * ahpla) shr 8)
-
     }
 
     /**
@@ -511,7 +511,7 @@ class JHelpImage(
         var yImage = yImage
         var width = width
         var height = height
-        if (! doAlphaMix)
+        if (!doAlphaMix)
         {
             this.drawImageOver(x, y, image, xImage, yImage, width, height)
             return
@@ -581,8 +581,8 @@ class JHelpImage(
                     this.mixColor(pixThis, alpha, colorImage)
                 }
 
-                pixThis ++
-                pixImage ++
+                pixThis++
+                pixImage++
             }
 
             lineThis += this.width
@@ -674,8 +674,8 @@ class JHelpImage(
             for (xx in 0 until w)
             {
                 this.mixColor(pixThis, alpha, image.pixels[pixImage])
-                pixThis ++
-                pixImage ++
+                pixThis++
+                pixImage++
             }
 
             lineThis += this.width
@@ -834,7 +834,7 @@ class JHelpImage(
      */
     fun applyGauss3x3()
     {
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -922,11 +922,11 @@ class JHelpImage(
                 c02 = c12
                 c12 = c22
 
-                p20 ++
-                p21 ++
-                p22 ++
+                p20++
+                p21++
+                p22++
 
-                p ++
+                p++
             }
 
             l0 += w
@@ -944,7 +944,7 @@ class JHelpImage(
      */
     fun applyPalette(precision : Int)
     {
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -985,7 +985,7 @@ class JHelpImage(
      */
     fun brighter(factor : Int)
     {
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -1012,7 +1012,7 @@ class JHelpImage(
      */
     fun brightness(factor : Double)
     {
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -1053,7 +1053,7 @@ class JHelpImage(
      */
     fun categorizeByColor(precision : Int)
     {
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -1094,7 +1094,7 @@ class JHelpImage(
      */
     fun categorizeByY(colorLow : Int, colorMiddle : Int, colorHigh : Int, precision : Double)
     {
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -1109,7 +1109,7 @@ class JHelpImage(
 
         var yAverage = y(red, green, blue)
 
-        index --
+        index--
         while (index >= 0)
         {
             color = this.pixels[index]
@@ -1119,7 +1119,7 @@ class JHelpImage(
 
             yAverage += y(red, green, blue)
 
-            index --
+            index--
         }
 
         val ymil = yAverage / this.pixels.size
@@ -1157,7 +1157,7 @@ class JHelpImage(
      */
     fun clear(color : Int)
     {
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -1175,14 +1175,14 @@ class JHelpImage(
     {
         val mode = this.drawMode
 
-        if (! mode)
+        if (!mode)
         {
             this.startDrawMode()
         }
 
         this.clear(0)
 
-        if (! mode)
+        if (!mode)
         {
             this.endDrawMode()
         }
@@ -1227,7 +1227,7 @@ class JHelpImage(
     fun drawLine(
         x1 : Int, y1 : Int, x2 : Int, y2 : Int, color : Int, doAlphaMix : Boolean = true)
     {
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -1301,7 +1301,7 @@ class JHelpImage(
         var pix = x + y * this.width
         val moreY = sy * this.width
 
-        if (alpha == 255 || ! doAlphaMix)
+        if (alpha == 255 || !doAlphaMix)
         {
             if (dx >= dy)
             {
@@ -1403,7 +1403,7 @@ class JHelpImage(
      */
     fun colorizeWithPalette(precision : Int) : Int
     {
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -1427,7 +1427,7 @@ class JHelpImage(
             if (result[pix] == 0)
             {
                 color = JHelpImage.PALETTE[indexPalette % JHelpImage.PALETTE_SIZE]
-                indexPalette ++
+                indexPalette++
 
                 reference = this.pixels[pix]
                 red = reference.red
@@ -1436,7 +1436,7 @@ class JHelpImage(
 
                 stack.push(Point(x, y))
 
-                while (! stack.isEmpty())
+                while (!stack.isEmpty())
                 {
                     point = stack.pop()
                     p = point.x + point.y * this.width
@@ -1469,11 +1469,11 @@ class JHelpImage(
                 }
             }
 
-            x --
+            x--
             if (x < 0)
             {
                 x = this.width - 1
-                y --
+                y--
             }
         }
 
@@ -1491,7 +1491,7 @@ class JHelpImage(
      */
     fun contrast(factor : Double)
     {
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -1507,7 +1507,7 @@ class JHelpImage(
         var yMax = y(red, green, blue)
         var yMin = yMax
 
-        index --
+        index--
         while (index >= 0)
         {
             color = this.pixels[index]
@@ -1520,7 +1520,7 @@ class JHelpImage(
             yMin = Math.min(yMin, y)
             yMax = Math.max(yMax, y)
 
-            index --
+            index--
         }
 
         val yMil = (yMin + yMax) / 2
@@ -1556,7 +1556,7 @@ class JHelpImage(
      */
     fun contrastAverage(factor : Double)
     {
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -1571,7 +1571,7 @@ class JHelpImage(
 
         var yAverage = y(red, green, blue)
 
-        index --
+        index--
         while (index >= 0)
         {
             color = this.pixels[index]
@@ -1581,7 +1581,7 @@ class JHelpImage(
 
             yAverage += y(red, green, blue)
 
-            index --
+            index--
         }
 
         val ymil = yAverage / this.pixels.size
@@ -1695,7 +1695,7 @@ class JHelpImage(
                     mask[x, y] = true
                 }
 
-                pix ++
+                pix++
             }
         }
 
@@ -1713,7 +1713,7 @@ class JHelpImage(
      */
     fun drawShape(shape : Shape, color : Int, doAlphaMix : Boolean)
     {
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -1728,7 +1728,7 @@ class JHelpImage(
         var xx : Int
         var yy : Int
 
-        while (! pathIterator.isDone)
+        while (!pathIterator.isDone)
         {
             when (pathIterator.currentSegment(info))
             {
@@ -1741,6 +1741,7 @@ class JHelpImage(
                         .toInt()
                     yStart = y
                 }
+
                 PathIterator.SEG_LINETO ->
                 {
                     xx = Math.round(info[0])
@@ -1753,6 +1754,7 @@ class JHelpImage(
                     x = xx
                     y = yy
                 }
+
                 PathIterator.SEG_CLOSE  ->
                 {
                     this.drawLine(x, y, xStart, yStart, color, doAlphaMix)
@@ -1798,7 +1800,7 @@ class JHelpImage(
      */
     fun darker(factor : Int)
     {
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -1882,7 +1884,7 @@ class JHelpImage(
      */
     fun drawEllipse(x : Int, y : Int, width : Int, height : Int, color : Int, doAlphaMix : Boolean = true)
     {
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -1894,7 +1896,7 @@ class JHelpImage(
     fun drawArc(x : Int, y : Int, width : Int, height : Int, color : Int, angleStart : Double, totalAngle : Double,
                 arcType : ArcType = ArcType.OPEN, doAlphaMix : Boolean = true)
     {
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -1910,7 +1912,7 @@ class JHelpImage(
 
     fun drawRing(x : Int, y : Int, inRadius : Int, outRadius : Int, color : Int, doAlphaMix : Boolean = true)
     {
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -1936,7 +1938,7 @@ class JHelpImage(
      */
     fun drawHorizontalLine(x1 : Int, x2 : Int, y : Int, color : Int, doAlphaMix : Boolean = true)
     {
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -1968,9 +1970,9 @@ class JHelpImage(
         start += yy
         end += yy
 
-        if (alpha == 255 || ! doAlphaMix)
+        if (alpha == 255 || !doAlphaMix)
         {
-            for (pix in start .. end)
+            for (pix in start..end)
             {
                 this.pixels[pix] = color
             }
@@ -1982,7 +1984,7 @@ class JHelpImage(
         val green = (color.green) * alpha
         val blue = (color.blue) * alpha
 
-        for (pix in start .. end)
+        for (pix in start..end)
         {
             this.mixColor(pix, alpha, red, green, blue)
         }
@@ -2007,7 +2009,7 @@ class JHelpImage(
                   width : Int = image.width, height : Int = image.height,
                   doAlphaMix : Boolean = true)
     {
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -2034,7 +2036,7 @@ class JHelpImage(
                   width : Int = image.width, height : Int = image.height,
                   alpha : Int)
     {
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -2065,7 +2067,7 @@ class JHelpImage(
         var yImage = yImage
         var width = width
         var height = height
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -2120,8 +2122,8 @@ class JHelpImage(
             for (xx in 0 until w)
             {
                 this.pixels[pixThis] = pixelCombination(this.pixels[pixThis], image.pixels[pixImage])
-                pixThis ++
-                pixImage ++
+                pixThis++
+                pixImage++
             }
 
             lineThis += this.width
@@ -2146,7 +2148,7 @@ class JHelpImage(
     {
         var x = x
         var y = y
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -2216,7 +2218,7 @@ class JHelpImage(
 
                     alpha = colorImage.alpha
 
-                    if (alpha == 255 || ! doAlphaMix)
+                    if (alpha == 255 || !doAlphaMix)
                     {
                         this.pixels[pixThis] = colorImage
                     }
@@ -2226,14 +2228,14 @@ class JHelpImage(
                     }
                 }
 
-                pixImage ++
-                xx ++
-                xxx ++
+                pixImage++
+                xx++
+                xxx++
             }
 
             lineImage += image.width
-            yy ++
-            yyy ++
+            yy++
+            yyy++
         }
     }
 
@@ -2280,7 +2282,7 @@ class JHelpImage(
      */
     fun drawThickShape(shape : Shape, thickness : Int, color : Int)
     {
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -2300,7 +2302,7 @@ class JHelpImage(
         var xx : Int
         var yy : Int
 
-        while (! pathIterator.isDone)
+        while (!pathIterator.isDone)
         {
             when (pathIterator.currentSegment(info))
             {
@@ -2313,6 +2315,7 @@ class JHelpImage(
                         .toInt()
                     yStart = y
                 }
+
                 PathIterator.SEG_LINETO ->
                 {
                     xx = Math.round(info[0])
@@ -2325,6 +2328,7 @@ class JHelpImage(
                     x = xx
                     y = yy
                 }
+
                 PathIterator.SEG_CLOSE  ->
                 {
                     this.drawThickLine(x, y, xStart, yStart, thickness, color)
@@ -2353,7 +2357,7 @@ class JHelpImage(
     {
         var thin = thin
         var color = color
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -2416,7 +2420,7 @@ class JHelpImage(
     fun drawPath(path : Path, elementDraw : JHelpImage, percentStart : Double, percentEnd : Double,
                  doAlphaMix : Boolean = true)
     {
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -2445,7 +2449,7 @@ class JHelpImage(
         var offsetX = offsetX
         var offsetY = offsetY
         var length = length
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -2480,8 +2484,8 @@ class JHelpImage(
 
         for (i in 1 until length)
         {
-            offsetX ++
-            offsetY ++
+            offsetX++
+            offsetY++
 
             xx = xs[offsetX]
             yy = ys[offsetY]
@@ -2509,7 +2513,7 @@ class JHelpImage(
      */
     fun drawRectangle(x : Int, y : Int, width : Int, height : Int, color : Int, doAlphaMix : Boolean = true)
     {
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -2545,7 +2549,7 @@ class JHelpImage(
     fun drawRoundRectangle(x : Int, y : Int, width : Int, height : Int, arcWidth : Int, arcHeight : Int, color : Int,
                            doAlphaMix : Boolean = true)
     {
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -2565,7 +2569,7 @@ class JHelpImage(
      */
     fun drawThickShape(shape : Shape, thickness : Int, texture : JHelpImage)
     {
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -2585,7 +2589,7 @@ class JHelpImage(
         var xx : Int
         var yy : Int
 
-        while (! pathIterator.isDone)
+        while (!pathIterator.isDone)
         {
             when (pathIterator.currentSegment(info))
             {
@@ -2598,6 +2602,7 @@ class JHelpImage(
                         .toInt()
                     yStart = y
                 }
+
                 PathIterator.SEG_LINETO ->
                 {
                     xx = Math.round(info[0])
@@ -2610,6 +2615,7 @@ class JHelpImage(
                     x = xx
                     y = yy
                 }
+
                 PathIterator.SEG_CLOSE  ->
                 {
                     this.drawThickLine(x, y, xStart, yStart, thickness, texture)
@@ -2637,7 +2643,7 @@ class JHelpImage(
      */
     fun drawString(x : Int, y : Int, string : String, font : JHelpFont, color : Int, doAlphaMix : Boolean = true)
     {
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -2667,7 +2673,7 @@ class JHelpImage(
      */
     fun drawStringCenter(x : Int, y : Int, string : String, font : JHelpFont, color : Int, doAlphaMix : Boolean = true)
     {
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -2696,7 +2702,7 @@ class JHelpImage(
      */
     fun drawThickEllipse(x : Int, y : Int, width : Int, height : Int, thickness : Int, color : Int)
     {
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -2718,7 +2724,7 @@ class JHelpImage(
      */
     fun drawThickEllipse(x : Int, y : Int, width : Int, height : Int, thickness : Int, texture : JHelpImage)
     {
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -2739,7 +2745,7 @@ class JHelpImage(
      */
     fun drawThickEllipse(x : Int, y : Int, width : Int, height : Int, thickness : Int, paint : JHelpPaint)
     {
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -2761,7 +2767,7 @@ class JHelpImage(
      */
     fun drawVerticalLine(x : Int, y1 : Int, y2 : Int, color : Int, doAlphaMix : Boolean = true)
     {
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -2794,7 +2800,7 @@ class JHelpImage(
             return
         }
 
-        if (alpha == 255 || ! doAlphaMix)
+        if (alpha == 255 || !doAlphaMix)
         {
             var pix = start
             while (pix <= end)
@@ -2843,7 +2849,7 @@ class JHelpImage(
 
                 for (index in 0 until length)
                 {
-                    if (this.visibilities !![index])
+                    if (this.visibilities!![index])
                     {
                         this.sprites[index]
                             .changeVisible(true)
@@ -2854,7 +2860,7 @@ class JHelpImage(
             synchronized(this.playOutDrawMode) {
                 this.drawModeLocked = true
 
-                while (! this.playOutDrawMode.empty)
+                while (!this.playOutDrawMode.empty)
                 {
                     this.playOutDrawMode.outQueue()(this)
                 }
@@ -2904,7 +2910,7 @@ class JHelpImage(
         var offsetX = offsetX
         var offsetY = offsetY
         var length = length
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -2939,8 +2945,8 @@ class JHelpImage(
 
         for (i in 1 until length)
         {
-            offsetX ++
-            offsetY ++
+            offsetX++
+            offsetY++
 
             xx = xs[offsetX]
             yy = ys[offsetY]
@@ -2973,7 +2979,7 @@ class JHelpImage(
         var offsetX = offsetX
         var offsetY = offsetY
         var length = length
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -3008,8 +3014,8 @@ class JHelpImage(
 
         for (i in 1 until length)
         {
-            offsetX ++
-            offsetY ++
+            offsetX++
+            offsetY++
 
             xx = xs[offsetX]
             yy = ys[offsetY]
@@ -3042,7 +3048,7 @@ class JHelpImage(
         var offsetX = offsetX
         var offsetY = offsetY
         var length = length
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -3077,8 +3083,8 @@ class JHelpImage(
 
         for (i in 1 until length)
         {
-            offsetX ++
-            offsetY ++
+            offsetX++
+            offsetY++
 
             xx = xs[offsetX]
             yy = ys[offsetY]
@@ -3168,7 +3174,7 @@ class JHelpImage(
                                 arcWidth : Int, arcHeight : Int,
                                 thickness : Int, color : Int)
     {
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -3193,7 +3199,7 @@ class JHelpImage(
                                 arcWidth : Int, arcHeight : Int,
                                 thickness : Int, texture : JHelpImage)
     {
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -3218,7 +3224,7 @@ class JHelpImage(
                                 arcWidth : Int, arcHeight : Int,
                                 thickness : Int, paint : JHelpPaint)
     {
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -3287,7 +3293,7 @@ class JHelpImage(
      */
     fun fillRespectAlpha(texture : JHelpImage)
     {
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -3309,11 +3315,11 @@ class JHelpImage(
             {
                 color = texture.pixels[lineTexture + xTexture]
                 this.pixels[pix] = this.pixels[pix].ushr(24) * color.ushr(24) shr 8 shl 24 or (color and 0x00FFFFFF)
-                pix ++
-                x ++
+                pix++
+                x++
                 xTexture = (xTexture + 1) % textureWidth
             }
-            y ++
+            y++
             yTexture = (yTexture + 1) % texture.height
         }
     }
@@ -3327,7 +3333,7 @@ class JHelpImage(
      */
     fun drawThickShape(shape : Shape, thickness : Int, paint : JHelpPaint)
     {
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -3347,7 +3353,7 @@ class JHelpImage(
         var xx : Int
         var yy : Int
 
-        while (! pathIterator.isDone)
+        while (!pathIterator.isDone)
         {
             when (pathIterator.currentSegment(info))
             {
@@ -3360,6 +3366,7 @@ class JHelpImage(
                         .toInt()
                     yStart = y
                 }
+
                 PathIterator.SEG_LINETO ->
                 {
                     xx = Math.round(info[0])
@@ -3372,6 +3379,7 @@ class JHelpImage(
                     x = xx
                     y = yy
                 }
+
                 PathIterator.SEG_CLOSE  ->
                 {
                     this.drawThickLine(x, y, xStart, yStart, thickness, paint)
@@ -3396,7 +3404,7 @@ class JHelpImage(
      */
     fun fillShape(shape : Shape, color : Int, doAlphaMix : Boolean = true)
     {
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -3436,20 +3444,20 @@ class JHelpImage(
         var line = startX + startY * this.width
         var pix : Int
 
-        if (alpha == 255 || ! doAlphaMix)
+        if (alpha == 255 || !doAlphaMix)
         {
-            for (yy in startY .. endY)
+            for (yy in startY..endY)
             {
                 pix = line
 
-                for (xx in startX .. endX)
+                for (xx in startX..endX)
                 {
                     if (shape.contains(xx.toDouble(), yy.toDouble()))
                     {
                         this.pixels[pix] = color
                     }
 
-                    pix ++
+                    pix++
                 }
 
                 line += this.width
@@ -3462,18 +3470,18 @@ class JHelpImage(
         val green = (color.green) * alpha
         val blue = (color.blue) * alpha
 
-        for (yy in startY .. endY)
+        for (yy in startY..endY)
         {
             pix = line
 
-            for (xx in startX .. endX)
+            for (xx in startX..endX)
             {
                 if (shape.contains(xx.toDouble(), yy.toDouble()))
                 {
                     this.mixColor(pix, alpha, red, green, blue)
                 }
 
-                pix ++
+                pix++
             }
 
             line += this.width
@@ -3483,7 +3491,7 @@ class JHelpImage(
     fun fillFunction(contains : (Double, Double) -> Boolean, x : Int, y : Int, width : Int, height : Int, color : Int,
                      doAlphaMix : Boolean = true)
     {
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -3516,20 +3524,20 @@ class JHelpImage(
         var line = startX + startY * this.width
         var pix : Int
 
-        if (alpha == 255 || ! doAlphaMix)
+        if (alpha == 255 || !doAlphaMix)
         {
-            for (yy in startY .. endY)
+            for (yy in startY..endY)
             {
                 pix = line
 
-                for (xx in startX .. endX)
+                for (xx in startX..endX)
                 {
                     if (contains(xx.toDouble(), yy.toDouble()))
                     {
                         this.pixels[pix] = color
                     }
 
-                    pix ++
+                    pix++
                 }
 
                 line += this.width
@@ -3542,18 +3550,18 @@ class JHelpImage(
         val green = (color.green) * alpha
         val blue = (color.blue) * alpha
 
-        for (yy in startY .. endY)
+        for (yy in startY..endY)
         {
             pix = line
 
-            for (xx in startX .. endX)
+            for (xx in startX..endX)
             {
                 if (contains(xx.toDouble(), yy.toDouble()))
                 {
                     this.mixColor(pix, alpha, red, green, blue)
                 }
 
-                pix ++
+                pix++
             }
 
             line += this.width
@@ -3563,7 +3571,7 @@ class JHelpImage(
     fun fillMask(mask : BooleanArray, x : Int, y : Int, width : Int, height : Int, color : Int,
                  doAlphaMix : Boolean = true)
     {
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -3598,22 +3606,22 @@ class JHelpImage(
         var maskLine = startX - x
         var maskPix : Int
 
-        if (alpha == 255 || ! doAlphaMix)
+        if (alpha == 255 || !doAlphaMix)
         {
-            for (yy in startY .. endY)
+            for (yy in startY..endY)
             {
                 pix = line
                 maskPix = maskLine
 
-                for (xx in startX .. endX)
+                for (xx in startX..endX)
                 {
                     if (mask[maskPix])
                     {
                         this.pixels[pix] = color
                     }
 
-                    pix ++
-                    maskPix ++
+                    pix++
+                    maskPix++
                 }
 
                 line += this.width
@@ -3627,20 +3635,20 @@ class JHelpImage(
         val green = (color.green) * alpha
         val blue = (color.blue) * alpha
 
-        for (yy in startY .. endY)
+        for (yy in startY..endY)
         {
             pix = line
             maskPix = maskLine
 
-            for (xx in startX .. endX)
+            for (xx in startX..endX)
             {
                 if (mask[maskPix])
                 {
                     this.mixColor(pix, alpha, red, green, blue)
                 }
 
-                pix ++
-                maskPix ++
+                pix++
+                maskPix++
             }
 
             line += this.width
@@ -3680,7 +3688,7 @@ class JHelpImage(
     fun fillColor(x : Int, y : Int, color : Int, precision : Int, alphaMix : Boolean = true)
     {
         var precision = precision
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -3703,13 +3711,13 @@ class JHelpImage(
             return
         }
 
-        if (alpha == 255 || ! alphaMix)
+        if (alpha == 255 || !alphaMix)
         {
             val stack = Stack<Point>()
             stack.push(Point(x, y))
             var point : Point
 
-            while (! stack.isEmpty())
+            while (!stack.isEmpty())
             {
                 point = stack.pop()
                 this.pixels[point.x + point.y * this.width] = color
@@ -3750,7 +3758,7 @@ class JHelpImage(
         val blue = (color.blue) * alpha
         var pix : Int
 
-        while (! stack.isEmpty())
+        while (!stack.isEmpty())
         {
             point = stack.pop()
 
@@ -3797,7 +3805,7 @@ class JHelpImage(
      */
     fun fillEllipse(x : Int, y : Int, width : Int, height : Int, color : Int, doAlphaMix : Boolean = true)
     {
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -3811,7 +3819,7 @@ class JHelpImage(
 
     fun fillRing(x : Int, y : Int, inRadius : Int, outRadius : Int, color : Int, doAlphaMix : Boolean = true)
     {
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -3842,7 +3850,7 @@ class JHelpImage(
      */
     fun fillEllipse(x : Int, y : Int, width : Int, height : Int, texture : JHelpImage, doAlphaMix : Boolean = true)
     {
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -3856,7 +3864,7 @@ class JHelpImage(
 
     fun fillRing(x : Int, y : Int, inRadius : Int, outRadius : Int, texture : JHelpImage, doAlphaMix : Boolean = true)
     {
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -3879,7 +3887,7 @@ class JHelpImage(
      */
     fun fillEllipse(x : Int, y : Int, width : Int, height : Int, paint : JHelpPaint, doAlphaMix : Boolean = true)
     {
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -3893,7 +3901,7 @@ class JHelpImage(
 
     fun fillRing(x : Int, y : Int, inRadius : Int, outRadius : Int, paint : JHelpPaint, doAlphaMix : Boolean = true)
     {
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -3923,7 +3931,7 @@ class JHelpImage(
         var offsetX = offsetX
         var offsetY = offsetY
         var length = length
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -3978,7 +3986,7 @@ class JHelpImage(
         var offsetX = offsetX
         var offsetY = offsetY
         var length = length
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -4030,7 +4038,7 @@ class JHelpImage(
         var offsetX = offsetX
         var offsetY = offsetY
         var length = length
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -4076,7 +4084,7 @@ class JHelpImage(
      */
     fun fillRectangle(x : Int, y : Int, width : Int, height : Int, color : Int, doAlphaMix : Boolean = true)
     {
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -4109,17 +4117,17 @@ class JHelpImage(
         var line : Int = startX + startY * this.width
         var pix : Int
 
-        if (alpha == 255 || ! doAlphaMix)
+        if (alpha == 255 || !doAlphaMix)
         {
-            for (yy in startY .. endY)
+            for (yy in startY..endY)
             {
                 pix = line
 
-                for (xx in startX .. endX)
+                for (xx in startX..endX)
                 {
                     this.pixels[pix] = color
 
-                    pix ++
+                    pix++
                 }
 
                 line += this.width
@@ -4132,14 +4140,14 @@ class JHelpImage(
         val green = (color.green) * alpha
         val blue = (color.blue) * alpha
 
-        for (yy in startY .. endY)
+        for (yy in startY..endY)
         {
             pix = line
 
             for (xx in startX until endX)
             {
                 this.mixColor(pix, alpha, red, green, blue)
-                pix ++
+                pix++
             }
 
             line += this.width
@@ -4162,7 +4170,7 @@ class JHelpImage(
      */
     fun fillRectangle(x : Int, y : Int, width : Int, height : Int, texture : JHelpImage, doAlphaMix : Boolean = true)
     {
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -4209,7 +4217,7 @@ class JHelpImage(
 
                 alpha = colorTexture.alpha
 
-                if (alpha == 255 || ! doAlphaMix)
+                if (alpha == 255 || !doAlphaMix)
                 {
                     this.pixels[pix] = colorTexture
                 }
@@ -4218,13 +4226,13 @@ class JHelpImage(
                     this.mixColor(pix, alpha, colorTexture)
                 }
 
-                pix ++
-                xx ++
+                pix++
+                xx++
                 xTexture = (xTexture + 1) % texture.width
             }
 
             line += this.width
-            yy ++
+            yy++
             yTexture = (yTexture + 1) % texture.height
         }
     }
@@ -4243,7 +4251,7 @@ class JHelpImage(
      */
     fun fillRectangle(x : Int, y : Int, width : Int, height : Int, paint : JHelpPaint, doAlphaMix : Boolean = true)
     {
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -4290,7 +4298,7 @@ class JHelpImage(
 
                 alpha = colorPaint.alpha
 
-                if (alpha == 255 || ! doAlphaMix)
+                if (alpha == 255 || !doAlphaMix)
                 {
                     this.pixels[pix] = colorPaint
                 }
@@ -4299,14 +4307,14 @@ class JHelpImage(
                     this.mixColor(pix, alpha, colorPaint)
                 }
 
-                pix ++
-                xx ++
-                xPaint ++
+                pix++
+                xx++
+                xPaint++
             }
 
             line += this.width
-            yy ++
-            yPaint ++
+            yy++
+            yPaint++
         }
     }
 
@@ -4320,7 +4328,7 @@ class JHelpImage(
      */
     fun fillRectangleInverseColor(x : Int, y : Int, width : Int, height : Int)
     {
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -4347,16 +4355,16 @@ class JHelpImage(
         var pix : Int
         var color : Int
 
-        for (yy in startY .. endY)
+        for (yy in startY..endY)
         {
             pix = line
 
-            for (xx in startX .. endX)
+            for (xx in startX..endX)
             {
                 color = this.pixels[pix]
                 this.pixels[pix] = color and BLACK_ALPHA_MASK or (color.inv() and COLOR_MASK)
 
-                pix ++
+                pix++
             }
 
             line += this.width
@@ -4382,7 +4390,7 @@ class JHelpImage(
     fun fillRectangleScale(x : Int, y : Int, width : Int, height : Int, texture : JHelpImage,
                            doAlphaMix : Boolean = true)
     {
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -4424,7 +4432,7 @@ class JHelpImage(
                 val colorTexture = texture.pixels[pixTexture + xTexture]
                 val alpha = colorTexture.alpha
 
-                if (alpha == 255 || ! doAlphaMix)
+                if (alpha == 255 || !doAlphaMix)
                 {
                     this.pixels[pix] = colorTexture
                 }
@@ -4433,15 +4441,15 @@ class JHelpImage(
                     this.mixColor(pix, alpha, colorTexture)
                 }
 
-                pix ++
-                xx ++
-                xt ++
+                pix++
+                xx++
+                xt++
                 xTexture = xt * texture.width / width
             }
 
             line += this.width
-            yy ++
-            yt ++
+            yy++
+            yt++
             yTexture = yt * texture.height / height
         }
     }
@@ -4468,7 +4476,7 @@ class JHelpImage(
     fun fillRectangleScaleBetter(x : Int, y : Int, width : Int, height : Int, texture : JHelpImage,
                                  doAlphaMix : Boolean = true)
     {
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -4516,7 +4524,7 @@ class JHelpImage(
      */
     fun fillRespectAlpha(color : Int)
     {
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -4535,7 +4543,7 @@ class JHelpImage(
      */
     fun fillRespectAlpha(paint : JHelpPaint)
     {
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -4550,7 +4558,7 @@ class JHelpImage(
             {
                 color = paint.obtainColor(x, y)
                 this.pixels[pix] = this.pixels[pix].ushr(24) * color.ushr(24) shr 8 shl 24 or (color and 0x00FFFFFF)
-                pix ++
+                pix++
             }
         }
     }
@@ -4572,7 +4580,7 @@ class JHelpImage(
     fun fillRoundRectangle(x : Int, y : Int, width : Int, height : Int, arcWidth : Int, arcHeight : Int, color : Int,
                            doAlphaMix : Boolean = true)
     {
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -4602,7 +4610,7 @@ class JHelpImage(
         arcWidth : Int, arcHeight : Int,
         texture : JHelpImage, doAlphaMix : Boolean = true)
     {
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -4630,7 +4638,7 @@ class JHelpImage(
         arcWidth : Int, arcHeight : Int, paint : JHelpPaint,
         doAlphaMix : Boolean = true)
     {
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -4662,7 +4670,7 @@ class JHelpImage(
      */
     fun fillShape(shape : Shape, texture : JHelpImage, doAlphaMix : Boolean = true)
     {
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -4718,7 +4726,7 @@ class JHelpImage(
 
                     alpha = colorTexture.alpha
 
-                    if (alpha == 255 || ! doAlphaMix)
+                    if (alpha == 255 || !doAlphaMix)
                     {
                         this.pixels[pix] = colorTexture
                     }
@@ -4728,13 +4736,13 @@ class JHelpImage(
                     }
                 }
 
-                pix ++
-                xx ++
+                pix++
+                xx++
                 xTexture = (xTexture + 1) % texture.width
             }
 
             line += this.width
-            yy ++
+            yy++
             yTexture = (yTexture + 1) % texture.height
         }
     }
@@ -4742,7 +4750,7 @@ class JHelpImage(
     fun fillMask(mask : BooleanArray, x : Int, y : Int, width : Int, height : Int,
                  texture : JHelpImage, doAlphaMix : Boolean = true)
     {
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -4794,7 +4802,7 @@ class JHelpImage(
 
                     alpha = colorTexture.alpha
 
-                    if (alpha == 255 || ! doAlphaMix)
+                    if (alpha == 255 || !doAlphaMix)
                     {
                         this.pixels[pix] = colorTexture
                     }
@@ -4804,15 +4812,15 @@ class JHelpImage(
                     }
                 }
 
-                pix ++
-                pixMask ++
-                xx ++
+                pix++
+                pixMask++
+                xx++
                 xTexture = (xTexture + 1) % texture.width
             }
 
             line += this.width
             lineMask += width
-            yy ++
+            yy++
             yTexture = (yTexture + 1) % texture.height
         }
     }
@@ -4820,7 +4828,7 @@ class JHelpImage(
     fun fillFunction(contains : (Double, Double) -> Boolean, x : Int, y : Int, width : Int, height : Int,
                      texture : JHelpImage, doAlphaMix : Boolean = true)
     {
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -4869,7 +4877,7 @@ class JHelpImage(
 
                     alpha = colorTexture.alpha
 
-                    if (alpha == 255 || ! doAlphaMix)
+                    if (alpha == 255 || !doAlphaMix)
                     {
                         this.pixels[pix] = colorTexture
                     }
@@ -4879,13 +4887,13 @@ class JHelpImage(
                     }
                 }
 
-                pix ++
-                xx ++
+                pix++
+                xx++
                 xTexture = (xTexture + 1) % texture.width
             }
 
             line += this.width
-            yy ++
+            yy++
             yTexture = (yTexture + 1) % texture.height
         }
     }
@@ -4901,7 +4909,7 @@ class JHelpImage(
      */
     fun fillShape(shape : Shape, paint : JHelpPaint, doAlphaMix : Boolean = true)
     {
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -4957,7 +4965,7 @@ class JHelpImage(
 
                     alpha = colorPaint.alpha
 
-                    if (alpha == 255 || ! doAlphaMix)
+                    if (alpha == 255 || !doAlphaMix)
                     {
                         this.pixels[pix] = colorPaint
                     }
@@ -4967,14 +4975,14 @@ class JHelpImage(
                     }
                 }
 
-                pix ++
-                xx ++
-                xPaint ++
+                pix++
+                xx++
+                xPaint++
             }
 
             line += this.width
-            yy ++
-            yPaint ++
+            yy++
+            yPaint++
         }
     }
 
@@ -4982,7 +4990,7 @@ class JHelpImage(
                      paint : JHelpPaint,
                      doAlphaMix : Boolean = true)
     {
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -5031,7 +5039,7 @@ class JHelpImage(
 
                     alpha = colorPaint.alpha
 
-                    if (alpha == 255 || ! doAlphaMix)
+                    if (alpha == 255 || !doAlphaMix)
                     {
                         this.pixels[pix] = colorPaint
                     }
@@ -5041,21 +5049,21 @@ class JHelpImage(
                     }
                 }
 
-                pix ++
-                xx ++
-                xPaint ++
+                pix++
+                xx++
+                xPaint++
             }
 
             line += this.width
-            yy ++
-            yPaint ++
+            yy++
+            yPaint++
         }
     }
 
     fun fillMask(mask : BooleanArray, x : Int, y : Int, width : Int, height : Int, paint : JHelpPaint,
                  doAlphaMix : Boolean = true)
     {
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -5107,7 +5115,7 @@ class JHelpImage(
 
                     alpha = colorPaint.alpha
 
-                    if (alpha == 255 || ! doAlphaMix)
+                    if (alpha == 255 || !doAlphaMix)
                     {
                         this.pixels[pix] = colorPaint
                     }
@@ -5117,16 +5125,16 @@ class JHelpImage(
                     }
                 }
 
-                pix ++
-                pixMask ++
-                xx ++
-                xPaint ++
+                pix++
+                pixMask++
+                xx++
+                xPaint++
             }
 
             line += this.width
             lineMask += width
-            yy ++
-            yPaint ++
+            yy++
+            yPaint++
         }
     }
 
@@ -5148,7 +5156,7 @@ class JHelpImage(
                    textAlign : TextAlignment = TextAlignment.LEFT,
                    doAlphaMix : Boolean = true) : Rectangle
     {
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -5173,7 +5181,7 @@ class JHelpImage(
                          textAlign : TextAlignment = TextAlignment.LEFT,
                          doAlphaMix : Boolean = true) : Rectangle
     {
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -5181,8 +5189,8 @@ class JHelpImage(
         val lines = font.computeTextLinesAlpha(string, textAlign,
                                                this.width - x, this.height - y, true)
         var mask : JHelpImage
-        val xx = - (lines.second.width shr 1)
-        val yy = - (lines.second.height shr 1)
+        val xx = -(lines.second.width shr 1)
+        val yy = -(lines.second.height shr 1)
 
         for (textLineAlpha in lines.first)
         {
@@ -5217,7 +5225,7 @@ class JHelpImage(
     fun fillString(x : Int, y : Int, string : String, font : JHelpFont, texture : JHelpImage, color : Int,
                    textAlign : TextAlignment = TextAlignment.LEFT, doAlphaMix : Boolean = true) : Rectangle
     {
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -5263,7 +5271,7 @@ class JHelpImage(
     fun fillString(x : Int, y : Int, string : String, font : JHelpFont, paint : JHelpPaint, color : Int,
                    textAlign : TextAlignment = TextAlignment.LEFT, doAlphaMix : Boolean = true) : Rectangle
     {
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -5296,7 +5304,7 @@ class JHelpImage(
      */
     fun filterBlue()
     {
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -5320,7 +5328,7 @@ class JHelpImage(
      */
     fun filterGreen()
     {
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -5348,7 +5356,7 @@ class JHelpImage(
      */
     fun filterOn(color : Int, colorOK : Int, colorKO : Int)
     {
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -5378,7 +5386,7 @@ class JHelpImage(
      */
     fun filterOn(color : Int, precision : Int, colorOK : Int, colorKO : Int)
     {
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -5410,7 +5418,7 @@ class JHelpImage(
      */
     fun filterRed()
     {
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -5433,7 +5441,7 @@ class JHelpImage(
      */
     fun filterU()
     {
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -5457,7 +5465,7 @@ class JHelpImage(
      */
     fun filterV()
     {
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -5481,7 +5489,7 @@ class JHelpImage(
      */
     fun filterY()
     {
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -5512,7 +5520,7 @@ class JHelpImage(
      */
     fun flipBoth()
     {
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -5529,8 +5537,8 @@ class JHelpImage(
             color = this.pixels[pixelStart]
             this.pixels[pixelStart] = this.pixels[pixelEnd]
             this.pixels[pixelEnd] = color
-            pixelStart ++
-            pixelEnd --
+            pixelStart++
+            pixelEnd--
         }
     }
 
@@ -5541,7 +5549,7 @@ class JHelpImage(
      */
     fun flipHorizontal()
     {
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -5563,8 +5571,8 @@ class JHelpImage(
                 this.pixels[pixL] = this.pixels[pixR]
                 this.pixels[pixR] = color
 
-                pixL ++
-                pixR --
+                pixL++
+                pixR--
             }
 
             line += this.width
@@ -5578,7 +5586,7 @@ class JHelpImage(
      */
     fun flipVertical()
     {
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -5687,7 +5695,7 @@ class JHelpImage(
      */
     fun gray()
     {
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -5712,7 +5720,7 @@ class JHelpImage(
      */
     fun grayInvert()
     {
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -5737,7 +5745,7 @@ class JHelpImage(
      */
     fun invertColors()
     {
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -5774,7 +5782,7 @@ class JHelpImage(
      */
     fun invertUV()
     {
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -5819,7 +5827,7 @@ class JHelpImage(
      */
     fun keepBlue()
     {
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -5837,7 +5845,7 @@ class JHelpImage(
      */
     fun keepGreen()
     {
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -5855,7 +5863,7 @@ class JHelpImage(
      */
     fun keepRed()
     {
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -5886,7 +5894,7 @@ class JHelpImage(
             throw IllegalArgumentException("We can only maximize with an image of same size")
         }
 
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -5940,7 +5948,7 @@ class JHelpImage(
             throw IllegalArgumentException("We can only take middle with an image of same size")
         }
 
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -5994,7 +6002,7 @@ class JHelpImage(
             throw IllegalArgumentException("We can only minimize with an image of same size")
         }
 
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -6048,7 +6056,7 @@ class JHelpImage(
             throw IllegalArgumentException("We can only multiply with an image of same size")
         }
 
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -6129,7 +6137,7 @@ class JHelpImage(
     {
         var x = x
         var y = y
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -6138,7 +6146,7 @@ class JHelpImage(
         var xx = 0
         if (x < this.clip.xMin)
         {
-            xx = - x + this.clip.xMin
+            xx = -x + this.clip.xMin
             w += x - this.clip.xMin
             x = this.clip.xMin
         }
@@ -6147,7 +6155,7 @@ class JHelpImage(
         var yy = 0
         if (y < this.clip.yMin)
         {
-            yy = - y + this.clip.yMin
+            yy = -y + this.clip.yMin
             h += y - this.clip.yMin
             y = this.clip.yMin
         }
@@ -6181,8 +6189,8 @@ class JHelpImage(
                     this.pixels[pix] = color
                 }
 
-                pix ++
-                pixAlpha ++
+                pix++
+                pixAlpha++
             }
 
             line += this.width
@@ -6208,7 +6216,7 @@ class JHelpImage(
     {
         var x = x
         var y = y
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -6217,7 +6225,7 @@ class JHelpImage(
         var xx = 0
         if (x < this.clip.xMin)
         {
-            xx = - x + this.clip.xMin
+            xx = -x + this.clip.xMin
             w += x - this.clip.xMin
             x = this.clip.xMin
         }
@@ -6226,7 +6234,7 @@ class JHelpImage(
         var yy = 0
         if (y < this.clip.yMin)
         {
-            yy = - y + this.clip.yMin
+            yy = -y + this.clip.yMin
             h += y - this.clip.yMin
             y = this.clip.yMin
         }
@@ -6266,8 +6274,8 @@ class JHelpImage(
                     this.pixels[pix] = texture.pixels[lineTexture + xxx % widthTexture]
                 }
 
-                pix ++
-                pixAlpha ++
+                pix++
+                pixAlpha++
             }
 
             line += this.width
@@ -6293,7 +6301,7 @@ class JHelpImage(
     {
         var x = x
         var y = y
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -6302,7 +6310,7 @@ class JHelpImage(
         var xx = 0
         if (x < this.clip.xMin)
         {
-            xx = - x + this.clip.xMin
+            xx = -x + this.clip.xMin
             w += x - this.clip.xMin
             x = this.clip.xMin
         }
@@ -6311,7 +6319,7 @@ class JHelpImage(
         var yy = 0
         if (y < this.clip.yMin)
         {
-            yy = - y + this.clip.yMin
+            yy = -y + this.clip.yMin
             h += y - this.clip.yMin
             y = this.clip.yMin
         }
@@ -6347,8 +6355,8 @@ class JHelpImage(
                     this.pixels[pix] = paint.obtainColor(xxx, yyy)
                 }
 
-                pix ++
-                pixAlpha ++
+                pix++
+                pixAlpha++
             }
 
             line += this.width
@@ -6402,7 +6410,7 @@ class JHelpImage(
     {
         var x = x
         var y = y
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -6411,7 +6419,7 @@ class JHelpImage(
         var xx = 0
         if (x < this.clip.xMin)
         {
-            xx = - x + this.clip.xMin
+            xx = -x + this.clip.xMin
             w += x - this.clip.xMin
             x = this.clip.xMin
         }
@@ -6420,7 +6428,7 @@ class JHelpImage(
         var yy = 0
         if (y < this.clip.yMin)
         {
-            yy = - y + this.clip.yMin
+            yy = -y + this.clip.yMin
             h += y - this.clip.yMin
             y = this.clip.yMin
         }
@@ -6474,7 +6482,7 @@ class JHelpImage(
                     blue = blueBack
                 }
 
-                if (alpha == 255 || ! doAlphaMix)
+                if (alpha == 255 || !doAlphaMix)
                 {
                     this.pixels[pix] = color
                 }
@@ -6483,7 +6491,7 @@ class JHelpImage(
                     this.mixColor(pix, alpha, red, green, blue)
                 }
 
-                pix ++
+                pix++
             }
 
             line += this.width
@@ -6516,7 +6524,7 @@ class JHelpImage(
         var y = y
         var backgroundX = backgroundX
         var backgroundY = backgroundY
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -6539,7 +6547,7 @@ class JHelpImage(
         var xx = 0
         if (x < this.clip.xMin)
         {
-            xx = - x + this.clip.xMin
+            xx = -x + this.clip.xMin
             w += x - this.clip.xMin
             x = this.clip.xMin
         }
@@ -6548,7 +6556,7 @@ class JHelpImage(
         var yy = 0
         if (y < this.clip.yMin)
         {
-            yy = - y + this.clip.yMin
+            yy = -y + this.clip.yMin
             h += y - this.clip.yMin
             y = this.clip.yMin
         }
@@ -6581,7 +6589,7 @@ class JHelpImage(
                     background.pixels[pixBack]
                 alpha = color.alpha
 
-                if (alpha == 255 || ! doAlphaMix)
+                if (alpha == 255 || !doAlphaMix)
                 {
                     this.pixels[pix] = color
                 }
@@ -6590,8 +6598,8 @@ class JHelpImage(
                     this.mixColor(pix, alpha, color)
                 }
 
-                pixBack ++
-                pix ++
+                pixBack++
+                pix++
             }
 
             lineBack += background.width
@@ -6616,7 +6624,7 @@ class JHelpImage(
     {
         var x = x
         var y = y
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -6625,7 +6633,7 @@ class JHelpImage(
         var xx = 0
         if (x < this.clip.xMin)
         {
-            xx = - x + this.clip.xMin
+            xx = -x + this.clip.xMin
             w += x - this.clip.xMin
             x = this.clip.xMin
         }
@@ -6634,7 +6642,7 @@ class JHelpImage(
         var yy = 0
         if (y < this.clip.yMin)
         {
-            yy = - y + this.clip.yMin
+            yy = -y + this.clip.yMin
             h += y - this.clip.yMin
             y = this.clip.yMin
         }
@@ -6666,7 +6674,7 @@ class JHelpImage(
                     background.obtainColor(xxx, yyy)
                 alpha = color.alpha
 
-                if (alpha == 255 || ! doAlphaMix)
+                if (alpha == 255 || !doAlphaMix)
                 {
                     this.pixels[pix] = color
                 }
@@ -6675,7 +6683,7 @@ class JHelpImage(
                     this.mixColor(pix, alpha, color)
                 }
 
-                pix ++
+                pix++
             }
 
             line += this.width
@@ -6708,7 +6716,7 @@ class JHelpImage(
         var y = y
         var foregroundX = foregroundX
         var foregroundY = foregroundY
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -6731,7 +6739,7 @@ class JHelpImage(
         var xx = 0
         if (x < this.clip.xMin)
         {
-            xx = - x + this.clip.xMin
+            xx = -x + this.clip.xMin
             w += x - this.clip.xMin
             x = this.clip.xMin
         }
@@ -6740,7 +6748,7 @@ class JHelpImage(
         var yy = 0
         if (y < this.clip.yMin)
         {
-            yy = - y + this.clip.yMin
+            yy = -y + this.clip.yMin
             h += y - this.clip.yMin
             y = this.clip.yMin
         }
@@ -6773,7 +6781,7 @@ class JHelpImage(
                     background
                 alpha = color.alpha
 
-                if (alpha == 255 || ! doAlphaMix)
+                if (alpha == 255 || !doAlphaMix)
                 {
                     this.pixels[pix] = color
                 }
@@ -6782,8 +6790,8 @@ class JHelpImage(
                     this.mixColor(pix, alpha, color)
                 }
 
-                pixFore ++
-                pix ++
+                pixFore++
+                pix++
             }
 
             lineFore += foreground.width
@@ -6822,7 +6830,7 @@ class JHelpImage(
         var foregroundY = foregroundY
         var backgroundX = backgroundX
         var backgroundY = backgroundY
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -6859,7 +6867,7 @@ class JHelpImage(
         var xx = 0
         if (x < this.clip.xMin)
         {
-            xx = - x + this.clip.xMin
+            xx = -x + this.clip.xMin
             w += x - this.clip.xMin
             x = this.clip.xMin
         }
@@ -6868,7 +6876,7 @@ class JHelpImage(
         var yy = 0
         if (y < this.clip.yMin)
         {
-            yy = - y + this.clip.yMin
+            yy = -y + this.clip.yMin
             h += y - this.clip.yMin
             y = this.clip.yMin
         }
@@ -6904,7 +6912,7 @@ class JHelpImage(
                     background.pixels[pixBack]
                 alpha = color.alpha
 
-                if (alpha == 255 || ! doAlphaMix)
+                if (alpha == 255 || !doAlphaMix)
                 {
                     this.pixels[pix] = color
                 }
@@ -6913,9 +6921,9 @@ class JHelpImage(
                     this.mixColor(pix, alpha, color)
                 }
 
-                pixFore ++
-                pixBack ++
-                pix ++
+                pixFore++
+                pixBack++
+                pix++
             }
 
             lineFore += foreground.width
@@ -6950,7 +6958,7 @@ class JHelpImage(
         var y = y
         var foregroundX = foregroundX
         var foregroundY = foregroundY
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -6973,7 +6981,7 @@ class JHelpImage(
         var xx = 0
         if (x < this.clip.xMin)
         {
-            xx = - x + this.clip.xMin
+            xx = -x + this.clip.xMin
             w += x - this.clip.xMin
             x = this.clip.xMin
         }
@@ -6982,7 +6990,7 @@ class JHelpImage(
         var yy = 0
         if (y < this.clip.yMin)
         {
-            yy = - y + this.clip.yMin
+            yy = -y + this.clip.yMin
             h += y - this.clip.yMin
             y = this.clip.yMin
         }
@@ -7016,7 +7024,7 @@ class JHelpImage(
                     background.obtainColor(xxx, yyy)
                 alpha = color.alpha
 
-                if (alpha == 255 || ! doAlphaMix)
+                if (alpha == 255 || !doAlphaMix)
                 {
                     this.pixels[pix] = color
                 }
@@ -7025,8 +7033,8 @@ class JHelpImage(
                     this.mixColor(pix, alpha, color)
                 }
 
-                pixFore ++
-                pix ++
+                pixFore++
+                pix++
             }
 
             lineFore += foreground.width
@@ -7051,7 +7059,7 @@ class JHelpImage(
     {
         var x = x
         var y = y
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -7060,7 +7068,7 @@ class JHelpImage(
         var xx = 0
         if (x < this.clip.xMin)
         {
-            xx = - x + this.clip.xMin
+            xx = -x + this.clip.xMin
             w += x - this.clip.xMin
             x = this.clip.xMin
         }
@@ -7069,7 +7077,7 @@ class JHelpImage(
         var yy = 0
         if (y < this.clip.yMin)
         {
-            yy = - y + this.clip.yMin
+            yy = -y + this.clip.yMin
             h += y - this.clip.yMin
             y = this.clip.yMin
         }
@@ -7100,7 +7108,7 @@ class JHelpImage(
                     background
                 alpha = color.alpha
 
-                if (alpha == 255 || ! doAlphaMix)
+                if (alpha == 255 || !doAlphaMix)
                 {
                     this.pixels[pix] = color
                 }
@@ -7109,7 +7117,7 @@ class JHelpImage(
                     this.mixColor(pix, alpha, color)
                 }
 
-                pix ++
+                pix++
             }
 
             line += this.width
@@ -7142,7 +7150,7 @@ class JHelpImage(
         var y = y
         var backgroundX = backgroundX
         var backgroundY = backgroundY
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -7165,7 +7173,7 @@ class JHelpImage(
         var xx = 0
         if (x < this.clip.xMin)
         {
-            xx = - x + this.clip.xMin
+            xx = -x + this.clip.xMin
             w += x - this.clip.xMin
             x = this.clip.xMin
         }
@@ -7174,7 +7182,7 @@ class JHelpImage(
         var yy = 0
         if (y < this.clip.yMin)
         {
-            yy = - y + this.clip.yMin
+            yy = -y + this.clip.yMin
             h += y - this.clip.yMin
             y = this.clip.yMin
         }
@@ -7208,7 +7216,7 @@ class JHelpImage(
                     background.pixels[pixBack]
                 alpha = color.alpha
 
-                if (alpha == 255 || ! doAlphaMix)
+                if (alpha == 255 || !doAlphaMix)
                 {
                     this.pixels[pix] = color
                 }
@@ -7217,8 +7225,8 @@ class JHelpImage(
                     this.mixColor(pix, alpha, color)
                 }
 
-                pixBack ++
-                pix ++
+                pixBack++
+                pix++
             }
 
             lineBack += background.width
@@ -7243,7 +7251,7 @@ class JHelpImage(
     {
         var x = x
         var y = y
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -7252,7 +7260,7 @@ class JHelpImage(
         var xx = 0
         if (x < this.clip.xMin)
         {
-            xx = - x + this.clip.xMin
+            xx = -x + this.clip.xMin
             w += x - this.clip.xMin
             x = this.clip.xMin
         }
@@ -7261,7 +7269,7 @@ class JHelpImage(
         var yy = 0
         if (y < this.clip.yMin)
         {
-            yy = - y + this.clip.yMin
+            yy = -y + this.clip.yMin
             h += y - this.clip.yMin
             y = this.clip.yMin
         }
@@ -7293,7 +7301,7 @@ class JHelpImage(
                     background.obtainColor(xxx, yyy)
                 alpha = color.alpha
 
-                if (alpha == 255 || ! doAlphaMix)
+                if (alpha == 255 || !doAlphaMix)
                 {
                     this.pixels[pix] = color
                 }
@@ -7302,7 +7310,7 @@ class JHelpImage(
                     this.mixColor(pix, alpha, color)
                 }
 
-                pix ++
+                pix++
             }
 
             line += this.width
@@ -7349,7 +7357,7 @@ class JHelpImage(
 
         val drawMode = this.drawMode
 
-        if (! drawMode)
+        if (!drawMode)
         {
             this.startDrawMode()
         }
@@ -7358,7 +7366,7 @@ class JHelpImage(
         task(this)
         this.drawModeLocked = false
 
-        if (! drawMode)
+        if (!drawMode)
         {
             this.endDrawMode()
         }
@@ -7519,7 +7527,7 @@ class JHelpImage(
     fun register(component : Component)
     {
         this.mutex {
-            if (! this.componentsListeners.contains(component))
+            if (!this.componentsListeners.contains(component))
             {
                 this.componentsListeners.add(component)
             }
@@ -7548,10 +7556,10 @@ class JHelpImage(
         {
             this.mutexVisibilities {
                 val index = sprite.spriteIndex()
-                if (index >= 0 && this.visibilities != null && this.visibilities !!.size > index)
+                if (index >= 0 && this.visibilities != null && this.visibilities!!.size > index)
                 {
                     System.arraycopy(this.visibilities, index + 1, this.visibilities, index,
-                                     this.visibilities !!.size - index - 1)
+                                     this.visibilities!!.size - index - 1)
                 }
 
                 for (indexSprite in 0 until this.sprites.size)
@@ -7576,7 +7584,7 @@ class JHelpImage(
      */
     fun repeatOnLine(x1 : Int, y1 : Int, x2 : Int, y2 : Int, image : JHelpImage, doAlphaMix : Boolean = true)
     {
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -7600,8 +7608,8 @@ class JHelpImage(
         val sy = sign(y2 - y1)
         var x = x1
         var y = y1
-        val xx = - (image.width shr 1)
-        val yy = - (image.height shr 1)
+        val xx = -(image.width shr 1)
+        val yy = -(image.height shr 1)
 
         if (dx >= dy)
         {
@@ -7678,12 +7686,12 @@ class JHelpImage(
      */
     fun repeatOnLineHorizontal(x1 : Int, x2 : Int, y : Int, image : JHelpImage, doAlphaMix : Boolean = true)
     {
-        val xx = - (image.width shr 1)
+        val xx = -(image.width shr 1)
         val yy = y - (image.height shr 1)
         val xMin = xx + Math.min(x1, x2)
         val xMax = xx + Math.max(x1, x2)
 
-        for (x in xMin .. xMax)
+        for (x in xMin..xMax)
         {
             this.drawImage(x, yy, image, doAlphaMix = doAlphaMix)
         }
@@ -7701,11 +7709,11 @@ class JHelpImage(
     fun repeatOnLineVertical(x : Int, y1 : Int, y2 : Int, image : JHelpImage, doAlphaMix : Boolean = true)
     {
         val xx = x - (image.width shr 1)
-        val yy = - (image.height shr 1)
+        val yy = -(image.height shr 1)
         val yMin = yy + Math.min(y1, y2)
         val yMax = yy + Math.max(y1, y2)
 
-        for (y in yMin .. yMax)
+        for (y in yMin..yMax)
         {
             this.drawImage(xx, y, image, doAlphaMix = doAlphaMix)
         }
@@ -7722,7 +7730,7 @@ class JHelpImage(
      */
     fun replaceColor(colorToReplace : Int, newColor : Int, near : Int)
     {
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -7762,8 +7770,8 @@ class JHelpImage(
         while (pixR >= 0)
         {
             pixels[pixR] = this.pixels[pix]
-            pix ++
-            pixR --
+            pix++
+            pixR--
         }
 
         return JHelpImage(width, height, pixels)
@@ -7795,11 +7803,11 @@ class JHelpImage(
             {
                 pixels[pixR] = this.pixels[pix]
 
-                pix ++
+                pix++
                 pixR += width
             }
 
-            xr --
+            xr--
             pixR = startR + xr
         }
 
@@ -7821,7 +7829,7 @@ class JHelpImage(
 
         var xr = 0
         val yr = height - 1
-        val stepR = - width
+        val stepR = -width
         val startR = yr * width
         var pixR = startR + xr
 
@@ -7833,11 +7841,11 @@ class JHelpImage(
             {
                 pixels[pixR] = this.pixels[pix]
 
-                pix ++
+                pix++
                 pixR += stepR
             }
 
-            xr ++
+            xr++
             pixR = startR + xr
         }
 
@@ -7897,7 +7905,7 @@ class JHelpImage(
      */
     fun setPixel(x : Int, y : Int, color : Int)
     {
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -7924,7 +7932,7 @@ class JHelpImage(
      */
     fun pixels(x : Int, y : Int, width : Int, height : Int, pixels : IntArray, offset : Int = 0)
     {
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -7982,7 +7990,7 @@ class JHelpImage(
      */
     fun setTransparency(alpha : Int)
     {
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -8007,7 +8015,7 @@ class JHelpImage(
      */
     fun shift(x : Int, y : Int)
     {
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
@@ -8102,7 +8110,7 @@ class JHelpImage(
             throw IllegalStateException("Draw mode is locked")
         }
 
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             this.drawMode = true
 
@@ -8120,8 +8128,8 @@ class JHelpImage(
                 for (index in length - 1 downTo 0)
                 {
                     sprite = this.sprites[index]
-                    this.visibilities !![index] = sprite.visible()
-                    visible = this.visibilities !![index]
+                    this.visibilities!![index] = sprite.visible()
+                    visible = this.visibilities!![index]
 
                     if (visible)
                     {
@@ -8134,7 +8142,7 @@ class JHelpImage(
             {
                 this.drawModeLocked = true
 
-                while (! this.playInDrawMode.empty)
+                while (!this.playInDrawMode.empty)
                 {
                     this.playInDrawMode.outQueue()(this)
                 }
@@ -8164,7 +8172,7 @@ class JHelpImage(
             throw IllegalArgumentException("We can only subtract with an image of same size")
         }
 
-        if (! this.drawMode)
+        if (!this.drawMode)
         {
             throw IllegalStateException("Must be in draw mode !")
         }
